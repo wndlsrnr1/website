@@ -1,0 +1,34 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/website
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+#        운영시 none으로 바꾸어 놓기
+        dialect: org.hibernate.dialect.MySQL5Dialect
+        format_sql: true
+        show_sql: true
+        use_sql_comments: true
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+logging.level:
+  org.hibernate.SQL: debug
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+  servlet:
+    session:
+#      이거 무슨 설정임?
+      tracking-modes: cookie
+
