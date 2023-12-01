@@ -2,12 +2,12 @@ package com.website.repository.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.user.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import static com.website.domain.user.QUser.*;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @Repository
 public class UserJpaRepository {
@@ -34,4 +34,11 @@ public class UserJpaRepository {
         userRepository.save(user);
     }
 
+    public User findUserByEmail(String email) {
+        List<User> fetch = jpaQueryFactory.selectFrom(user).where(user.email.eq(email)).fetch();
+        if (fetch.size() == 0) {
+            return null;
+        }
+        return fetch.get(0);
+    }
 }
