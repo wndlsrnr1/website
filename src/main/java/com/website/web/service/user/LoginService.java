@@ -28,11 +28,24 @@ public class LoginService {
         return user;
     }
 
+    //public User findUser(LoginFormRequest loginFormRequest) {
+    //    String password = loginFormRequest.getPassword();
+    //    String email = loginFormRequest.getEmail();
+    //
+    //    User findNormalUser = userJpaRepository.findNormalUserByEmailPassword(email, password);
+    //
+    //    if (findNormalUser == null) {
+    //        return null;
+    //    }
+    //
+    //    return findNormalUser;
+    //}
+
     public User findUser(LoginFormRequest loginFormRequest) {
         String password = loginFormRequest.getPassword();
         String email = loginFormRequest.getEmail();
 
-        User findNormalUser = userJpaRepository.findNormalUserByEmailPassword(email, password);
+        User findNormalUser = userJpaRepository.fail();
 
         if (findNormalUser == null) {
             return null;

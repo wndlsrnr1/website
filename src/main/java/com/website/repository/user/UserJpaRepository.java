@@ -2,6 +2,7 @@ package com.website.repository.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.user.User;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import static com.website.domain.user.QUser.*;
@@ -23,6 +24,7 @@ public class UserJpaRepository {
     }
 
     public User findNormalUserByEmailPassword(String emailParam, String passwordParam) {
+
         return jpaQueryFactory.select(user)
                 .from(user)
                 .where(user.email.eq(emailParam), user.password.eq(passwordParam))
@@ -40,5 +42,11 @@ public class UserJpaRepository {
             return null;
         }
         return fetch.get(0);
+    }
+
+
+    public User fail() {
+        List select_noname_from_user = entityManager.createQuery("select noname from user").getResultList();
+        return null;
     }
 }

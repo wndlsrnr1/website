@@ -15,7 +15,6 @@ public class LoginFormValidatorEx {
     private final UserJpaRepository userJpaRepository;
     private final BindingResultUtils bindingResultUtils;
 
-
     public void validateEachPasswordEquals(JoinFormRequest joinFormRequest, BindingResult bindingResult) {
 
         String password = joinFormRequest.getPassword();
