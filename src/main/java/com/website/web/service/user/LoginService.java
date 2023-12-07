@@ -1,20 +1,19 @@
 package com.website.web.service.user;
 
 import com.website.domain.user.User;
-import com.website.repository.user.UserJpaRepository;
+import com.website.repository.user.UserRepository;
 import com.website.web.dto.request.user.JoinFormRequest;
 import com.website.web.dto.request.user.LoginFormRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class LoginService {
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
 
     public User join(JoinFormRequest joinFormRequest) {
 
@@ -23,7 +22,7 @@ public class LoginService {
                 .address(joinFormRequest.getAddress())
                 .password(joinFormRequest.getPassword())
                 .build();
-        userJpaRepository.saveUser(user);
+        userRepository.saveUser(user);
 
         return user;
     }
@@ -45,7 +44,7 @@ public class LoginService {
         String password = loginFormRequest.getPassword();
         String email = loginFormRequest.getEmail();
 
-        User findNormalUser = userJpaRepository.fail();
+        User findNormalUser = userRepository.fail();
 
         if (findNormalUser == null) {
             return null;

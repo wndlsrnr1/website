@@ -1,8 +1,8 @@
 package com.website.web.controller.login;
 
 import com.website.domain.user.User;
-import com.website.repository.user.UserJpaRepository;
 import com.website.repository.user.UserRepository;
+import com.website.repository.user.UserJpaRepository;
 import com.website.web.dto.request.user.JoinFormRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,10 +19,10 @@ import java.util.List;
 class LoginControllerTest {
 
     @Autowired
-    UserRepository userRepository;
+    UserJpaRepository userJpaRepository;
 
     @Autowired
-    UserJpaRepository userJpaRepository;
+    UserRepository userRepository;
 
     @BeforeEach
     void saveData() {
@@ -36,7 +36,7 @@ class LoginControllerTest {
         User user = User.builder().name(joinFormRequest.getName())
                 .email(joinFormRequest.getEmail())
                 .address(joinFormRequest.getAddress()).build();
-        userRepository.save(user);
+        userJpaRepository.save(user);
 
     }
 
@@ -55,24 +55,24 @@ class LoginControllerTest {
                 .address(joinFormRequest.getAddress())
                 .password(joinFormRequest.getPassword())
                 .build();
-        userRepository.save(user);
+        userJpaRepository.save(user);
 
-        userRepository.flush();
+        userJpaRepository.flush();
 
     }
 
     @Test
     void findAnyTest() {
-        List<User> all = userRepository.findAll();
+        List<User> all = userJpaRepository.findAll();
         log.info("all = {}", all);
     }
 
     @Test
     void loginTest() {
-        User user = userRepository.findAll().get(0);
+        User user = userJpaRepository.findAll().get(0);
         String email = user.getEmail();
         String password = user.getPassword();
-        User findNormalUser = userJpaRepository.findNormalUserByEmailPassword(email, password);
+        User findNormalUser = userRepository.findNormalUserByEmailPassword(email, password);
 
         log.info("findNormalUser = {}", findNormalUser);
     }
