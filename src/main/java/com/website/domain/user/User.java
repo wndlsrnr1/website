@@ -1,4 +1,4 @@
-package com.website.domain;
+package com.website.domain.user;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,14 +15,24 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Generated(GenerationTime.ALWAYS)
+    @GeneratedValue
     @Column(name = "user_id", nullable = false)
     private Long id;
+
     private String name;
 
+    private String address;
+
+    private String email;
+
+    private String password;
+
     @Builder
-    public User(String name) {
+    public User(String name, String address, String email, String password) {
         this.name = name;
+        this.address = address;
+        this.email = email;
+        this.password = password;
     }
+
 }
