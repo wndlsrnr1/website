@@ -19,6 +19,11 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+      enabled: true
+      max-request-size: 20MB
+  messages:
+    basename: errors, messages
+    encoding: UTF-8
 
 logging.level:
   org.hibernate.SQL: debug
@@ -27,6 +32,12 @@ server:
   error:
     whitelabel:
       enabled: false
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+    include-exception: false
+    path: /error
+
   servlet:
     session:
 #      이거 무슨 설정임?
