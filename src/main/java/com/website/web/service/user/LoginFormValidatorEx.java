@@ -24,6 +24,7 @@ public class LoginFormValidatorEx {
             bindingResultUtils.addFieldMessagesTo(bindingResult, "password", "NotMatches.password");
             bindingResultUtils.addObjectMessagesTo(bindingResult, "NotMatches");
         }
+
     }
 
     public void validateDuplicatedEmail(JoinFormRequest joinFormRequest, BindingResult bindingResult) {
