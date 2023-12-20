@@ -3,6 +3,7 @@ package com.website.repository.category;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.category.Category;
 import com.website.domain.category.QCategory;
+import com.website.domain.category.QSubcategory;
 import com.website.domain.category.Subcategory;
 import com.website.repository.user.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,14 +18,12 @@ import java.util.Optional;
 @Repository
 public class CategoryRepository {
 
-    private final EntityManager entityManager;
     private final CategoryJpaRepository categoryJpaRepository;
     private final SubcategoryJpaRepository subcategoryJpaRepository;
     private final JPAQueryFactory jpaQueryFactory;
 
 
     public CategoryRepository(EntityManager entityManager, CategoryJpaRepository categoryJpaRepository, SubcategoryJpaRepository subcategoryJpaRepository) {
-        this.entityManager = entityManager;
         this.jpaQueryFactory = new JPAQueryFactory(entityManager);
         this.categoryJpaRepository = categoryJpaRepository;
         this.subcategoryJpaRepository = subcategoryJpaRepository;
@@ -89,6 +88,7 @@ public class CategoryRepository {
         return subcategoryJpaRepository.save(subcategory);
     }
 
+
     //Delete
     public void deleteCategory(Long id) {
         try {
@@ -104,5 +104,16 @@ public class CategoryRepository {
 
     public List<Category> categoryFindAll() {
         return categoryJpaRepository.findAll();
+    }
+
+    public List<Subcategory> subcategoriesFindByCategoryId(Long categoryId) {
+        return jpaQueryFactory
+                .selectFrom(QSubcategory.subcategory)
+                .where(QSubcategory.subcategory.category.id.eq(categoryId))
+                .fetch();
+    }
+
+    public List<Subcategory> subcategoryFindAll() {
+        return subcategoryJpaRepository.findAll();
     }
 }

@@ -50,29 +50,29 @@ public class AdminCategoryCRUDController {
     //C
     @PutMapping("/subcategory/create")
     public ResponseEntity createSubcategory(CreateSubcategoryRequest request) {
-        return ResponseEntity.ok().build();
+        return categoryCRUDService.createSubcategory(request);
     }
 
     //R
     @GetMapping("/subcategory")
-    public ResponseEntity getSubcategory(@RequestParam("subcategory_id") Long subcategoryId, @RequestParam("category_id") Long categoryId) {
-        return null;
+    public ResponseEntity getSubcategory(@RequestParam("category_id") Long categoryId) {
+        return categoryCRUDService.findSubcategoriesByCategoryId(categoryId);
     }
 
-    @GetMapping("/subcategory")
+    @GetMapping("/subcategories")
     public ResponseEntity getSubcategories() {
-        return null;
+        return categoryCRUDService.findSubcategoryAll();
     }
 
     //U
     @PostMapping("/subcategory/update")
     public ResponseEntity updateSubcategory(UpdateSubcategoryRequest request) {
-        return null;
+        return categoryCRUDService.updateSubcategory(request);
     }
 
     //D
     @DeleteMapping("/subcategory/delete/{subcategory_id}")
     public ResponseEntity deleteSubcategory(@PathVariable("subcategory_id") Long id) {
-        return null;
+        return categoryCRUDService.deleteSubcategory(id);
     }
 }

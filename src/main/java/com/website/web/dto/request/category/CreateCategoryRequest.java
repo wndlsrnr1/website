@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class CreateCategoryRequest {
     @NotBlank
-    String name;
+    private String name;
     @NotBlank
-    String nameKor;
+    private String nameKor;
 }
