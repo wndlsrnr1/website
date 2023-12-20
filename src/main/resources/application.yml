@@ -1,5 +1,8 @@
 spring:
   datasource:
+#    "springboot"가 이 설정을 참고해서 datasource 생성
+#    커넥션 풀을 제공하는 HikariDataSource
+#     자동으로 등록되는 빈이름 transactionManager
     url: jdbc:mysql://localhost:3306/website
     username: root
     password:
@@ -19,6 +22,11 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+      enabled: true
+      max-request-size: 20MB
+  messages:
+    basename: errors, messages
+    encoding: UTF-8
 
 logging.level:
   org.hibernate.SQL: debug
@@ -27,6 +35,12 @@ server:
   error:
     whitelabel:
       enabled: false
+    include-stacktrace: never
+    include-message: never
+    include-binding-errors: never
+    include-exception: false
+    path: /error
+
   servlet:
     session:
 #      이거 무슨 설정임?
