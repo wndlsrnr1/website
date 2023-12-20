@@ -1,6 +1,7 @@
 package com.website;
 
-import com.website.web.interceptor.LoginCheckInterceptor;
+import com.website.web.filter.ExceptionLogFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,8 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.servlet.DispatcherType;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -37,5 +40,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(1);
          */
         return;
+    }
+
+    @Bean
+    public FilterRegistrationBean<ExceptionLogFilter> filterRegistrationBean() {
+        FilterRegistrationBean<ExceptionLogFilter> registry = new FilterRegistrationBean(new ExceptionLogFilter());
+        registry.setOrder(1);
+        registry.addUrlPatterns("/*");
+        registry.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
+        return registry;
     }
 }

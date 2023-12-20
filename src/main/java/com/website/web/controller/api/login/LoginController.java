@@ -1,8 +1,9 @@
-package com.website.web.controller.login;
+package com.website.web.controller.api.login;
 
 import com.website.domain.user.User;
 import com.website.domain.user.constance.UserConst;
 import com.website.web.dto.common.ApiError;
+import com.website.web.dto.request.TestDTO;
 import com.website.web.dto.request.user.JoinFormRequest;
 import com.website.web.dto.request.user.LoginFormRequest;
 import com.website.web.dto.common.ApiResponseBody;
@@ -29,7 +30,7 @@ public class LoginController {
     private final LoginFormValidatorEx loginFormValidatorEx;
     private final BindingResultUtils bindingResultUtils;
 
-    @PostMapping("/join/user")
+    @PostMapping(value = "/join/user")
     public ResponseEntity joinUser(@Validated @RequestBody JoinFormRequest joinFormRequest, BindingResult bindingResult) {
 
         //DB 조회 전 형식 validate
@@ -56,7 +57,7 @@ public class LoginController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/login/user")
+    @PostMapping(value = "/login/user")
     public ResponseEntity loginUser(@Validated @RequestBody LoginFormRequest loginFormRequest, BindingResult bindingResult, HttpServletRequest request) {
 
         //Bean validation

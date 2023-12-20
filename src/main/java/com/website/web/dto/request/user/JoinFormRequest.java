@@ -1,6 +1,6 @@
 package com.website.web.dto.request.user;
 
-import com.website.web.commonconstance.Regexes;
+import com.website.web.constance.Regexes;
 import lombok.*;
 
 import javax.validation.constraints.Email;

@@ -1,7 +1,7 @@
 package com.website.web.service.user;
 
 import com.website.domain.user.User;
-import com.website.repository.user.UserJpaRepository;
+import com.website.repository.user.UserRepository;
 import com.website.web.dto.request.user.JoinFormRequest;
 import com.website.web.service.common.BindingResultUtils;
 import lombok.RequiredArgsConstructor;
@@ -12,9 +12,8 @@ import org.springframework.validation.BindingResult;
 @RequiredArgsConstructor
 public class LoginFormValidatorEx {
 
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final BindingResultUtils bindingResultUtils;
-
 
     public void validateEachPasswordEquals(JoinFormRequest joinFormRequest, BindingResult bindingResult) {
 
@@ -29,7 +28,7 @@ public class LoginFormValidatorEx {
 
     public void validateDuplicatedEmail(JoinFormRequest joinFormRequest, BindingResult bindingResult) {
         String email = joinFormRequest.getEmail();
-        User userByEmail = userJpaRepository.findUserByEmail(email);
+        User userByEmail = userRepository.findUserByEmail(email);
         if (userByEmail != null) {
             bindingResultUtils.addFieldMessagesTo(bindingResult, "email", "AlreadyExist.email");
             bindingResultUtils.addObjectMessagesTo(bindingResult, "AlreadyExist.email");
