@@ -1,5 +1,8 @@
 spring:
   datasource:
+#    "springboot"가 이 설정을 참고해서 datasource 생성
+#    커넥션 풀을 제공하는 HikariDataSource
+#     자동으로 등록되는 빈이름 transactionManager
     url: jdbc:mysql://localhost:3306/website
     username: root
     password:

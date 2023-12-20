@@ -30,6 +30,10 @@ public class UserRepository {
                 .fetchOne();
     }
 
+    public User findByUserId(Long userId) {
+        return userJpaRepository.findById(userId).get();
+    }
+
 
     public void saveUser(User user) {
         userJpaRepository.save(user);
@@ -44,8 +48,8 @@ public class UserRepository {
     }
 
 
-    public User fail() {
-        List select_noname_from_user = entityManager.createQuery("select noname from user").getResultList();
-        return null;
-    }
+    //public User fail() {
+    //    List select_noname_from_user = entityManager.createQuery("select name from user").getResultList();
+    //    return null;
+    //}
 }
