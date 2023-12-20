@@ -2,14 +2,12 @@ package com.website.web.service.user;
 
 import com.website.domain.user.User;
 import com.website.repository.user.UserJpaRepository;
-import com.website.repository.user.UserRepository;
-import com.website.web.dto.user.JoinForm;
-import com.website.web.dto.user.LoginForm;
+import com.website.web.dto.request.user.JoinFormRequest;
+import com.website.web.dto.request.user.LoginFormRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.validation.BindingResult;
 
 @Service
 @RequiredArgsConstructor
@@ -18,21 +16,21 @@ public class LoginService {
 
     private final UserJpaRepository userJpaRepository;
 
-    public User join(JoinForm joinForm) {
+    public User join(JoinFormRequest joinFormRequest) {
 
-        User user = User.builder().name(joinForm.getName())
-                .email(joinForm.getEmail())
-                .address(joinForm.getAddress())
-                .password(joinForm.getPassword())
+        User user = User.builder().name(joinFormRequest.getName())
+                .email(joinFormRequest.getEmail())
+                .address(joinFormRequest.getAddress())
+                .password(joinFormRequest.getPassword())
                 .build();
         userJpaRepository.saveUser(user);
 
         return user;
     }
 
-    public User findUser(LoginForm loginForm) {
-        String password = loginForm.getPassword();
-        String email = loginForm.getEmail();
+    public User findUser(LoginFormRequest loginFormRequest) {
+        String password = loginFormRequest.getPassword();
+        String email = loginFormRequest.getEmail();
 
         User findNormalUser = userJpaRepository.findNormalUserByEmailPassword(email, password);
 
@@ -42,4 +40,6 @@ public class LoginService {
 
         return findNormalUser;
     }
+
+
 }

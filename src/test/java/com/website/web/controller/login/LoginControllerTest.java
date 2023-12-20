@@ -3,7 +3,7 @@ package com.website.web.controller.login;
 import com.website.domain.user.User;
 import com.website.repository.user.UserJpaRepository;
 import com.website.repository.user.UserRepository;
-import com.website.web.dto.user.JoinForm;
+import com.website.web.dto.request.user.JoinFormRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,16 +26,16 @@ class LoginControllerTest {
 
     @BeforeEach
     void saveData() {
-        JoinForm joinForm = JoinForm.builder()
+        JoinFormRequest joinFormRequest = JoinFormRequest.builder()
                 .email("wndlsrnr1@gmail.com")
                 .password("1234")
                 .name("주인국")
                 .address("myHome")
                 .build();
 
-        User user = User.builder().name(joinForm.getName())
-                .email(joinForm.getEmail())
-                .address(joinForm.getAddress()).build();
+        User user = User.builder().name(joinFormRequest.getName())
+                .email(joinFormRequest.getEmail())
+                .address(joinFormRequest.getAddress()).build();
         userRepository.save(user);
 
     }
@@ -43,17 +43,17 @@ class LoginControllerTest {
     @Test
     void joinTest() {
 
-        JoinForm joinForm = JoinForm.builder()
+        JoinFormRequest joinFormRequest = JoinFormRequest.builder()
                 .email("wndlsrnr1@gmail.com")
                 .password("1234")
                 .name("주인국")
                 .address("myHome")
                 .build();
 
-        User user = User.builder().name(joinForm.getName())
-                .email(joinForm.getEmail())
-                .address(joinForm.getAddress())
-                .password(joinForm.getPassword())
+        User user = User.builder().name(joinFormRequest.getName())
+                .email(joinFormRequest.getEmail())
+                .address(joinFormRequest.getAddress())
+                .password(joinFormRequest.getPassword())
                 .build();
         userRepository.save(user);
 

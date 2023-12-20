@@ -19,6 +19,9 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  messages:
+    basename: errors, messages
+    encoding: UTF-8
 
 logging.level:
   org.hibernate.SQL: debug
