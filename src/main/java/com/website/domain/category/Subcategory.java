@@ -18,7 +18,7 @@ public class Subcategory {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -29,5 +29,14 @@ public class Subcategory {
         this.category = category;
         this.name = name;
         this.nameKor = nameKor;
+    }
+
+    @Override
+    public String toString() {
+        return "Subcategory{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", nameKor='" + nameKor + '\'' +
+                '}';
     }
 }

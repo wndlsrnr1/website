@@ -5,10 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -23,8 +21,20 @@ public class Category {
     private String name;
     private String nameKor;
 
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Subcategory> subcategories;
+
     public Category(String name, String nameKor) {
         this.name = name;
         this.nameKor = nameKor;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", nameKor='" + nameKor + '\'' +
+                '}';
     }
 }

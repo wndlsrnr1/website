@@ -18,6 +18,7 @@ import java.util.Optional;
 @Repository
 public class CategoryRepository {
 
+    //여기서 DataAccessException이 올라오지만 어차피 처리 못하므로 Advisor에서 처리하도록 한다.
     private final CategoryJpaRepository categoryJpaRepository;
     private final SubcategoryJpaRepository subcategoryJpaRepository;
     private final JPAQueryFactory jpaQueryFactory;

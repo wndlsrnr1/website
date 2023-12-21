@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,6 @@ import javax.persistence.EntityManager;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-@Transactional
 @SpringBootTest
 @Slf4j
 class CategoryRepositoryTest {
@@ -24,6 +24,7 @@ class CategoryRepositoryTest {
     @Autowired
     EntityManager entityManager;
 
+    @Transactional
     @Test
     void createTest() {
         //[[[[[[[[[[[[[[[[[[[[[[[[[[[create]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -54,7 +55,7 @@ class CategoryRepositoryTest {
         Subcategory uncreatedSubcategory2 = categoryRepository.saveSubcategory(subcategoryFail2);
         assertThat(uncreatedSubcategory2).isNull();
     }
-
+    @Transactional
     @Test
     void readTest() {
         //given
@@ -81,7 +82,7 @@ class CategoryRepositoryTest {
         Subcategory expectedNullSubcategory2 = categoryRepository.subcategoryFindById(createdCategory.getId());
         assertThat(expectedNullSubcategory2).isNull();
     }
-
+    @Transactional
     @Test
     void deleteTest() {
         //given
@@ -101,7 +102,7 @@ class CategoryRepositoryTest {
         assertThat(expectedNull2).isNull();
     }
 
-
+    @Transactional
     @Test
     void updateTest() {
         //given
@@ -128,6 +129,21 @@ class CategoryRepositoryTest {
         //다른 값에 저장
         assertThat(categoryName).isNotEqualTo(updatedCategory.getName());
         assertThat(subcategoryName).isNotEqualTo(updateSubcategory.getName());
+    }
+
+    @Test
+    void CategorySubcategoryDeleteCascadeTest() {
+        //given
+        Category category = new Category("PLAY_STATION", "플레이스테이션");
+        Category createdCategory = categoryRepository.saveCategory(category);
+        Subcategory subcategory = new Subcategory(createdCategory, "SUB_PLAY_STATION", "서브_플스");
+        Subcategory createdSubcategory = categoryRepository.saveSubcategory(subcategory);
+
+        //상위 삭제
+        categoryRepository.deleteCategory(createdCategory.getId());
+        Subcategory subcategory1 = categoryRepository.subcategoryFindById(createdSubcategory.getId());
+        assertThat(categoryRepository.categoryFindById(createdCategory.getId())).isNull();
+        assertThat(categoryRepository.subcategoryFindById(createdSubcategory.getId())).isNull();
     }
 
 
