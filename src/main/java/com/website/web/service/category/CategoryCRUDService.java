@@ -8,14 +8,20 @@ import com.website.web.dto.request.category.CreateCategoryRequest;
 import com.website.web.dto.request.category.CreateSubcategoryRequest;
 import com.website.web.dto.request.category.UpdateCategoryRequest;
 import com.website.web.dto.request.category.UpdateSubcategoryRequest;
+import com.website.web.dto.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryCRUDService {
@@ -49,8 +55,10 @@ public class CategoryCRUDService {
 
     public ResponseEntity findCategoryAll() {
         List<Category> findCategories = categoryRepository.categoryFindAll();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(findCategories).message("ok").build();
+        log.info("findCategories = {}", body);
         return ResponseEntity.ok(
-                ApiResponseBody.builder().data(findCategories).message("ok").build()
+                body
         );
     }
 
@@ -115,6 +123,18 @@ public class CategoryCRUDService {
     public ResponseEntity deleteSubcategory(Long id) {
         categoryRepository.deleteSubcategory(id);
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity findCategoriesAndSubCategories() {
+        List<Subcategory> subCategory = categoryRepository.findCategoriesAndSubCategories();
+        Map<Long, CategoryResponse> list = new HashMap<>();
+        for (Subcategory subcategory : subCategory) {
+
+        }
+
+        //ApiResponseBody body = ApiResponseBody.builder().data(findCategories).message("ok").build();
+        //return ResponseEntity.ok(body);
+        return null;
     }
 
     //do something..

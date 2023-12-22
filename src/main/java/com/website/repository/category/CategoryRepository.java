@@ -2,12 +2,10 @@ package com.website.repository.category;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.category.Category;
-import com.website.domain.category.QCategory;
 import com.website.domain.category.QSubcategory;
 import com.website.domain.category.Subcategory;
-import com.website.repository.user.UserJpaRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -104,7 +102,8 @@ public class CategoryRepository {
     }
 
     public List<Category> categoryFindAll() {
-        return categoryJpaRepository.findAll();
+
+        return categoryJpaRepository.findAll(Sort.by("name"));
     }
 
     public List<Subcategory> subcategoriesFindByCategoryId(Long categoryId) {
@@ -116,5 +115,9 @@ public class CategoryRepository {
 
     public List<Subcategory> subcategoryFindAll() {
         return subcategoryJpaRepository.findAll();
+    }
+
+    public List<Subcategory> findCategoriesAndSubCategories() {
+        return jpaQueryFactory.selectFrom(QSubcategory.subcategory).fetch();
     }
 }

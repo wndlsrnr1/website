@@ -1,5 +1,6 @@
 package com.website.domain.category;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Setter
+@JsonIgnoreProperties("category")
 public class Subcategory {
 
     @Id
@@ -18,7 +20,8 @@ public class Subcategory {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
@@ -29,14 +32,5 @@ public class Subcategory {
         this.category = category;
         this.name = name;
         this.nameKor = nameKor;
-    }
-
-    @Override
-    public String toString() {
-        return "Subcategory{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", nameKor='" + nameKor + '\'' +
-                '}';
     }
 }

@@ -15,7 +15,7 @@ public class ExceptionLogFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        DispatcherType dispatcherType = request.getDispatcherType();
+        //DispatcherType dispatcherType = request.getDispatcherType();
         //log.info("dispatcherType = {}", dispatcherType);
         chain.doFilter(request, response);
     }

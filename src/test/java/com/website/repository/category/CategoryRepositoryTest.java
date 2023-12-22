@@ -1,7 +1,12 @@
 package com.website.repository.category;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.category.Category;
+import com.website.domain.category.QCategory;
+import com.website.domain.category.QSubcategory;
 import com.website.domain.category.Subcategory;
+import com.website.web.service.category.CategoryCRUDService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
@@ -24,6 +31,8 @@ class CategoryRepositoryTest {
     @Autowired
     EntityManager entityManager;
 
+    @Autowired
+    CategoryCRUDService categoryCRUDService;
     @Transactional
     @Test
     void createTest() {
@@ -146,5 +155,12 @@ class CategoryRepositoryTest {
         assertThat(categoryRepository.subcategoryFindById(createdSubcategory.getId())).isNull();
     }
 
+
+    @Test
+    void joinTest() {
+        List<Category> categories = categoryRepository.categoryFindAll();
+        log.info("categories = {}", categories);
+
+    }
 
 }

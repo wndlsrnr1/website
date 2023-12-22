@@ -1,5 +1,6 @@
 package com.website.domain.category;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@JsonIgnoreProperties("subcategories")
 public class Category {
 
     @Id
@@ -21,7 +23,7 @@ public class Category {
     private String name;
     private String nameKor;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Subcategory> subcategories;
 
     public Category(String name, String nameKor) {
@@ -29,12 +31,4 @@ public class Category {
         this.nameKor = nameKor;
     }
 
-    @Override
-    public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", nameKor='" + nameKor + '\'' +
-                '}';
-    }
 }
