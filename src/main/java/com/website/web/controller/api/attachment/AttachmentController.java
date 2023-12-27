@@ -4,7 +4,6 @@ import com.website.domain.attachment.Attachment;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
-import com.website.web.dto.request.file.AttachmentDownLoadRequest;
 import com.website.web.dto.request.file.AttachmentUploadRequest;
 import com.website.web.service.attachment.SaveFileService;
 import com.website.web.service.common.BindingResultUtils;
@@ -16,14 +15,11 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
