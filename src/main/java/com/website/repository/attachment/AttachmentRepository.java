@@ -1,76 +1,24 @@
 package com.website.repository.attachment;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.attachment.Attachment;
-import com.website.domain.attachment.QAttachment;
-import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.website.domain.attachment.QAttachment.attachment;
+public interface AttachmentRepository {
 
-@Repository
-public class AttachmentRepository {
+    Attachment findById(Long id);
 
-    //주입
-    private final EntityManager entityManager;
-    //주입
-    private final AttachmentJpaRepository attachmentJpaRepository;
-    private final JPAQueryFactory jpaQueryFactory;
+    List<Attachment> findByRequestName(String requestName);
 
-    public AttachmentRepository(EntityManager entityManager, AttachmentJpaRepository attachmentJpaRepository) {
-        this.entityManager = entityManager;
-        //주입 받은 EntityManager로 생성
-        this.jpaQueryFactory = new JPAQueryFactory(entityManager);
-        this.attachmentJpaRepository = attachmentJpaRepository;
-    }
+    List<Attachment> findBySaveName(String saveName);
 
-    public Attachment findById(Long id) {
-        return attachmentJpaRepository.findById(id).get();
-    }
+    Attachment saveAttachment(String requestName, String saveName);
 
-    public List<Attachment> findByRequestName(String requestName) {
-        return jpaQueryFactory.selectFrom(attachment).where(attachment.requestName.eq(requestName)).fetch();
-    }
+    Attachment saveAttachment(Attachment attachmentParam);
 
-    /**
-     *
-     * @param saveName is name of file which save in server side
-     * @return List<Attachment> but size of List will be 1
-     */
-    public List<Attachment> findBySaveName(String saveName) {
-        return jpaQueryFactory.selectFrom(attachment).where(attachment.saveName.eq(saveName)).fetch();
-    }
+    List<Attachment> saveAttachments(List<Attachment> attachments);
 
-    public Attachment saveAttachment(String requestName, String saveName) {
-        Attachment newAttachment = new Attachment(requestName, saveName);
-        Attachment returnAttachment = attachmentJpaRepository.save(newAttachment);
-        return returnAttachment;
-    }
-    public Attachment saveAttachment(Attachment attachmentParam) {
-        return attachmentJpaRepository.save(attachmentParam);
-    }
+    boolean deleteAttachmentById(Long id);
 
-    public List<Attachment> saveAttachments(List<Attachment> attachments) {
-        List<Attachment> list = new ArrayList<>();
-        for (Attachment at : attachments) {
-            Attachment returnAttachment = saveAttachment(at);
-            list.add(returnAttachment);
-        }
-        return list;
-    }
-
-    public boolean deleteAttachmentById(Long id) {
-        attachmentJpaRepository.deleteById(id);
-        return true;
-    }
-
-    public Long deleteAttachmentBySaveName(String saveName) {
-        long rows = jpaQueryFactory.delete(attachment).where(attachment.saveName.eq(saveName)).execute();
-        return rows;
-    }
-
-
+    Long deleteAttachmentBySaveName(String saveName);
 }
