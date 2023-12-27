@@ -7,6 +7,7 @@ import com.website.web.dto.request.TestDTO;
 import com.website.web.dto.request.user.JoinFormRequest;
 import com.website.web.dto.request.user.LoginFormRequest;
 import com.website.web.dto.common.ApiResponseBody;
+import com.website.web.dto.response.UserLoginResponse;
 import com.website.web.service.common.BindingResultUtils;
 import com.website.web.service.user.LoginService;
 import com.website.web.service.user.LoginFormValidatorEx;
@@ -30,35 +31,31 @@ public class LoginController {
     private final LoginFormValidatorEx loginFormValidatorEx;
     private final BindingResultUtils bindingResultUtils;
 
-    @PostMapping(value = "/join/user")
-    public ResponseEntity joinUser(@Validated @RequestBody JoinFormRequest joinFormRequest, BindingResult bindingResult) {
-
-        //DB 조회 전 형식 validate
-        loginFormValidatorEx.validateEachPasswordEquals(joinFormRequest, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            ApiResponseBody body = ApiResponseBody.builder()
-                    .data(null)
-                    .apiError(new ApiError(bindingResult)).build();
-            return ResponseEntity.badRequest().body(body);
+    @GetMapping("/login/auth")
+    public ResponseEntity authLogin(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute(UserConst.USER_ID) != null) {
+            Long userId = (Long) session.getAttribute(UserConst.USER_ID);
+            User findUser = loginService.findUserByUserId(userId);
+            if (findUser.getId() == null || !findUser.getId().equals(userId)) {
+                ApiResponseBody<Object> body = ApiResponseBody.builder().data(new UserLoginResponse(false)).build();
+                return ResponseEntity.ok().body(body);
+            }
+            ApiResponseBody<Object> body = ApiResponseBody.builder().data(new UserLoginResponse(true)).build();
+            return ResponseEntity.ok().body(body);
         }
 
-        //DB 조회 후 중복 방지
-        loginFormValidatorEx.validateDuplicatedEmail(joinFormRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            ApiResponseBody body = ApiResponseBody.builder()
-                    .data(null)
-                    .apiError(new ApiError(bindingResult)).build();
-            return ResponseEntity.badRequest().body(body);
-        }
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(new UserLoginResponse(false)).build();
+        return ResponseEntity.ok().body(body);
+    }
 
-        //정상 처리
-        User joinedUser = loginService.join(joinFormRequest);
-        return ResponseEntity.ok().build();
+    @PostMapping(value = "/user/join")
+    public ResponseEntity joinUser(@Validated JoinFormRequest joinFormRequest, BindingResult bindingResult) {
+        return loginService.joinUser(joinFormRequest, bindingResult);
     }
 
     @PostMapping(value = "/login/user")
-    public ResponseEntity loginUser(@Validated @RequestBody LoginFormRequest loginFormRequest, BindingResult bindingResult, HttpServletRequest request) {
+    public ResponseEntity loginUser(@Validated LoginFormRequest loginFormRequest, BindingResult bindingResult, HttpServletRequest request) {
 
         //Bean validation
         if (bindingResult.hasErrors()) {
@@ -74,12 +71,16 @@ public class LoginController {
         //이미 세션에 유저가 있을 경우
         HttpSession prevSession = request.getSession(false);
         if (prevSession != null && prevSession.getAttribute(UserConst.USER_ID) != null) {
-            return ResponseEntity.badRequest().build();
+            log.info("SessionAlready");
+            bindingResultUtils.addObjectMessagesTo(bindingResult, "Already.login");
+            ApiResponseBody<Object> body = ApiResponseBody.builder().message("login already").data(null).apiError(new ApiError(bindingResult)).build();
+            return ResponseEntity.badRequest().body(body);
         }
 
         //입력한 정보대로 유저가 있는 지
         User user = loginService.findUser(loginFormRequest);
         if (user == null) {
+            log.info("NoData");
             bindingResultUtils.addObjectMessagesTo(bindingResult, "Nodata.user");
             ApiError apiError = new ApiError(bindingResult);
             ApiResponseBody apiBody = ApiResponseBody.builder().data(null).apiError(apiError).message("No user").build();
@@ -89,7 +90,7 @@ public class LoginController {
 
         HttpSession session = request.getSession();
         session.setAttribute(UserConst.USER_ID, user.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(ApiResponseBody.ok());
     }
 
     @GetMapping("/logout")
@@ -103,6 +104,12 @@ public class LoginController {
         session.invalidate();
         ApiResponseBody body = ApiResponseBody.builder().message("session invalidated").build();
         return ResponseEntity.ok().body(body);
+    }
+
+    @GetMapping("/email/check")
+    public ResponseEntity loginCheck(HttpServletRequest request, @RequestParam("email") String email) {
+        log.info(email);
+        return loginService.validateEmail(email);
     }
 
 }

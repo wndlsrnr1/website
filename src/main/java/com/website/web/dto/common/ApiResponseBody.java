@@ -18,6 +18,8 @@ public class ApiResponseBody<T> {
         this.message = message;
     }
 
-
+    public static ApiResponseBody ok() {
+        return ApiResponseBody.builder().message("ok").build();
+    }
 
 }

@@ -44,8 +44,8 @@ public class UserRepository {
     }
 
 
-    public User fail() {
-        List select_noname_from_user = entityManager.createQuery("select noname from user").getResultList();
-        return null;
+
+    public User findByUserId(Long userId) {
+        return userJpaRepository.findById(userId).orElse(null);
     }
 }
