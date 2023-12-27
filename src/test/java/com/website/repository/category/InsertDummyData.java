@@ -2,8 +2,8 @@ package com.website.repository.category;
 
 import com.website.domain.category.Category;
 import com.website.domain.category.Subcategory;
-import com.website.domain.user.User;
 import com.website.repository.user.UserRepository;
+//import com.website.repository.user.UserRepository2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

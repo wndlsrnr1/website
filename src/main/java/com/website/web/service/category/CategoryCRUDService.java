@@ -3,6 +3,7 @@ package com.website.web.service.category;
 import com.website.domain.category.Category;
 import com.website.domain.category.Subcategory;
 import com.website.repository.category.CategoryRepository;
+//import com.website.repository.category.CategoryRepositoryByJpaAndQueryDsl;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.category.CreateCategoryRequest;
 import com.website.web.dto.request.category.CreateSubcategoryRequest;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

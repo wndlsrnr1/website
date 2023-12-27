@@ -1,51 +1,13 @@
 package com.website.repository.user;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.user.User;
-import org.springframework.stereotype.Repository;
 
-import static com.website.domain.user.QUser.*;
+public interface UserRepository {
+    User findNormalUserByEmailPassword(String emailParam, String passwordParam);
 
-import javax.persistence.EntityManager;
-import java.util.List;
+    void saveUser(User user);
 
-@Repository
-public class UserRepository {
+    User findUserByEmail(String email);
 
-    private final EntityManager entityManager;
-    private final JPAQueryFactory jpaQueryFactory;
-    private final UserJpaRepository userJpaRepository;
-
-    public UserRepository(EntityManager entityManager, UserJpaRepository userJpaRepository) {
-        this.entityManager = entityManager;
-        this.jpaQueryFactory = new JPAQueryFactory(entityManager);
-        this.userJpaRepository = userJpaRepository;
-    }
-
-    public User findNormalUserByEmailPassword(String emailParam, String passwordParam) {
-
-        return jpaQueryFactory.select(user)
-                .from(user)
-                .where(user.email.eq(emailParam), user.password.eq(passwordParam))
-                .fetchOne();
-    }
-
-
-    public void saveUser(User user) {
-        userJpaRepository.save(user);
-    }
-
-    public User findUserByEmail(String email) {
-        List<User> fetch = jpaQueryFactory.selectFrom(user).where(user.email.eq(email)).fetch();
-        if (fetch.size() == 0) {
-            return null;
-        }
-        return fetch.get(0);
-    }
-
-
-
-    public User findByUserId(Long userId) {
-        return userJpaRepository.findById(userId).orElse(null);
-    }
+    User findByUserId(Long userId);
 }

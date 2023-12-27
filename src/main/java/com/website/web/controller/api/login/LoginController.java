@@ -7,7 +7,7 @@ import com.website.web.dto.request.TestDTO;
 import com.website.web.dto.request.user.JoinFormRequest;
 import com.website.web.dto.request.user.LoginFormRequest;
 import com.website.web.dto.common.ApiResponseBody;
-import com.website.web.dto.response.UserLoginResponse;
+//import com.website.web.dto.response.UserLoginResponse;
 import com.website.web.service.common.BindingResultUtils;
 import com.website.web.service.user.LoginService;
 import com.website.web.service.user.LoginFormValidatorEx;
@@ -38,14 +38,14 @@ public class LoginController {
             Long userId = (Long) session.getAttribute(UserConst.USER_ID);
             User findUser = loginService.findUserByUserId(userId);
             if (findUser.getId() == null || !findUser.getId().equals(userId)) {
-                ApiResponseBody<Object> body = ApiResponseBody.builder().data(new UserLoginResponse(false)).build();
+                ApiResponseBody<Object> body = ApiResponseBody.builder().data(false).build();
                 return ResponseEntity.ok().body(body);
             }
-            ApiResponseBody<Object> body = ApiResponseBody.builder().data(new UserLoginResponse(true)).build();
+            ApiResponseBody<Object> body = ApiResponseBody.builder().data(true).build();
             return ResponseEntity.ok().body(body);
         }
 
-        ApiResponseBody<Object> body = ApiResponseBody.builder().data(new UserLoginResponse(false)).build();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(false).build();
         return ResponseEntity.ok().body(body);
     }
 
