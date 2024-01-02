@@ -2,10 +2,7 @@ package com.website.domain.attachment;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -19,9 +16,14 @@ public class Attachment {
     private String requestName;
     private String saveName;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "file_type", nullable = false)
+    private FileType fileType;
+
     @Builder
     public Attachment(String requestName, String saveName) {
         this.requestName = requestName;
         this.saveName = saveName;
     }
+
 }

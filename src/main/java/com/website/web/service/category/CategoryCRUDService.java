@@ -9,7 +9,7 @@ import com.website.web.dto.request.category.CreateCategoryRequest;
 import com.website.web.dto.request.category.CreateSubcategoryRequest;
 import com.website.web.dto.request.category.UpdateCategoryRequest;
 import com.website.web.dto.request.category.UpdateSubcategoryRequest;
-import com.website.web.dto.response.CategoryResponse;
+import com.website.web.dto.response.category.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

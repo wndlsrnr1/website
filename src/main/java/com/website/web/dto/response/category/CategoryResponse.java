@@ -1,4 +1,4 @@
-package com.website.web.dto.response;
+package com.website.web.dto.response.category;
 
 import com.website.domain.category.Subcategory;
 import lombok.AllArgsConstructor;

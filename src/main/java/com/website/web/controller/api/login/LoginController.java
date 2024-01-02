@@ -8,6 +8,7 @@ import com.website.web.dto.request.user.JoinFormRequest;
 import com.website.web.dto.request.user.LoginFormRequest;
 import com.website.web.dto.common.ApiResponseBody;
 //import com.website.web.dto.response.UserLoginResponse;
+import com.website.web.dto.response.user.LoginResponse;
 import com.website.web.service.common.BindingResultUtils;
 import com.website.web.service.user.LoginService;
 import com.website.web.service.user.LoginFormValidatorEx;
@@ -34,18 +35,19 @@ public class LoginController {
     @GetMapping("/login/auth")
     public ResponseEntity authLogin(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+
         if (session != null && session.getAttribute(UserConst.USER_ID) != null) {
             Long userId = (Long) session.getAttribute(UserConst.USER_ID);
             User findUser = loginService.findUserByUserId(userId);
             if (findUser.getId() == null || !findUser.getId().equals(userId)) {
-                ApiResponseBody<Object> body = ApiResponseBody.builder().data(false).build();
+                ApiResponseBody<Object> body = ApiResponseBody.builder().data(new LoginResponse(false)).build();
                 return ResponseEntity.ok().body(body);
             }
-            ApiResponseBody<Object> body = ApiResponseBody.builder().data(true).build();
+            ApiResponseBody<Object> body = ApiResponseBody.builder().data(new LoginResponse(true)).build();
             return ResponseEntity.ok().body(body);
         }
 
-        ApiResponseBody<Object> body = ApiResponseBody.builder().data(false).build();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(new LoginResponse(false)).build();
         return ResponseEntity.ok().body(body);
     }
 
