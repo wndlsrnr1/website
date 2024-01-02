@@ -5,6 +5,7 @@ import com.website.domain.category.Category;
 import com.website.domain.category.QSubcategory;
 import com.website.domain.category.Subcategory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
@@ -124,4 +125,5 @@ public class CategoryRepositoryByJpaAndQueryDsl implements CategoryRepository{
     public List<Subcategory> findCategoriesAndSubCategories() {
         return jpaQueryFactory.selectFrom(QSubcategory.subcategory).fetch();
     }
+
 }
