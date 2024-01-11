@@ -4,19 +4,22 @@ import com.website.domain.category.Category;
 import com.website.domain.category.Subcategory;
 import com.website.domain.item.Item;
 import com.website.repository.category.CategoryRepository;
+import com.website.repository.subcategory.SubcategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 class ItemRepositoryTest {
 
     @Autowired
@@ -26,8 +29,10 @@ class ItemRepositoryTest {
     CategoryRepository categoryRepository;
 
     @Autowired
-    ItemJpaRepository itemJpaRepository;
+    SubcategoryRepository subcategoryRepository;
 
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     public void 널아님() {
@@ -39,10 +44,10 @@ class ItemRepositoryTest {
     @Test
     void create() {
         //given
-        Category category = categoryRepository.saveCategory(new Category("name", "nameKor"));
+        Category category = categoryRepository.save(new Category("name", "nameKor"));
         Subcategory subcategory = new Subcategory(category, "name", "nameKor");
-        categoryRepository.saveSubcategory(subcategory);
-        Subcategory sub = categoryRepository.subcategoryFindById(subcategory.getId());
+        subcategoryRepository.save(subcategory);
+        Subcategory sub = subcategoryRepository.findById(subcategory.getId()).orElseGet(null);
 
         Item item = Item.builder()
                 .name("이름")
@@ -56,10 +61,10 @@ class ItemRepositoryTest {
                 .build();
 
         //when
-        itemRepository.saveItem(item);
+        itemRepository.save(item);
 
         //then
-        Item findItem = itemRepository.findItemById(item.getId());
+        Item findItem = itemRepository.findById(item.getId()).get();
         log.info("[[[saved item id]]] = {}", findItem.getId());
         Assertions.assertThat(findItem).isNotNull();
         Assertions.assertThat(item.getName()).isEqualTo(findItem.getName());
@@ -70,10 +75,10 @@ class ItemRepositoryTest {
     @Test
     void read() {
         //given
-        Category category = categoryRepository.saveCategory(new Category("name", "nameKor"));
+        Category category = categoryRepository.save(new Category("name", "nameKor"));
         Subcategory subcategory = new Subcategory(category, "name", "nameKor");
-        categoryRepository.saveSubcategory(subcategory);
-        Subcategory sub = categoryRepository.subcategoryFindById(subcategory.getId());
+        subcategoryRepository.save(subcategory);
+        Subcategory sub = subcategoryRepository.findById(subcategory.getId()).orElseGet(null);
 
         for (int i = 0; i < 100; i++) {
             Item item = Item.builder()
@@ -87,7 +92,7 @@ class ItemRepositoryTest {
                     .subcategory(sub)
                     .build();
 
-            itemRepository.saveItem(item);
+            itemRepository.save(item);
         }
 
         List<Item> items = itemRepository.findAll();
@@ -103,10 +108,10 @@ class ItemRepositoryTest {
     void update() {
         //given
         //given
-        Category category = categoryRepository.saveCategory(new Category("name", "nameKor"));
+        Category category = categoryRepository.save(new Category("name", "nameKor"));
         Subcategory subcategory = new Subcategory(category, "name", "nameKor");
-        categoryRepository.saveSubcategory(subcategory);
-        Subcategory sub = categoryRepository.subcategoryFindById(subcategory.getId());
+        subcategoryRepository.save(subcategory);
+        Subcategory sub = subcategoryRepository.findById(subcategory.getId()).orElseGet(null);
 
         Item item = Item.builder()
                 .name("이름")
@@ -120,16 +125,16 @@ class ItemRepositoryTest {
                 .build();
 
         //when
-        itemRepository.saveItem(item);
+        itemRepository.save(item);
 
         //then
-        Item findItem = itemRepository.findItemById(item.getId());
+        Item findItem = itemRepository.findById(item.getId()).get();
 
         //when
         itemRepository.updateNameById("업데이트", findItem.getId());
 
         //then
-        Item itemById = itemRepository.findItemById(findItem.getId());
+        Item itemById = itemRepository.findById(findItem.getId()).get();
         log.info("name = {}", itemById.getName());
 
     }
@@ -138,10 +143,10 @@ class ItemRepositoryTest {
     //Delete
     @Test
     void delete() {
-        Category category = categoryRepository.saveCategory(new Category("name", "nameKor"));
+        Category category = categoryRepository.save(new Category("name", "nameKor"));
         Subcategory subcategory = new Subcategory(category, "name", "nameKor");
-        categoryRepository.saveSubcategory(subcategory);
-        Subcategory sub = categoryRepository.subcategoryFindById(subcategory.getId());
+        subcategoryRepository.save(subcategory);
+        Subcategory sub = subcategoryRepository.findById(subcategory.getId()).orElseGet(null);
 
         Item item = Item.builder()
                 .name("이름")
@@ -154,12 +159,11 @@ class ItemRepositoryTest {
                 .subcategory(sub)
                 .build();
 
-        itemRepository.saveItem(item);
+        itemRepository.save(item);
 
         itemRepository.deleteById(item.getId());
 
-        Item itemById = itemRepository.findItemById(item.getId());
-        log.info("item.getId() = {}", item.getId());
-        Assertions.assertThat(itemById).isNull();
+        Assertions.assertThatThrownBy(() -> itemRepository.findById(item.getId()).orElseGet(null)).isInstanceOf(NullPointerException.class);
     }
+
 }
