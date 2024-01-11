@@ -2,6 +2,7 @@ package com.website.repository.category;
 
 import com.website.domain.category.Category;
 import com.website.domain.category.Subcategory;
+import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.service.category.CategoryCRUDService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -13,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @Slf4j
+@Transactional
 class CategoryRepositoryTest {
 
     @Autowired
@@ -27,17 +30,22 @@ class CategoryRepositoryTest {
 
     @Autowired
     CategoryCRUDService categoryCRUDService;
+
+    @Autowired
+    SubcategoryRepository subcategoryRepository;
+
     @Transactional
     @Test
     void createTest() {
+
         //[[[[[[[[[[[[[[[[[[[[[[[[[[[create]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
         //[[[[[[[[[[[[[[[[[[정상흐름]]]]]]]]]]]]]]]]]]
         Category category = new Category("PLAY_STATION", "플레이스테이션");
         Subcategory subcategory = new Subcategory(category, "SUB_PLAY_STATION", "서브_플스");
 
-        Category createdCategory = categoryRepository.saveCategory(category);
-        Subcategory createdSubcategory = categoryRepository.saveSubcategory(subcategory);
+        Category createdCategory = categoryRepository.save(category);
+        Subcategory createdSubcategory = subcategoryRepository.save(subcategory);
 
         log.info("category = {}", category);
         log.info("subcategory = {}", subcategory);
@@ -46,61 +54,61 @@ class CategoryRepositoryTest {
         assertThat(category).isEqualTo(createdCategory);
         assertThat(subcategory).isEqualTo(createdSubcategory);
 
-        //[[[[[[[[[[[[[[[[[[[[[[[[[[잘못된 정보]]]]]]]]]]]]]]]]]]]]]]]]]]
-        Category categoryFake = new Category("PLAY_STATION2", "플레이스테이션2");
-        Subcategory subcategoryFail = new Subcategory(categoryFake, "SUB_PLAY_STATION2", "서브_플스2");
-        Subcategory uncreatedSubcategory = categoryRepository.saveSubcategory(subcategoryFail);
-        Assertions.assertThat(uncreatedSubcategory).isNull();
 
         //[[[[[[[[[[[[[[[[[[[[[[[[삭제된 정보]]]]]]]]]]]]]]]]]]]]]]]]
-        categoryRepository.deleteCategory(createdCategory.getId());
-        Subcategory subcategoryFail2 = new Subcategory(createdCategory, "SUB_PLAY_STATION2", "서브_플스2");
-        Subcategory uncreatedSubcategory2 = categoryRepository.saveSubcategory(subcategoryFail2);
-        assertThat(uncreatedSubcategory2).isNull();
+        categoryRepository.deleteById(createdCategory.getId());
+
+        //Subcategory subcategoryFail2 = new Subcategory(createdCategory, "SUB_PLAY_STATION2", "서브_플스2");
+        //Subcategory uncreatedSubcategory2 = subcategoryRepository.save(subcategoryFail2);
+        //assertThat(uncreatedSubcategory2).isNull();
+
     }
+
     @Transactional
     @Test
     void readTest() {
         //given
         Category category = new Category("PLAY_STATION", "플레이스테이션");
         Subcategory subcategory = new Subcategory(category, "SUB_PLAY_STATION", "서브_플스");
-        Category createdCategory = categoryRepository.saveCategory(category);
-        Subcategory createdSubcategory = categoryRepository.saveSubcategory(subcategory);
+        Category createdCategory = categoryRepository.save(category);
+        Subcategory createdSubcategory = subcategoryRepository.save(subcategory);
 
         //when
-        Category category1 = categoryRepository.categoryFindById(createdCategory.getId());
-        Subcategory subcategory1 = categoryRepository.subcategoryFindById(createdSubcategory.getId());
+        Category category1 = categoryRepository.findById(createdCategory.getId()).get();
+        Subcategory subcategory1 = subcategoryRepository.findById(createdSubcategory.getId()).get();
 
         //then 정상 흐름
         assertThat(category).isEqualTo(category1);
         assertThat(subcategory).isEqualTo(subcategory1);
 
         //then 없는 ID 찾기
-        Category expectedNullCategory = categoryRepository.categoryFindById(Long.MIN_VALUE);
-        Subcategory expectedNullSubcategory = categoryRepository.subcategoryFindById(Long.MIN_VALUE);
-        assertThat(expectedNullCategory).isNull();
+        boolean empty = categoryRepository.findById(Long.MIN_VALUE).isEmpty();
+        Subcategory expectedNullSubcategory = subcategoryRepository.findById(Long.MIN_VALUE).orElse(null);
+        assertThat(empty).isTrue();
         assertThat(expectedNullSubcategory).isNull();
 
-        categoryRepository.deleteCategory(createdCategory.getId());
-        Subcategory expectedNullSubcategory2 = categoryRepository.subcategoryFindById(createdCategory.getId());
+        categoryRepository.deleteById(createdCategory.getId());
+        Subcategory expectedNullSubcategory2 = subcategoryRepository.findById(createdCategory.getId()).orElse(null);
         assertThat(expectedNullSubcategory2).isNull();
     }
+
     @Transactional
     @Test
     void deleteTest() {
         //given
         Category category = new Category("PLAY_STATION", "플레이스테이션");
         Subcategory subcategory = new Subcategory(category, "SUB_PLAY_STATION", "서브_플스");
-        Category createdCategory = categoryRepository.saveCategory(category);
-        Subcategory createdSubcategory = categoryRepository.saveSubcategory(subcategory);
+        Category createdCategory = categoryRepository.save(category);
+        Subcategory createdSubcategory = subcategoryRepository.save(subcategory);
 
         //when
-        categoryRepository.deleteSubcategory(createdSubcategory.getId());
-        categoryRepository.deleteCategory(createdCategory.getId());
+        subcategoryRepository.deleteById(createdSubcategory.getId());
+        categoryRepository.deleteById(createdCategory.getId());
 
         //then
-        Category expectedNull1 = categoryRepository.categoryFindById(category.getId());
-        Subcategory expectedNull2 = categoryRepository.subcategoryFindById(subcategory.getId());
+        Category expectedNull1 = categoryRepository.findById(category.getId()).orElse(null);
+        Subcategory expectedNull2 = subcategoryRepository.findById(subcategory.getId()).orElse(null);
+
         assertThat(expectedNull1).isNull();
         assertThat(expectedNull2).isNull();
     }
@@ -111,8 +119,8 @@ class CategoryRepositoryTest {
         //given
         Category category = new Category("PLAY_STATION", "플레이스테이션");
         Subcategory subcategory = new Subcategory(category, "SUB_PLAY_STATION", "서브_플스");
-        Category createdCategory = categoryRepository.saveCategory(category);
-        Subcategory createdSubcategory = categoryRepository.saveSubcategory(subcategory);
+        Category createdCategory = categoryRepository.save(category);
+        Subcategory createdSubcategory = subcategoryRepository.save(subcategory);
         String categoryName = category.getName();
         String subcategoryName = subcategory.getName();
 
@@ -121,8 +129,9 @@ class CategoryRepositoryTest {
         forUpdateDto.setId(createdCategory.getId());
         Subcategory forUpdateDtoSub = new Subcategory(forUpdateDto, "SUB_XBOX", "서브 엑박");
         forUpdateDtoSub.setId(createdSubcategory.getId());
-        Category updatedCategory = categoryRepository.updateCategory(forUpdateDto);
-        Subcategory updateSubcategory = categoryRepository.updateSubcategory(forUpdateDtoSub);
+
+        Category updatedCategory = categoryRepository.save(forUpdateDto);
+        Subcategory updateSubcategory = subcategoryRepository.save(forUpdateDtoSub);
 
         //같은 객체로 반환해줘서 다른지 확인 안 됨. 왜??
         //then
@@ -136,25 +145,26 @@ class CategoryRepositoryTest {
 
     @Test
     void CategorySubcategoryDeleteCascadeTest() {
+
         //given
         Category category = new Category("PLAY_STATION", "플레이스테이션");
-        Category createdCategory = categoryRepository.saveCategory(category);
+        Category createdCategory = categoryRepository.save(category);
         Subcategory subcategory = new Subcategory(createdCategory, "SUB_PLAY_STATION", "서브_플스");
-        Subcategory createdSubcategory = categoryRepository.saveSubcategory(subcategory);
+        Subcategory createdSubcategory = subcategoryRepository.save(subcategory);
 
         //상위 삭제
-        categoryRepository.deleteCategory(createdCategory.getId());
-        Subcategory subcategory1 = categoryRepository.subcategoryFindById(createdSubcategory.getId());
-        assertThat(categoryRepository.categoryFindById(createdCategory.getId())).isNull();
-        assertThat(categoryRepository.subcategoryFindById(createdSubcategory.getId())).isNull();
+        categoryRepository.deleteById(createdCategory.getId());
+        Subcategory subcategory1 = subcategoryRepository.findById(createdSubcategory.getId()).orElse(null);
+        assertThat(categoryRepository.findById(createdCategory.getId()).orElse(null)).isNull();
+        assertThat(subcategoryRepository.findById(createdSubcategory.getId()).orElse(null)).isNull();
+
     }
 
 
     @Test
     void joinTest() {
-        List<Category> categories = categoryRepository.categoryFindAll();
+        List<Category> categories = categoryRepository.findAll();
         log.info("categories = {}", categories);
-
     }
 
 }

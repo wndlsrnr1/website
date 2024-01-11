@@ -4,6 +4,7 @@ import com.website.domain.category.Category;
 import com.website.domain.category.Subcategory;
 import com.website.repository.category.CategoryRepository;
 //import com.website.repository.category.CategoryRepositoryByJpaAndQueryDsl;
+import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.category.CreateCategoryRequest;
 import com.website.web.dto.request.category.CreateSubcategoryRequest;
@@ -12,6 +13,7 @@ import com.website.web.dto.request.category.UpdateSubcategoryRequest;
 import com.website.web.dto.response.category.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class CategoryCRUDService {
 
     private final CategoryRepository categoryRepository;
+    private final SubcategoryRepository subcategoryRepository;
 
     @Transactional
     public ResponseEntity createCategory(CreateCategoryRequest request) {
@@ -35,16 +38,17 @@ public class CategoryCRUDService {
         }
 
         Category category = new Category(request.getName(), request.getNameKor());
-        Category savedCategory = categoryRepository.saveCategory(category);
+        Category savedCategory = categoryRepository.save(category);
 
         if (savedCategory == null) {
             throw new IllegalArgumentException("category 생성중 오류 생김");
         }
+
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     public ResponseEntity findCategory(Long id) {
-        Category findCategory = categoryRepository.categoryFindById(id);
+        Category findCategory = categoryRepository.findById(id).orElseGet(null);
         if (findCategory == null) {
             throw new IllegalArgumentException();
         }
@@ -54,7 +58,7 @@ public class CategoryCRUDService {
     }
 
     public ResponseEntity findCategoryAll() {
-        List<Category> findCategories = categoryRepository.categoryFindAll();
+        List<Category> findCategories = categoryRepository.findAll(Sort.by("name"));
         ApiResponseBody<Object> body = ApiResponseBody.builder().data(findCategories).message("ok").build();
         log.info("findCategories = {}", body);
         return ResponseEntity.ok(
@@ -64,50 +68,50 @@ public class CategoryCRUDService {
 
     @Transactional
     public ResponseEntity updateCategory(UpdateCategoryRequest request) {
-        Category category = categoryRepository.categoryFindById(request.getId());
+        Category category = categoryRepository.findById(request.getId()).orElseGet(null);
         if (category == null) {
             throw new IllegalArgumentException("데이터 없음");
         }
         category.setName(request.getName());
         category.setNameKor(request.getNameKor());
-        categoryRepository.updateCategory(category);
+        categoryRepository.save(category);
         return ResponseEntity.ok().build();
     }
 
     public ResponseEntity deleteCategory(Long id) {
-        categoryRepository.deleteCategory(id);
+        categoryRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
     @Transactional
     public ResponseEntity createSubcategory(CreateSubcategoryRequest request) {
         Long categoryId = request.getCategoryId();
-        Category findCategory = categoryRepository.categoryFindById(categoryId);
+        Category findCategory = categoryRepository.findById(categoryId).orElseGet(null);
         if (findCategory == null) {
             throw new IllegalArgumentException("subcategory에 매핑 되는 categoryId가 없음");
         }
         Subcategory subcategory = new Subcategory(findCategory, request.getName(), request.getNameKor());
-        Subcategory savedSubcategory = categoryRepository.saveSubcategory(subcategory);
+        subcategoryRepository.save(subcategory);
         return ResponseEntity.ok(
-                ApiResponseBody.builder().data(savedSubcategory).message("created").build()
+                ApiResponseBody.builder().data(subcategory).message("created").build()
         );
     }
 
     public ResponseEntity findSubcategoriesByCategoryId(Long categoryId) {
-        List<Subcategory> subcategories = categoryRepository.subcategoriesFindByCategoryId(categoryId);
+        List<Subcategory> subcategories = subcategoryRepository.findByCategoryId(categoryId);
         ApiResponseBody<Object> body = ApiResponseBody.builder().data(subcategories).message("ok").build();
         return ResponseEntity.ok().body(body);
     }
 
     public ResponseEntity findSubcategoryAll() {
-        List<Subcategory> subcategories = categoryRepository.subcategoryFindAll();
+        List<Subcategory> subcategories = subcategoryRepository.findAll(100);
         ApiResponseBody body = ApiResponseBody.builder().data(subcategories).message("ok").build();
         return ResponseEntity.ok(body);
     }
 
     @Transactional
     public ResponseEntity updateSubcategory(UpdateSubcategoryRequest request) {
-        Category category = categoryRepository.categoryFindById(request.getCategoryId());
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseGet(null);
         if (category == null) {
             throw new IllegalArgumentException();
         }
@@ -115,23 +119,22 @@ public class CategoryCRUDService {
         Subcategory subcategory = new Subcategory(category, request.getName(), request.getNameKor());
         subcategory.setId(request.getSubcategoryId());
 
-        categoryRepository.updateSubcategory(subcategory);
+        subcategoryRepository.save(subcategory);
 
         return ResponseEntity.ok().build();
     }
 
     public ResponseEntity deleteSubcategory(Long id) {
-        categoryRepository.deleteSubcategory(id);
+        subcategoryRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
     public ResponseEntity findCategoriesAndSubCategories() {
-        List<Subcategory> subCategory = categoryRepository.findCategoriesAndSubCategories();
+        List<Subcategory> subCategory = subcategoryRepository.findAll(100);
         Map<Long, CategoryResponse> list = new HashMap<>();
         for (Subcategory subcategory : subCategory) {
 
         }
-
         //ApiResponseBody body = ApiResponseBody.builder().data(findCategories).message("ok").build();
         //return ResponseEntity.ok(body);
         return null;
