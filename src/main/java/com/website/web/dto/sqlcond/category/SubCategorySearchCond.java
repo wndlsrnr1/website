@@ -5,8 +5,5 @@ import lombok.Data;
 @Data
 public class SubCategorySearchCond {
     private Long categoryId;
-    private String name;
-    private String nameKor;
-    private Integer page;
-    private Integer totalPage;
+    private String searchName;
 }

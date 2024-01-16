@@ -44,8 +44,14 @@ public class InsertDummyData {
         }
     }
 
-
-
+    @Test
+    @Commit
+    void insertCategory100() {
+        for (int i = 101; i < 1000; i++) {
+            Category category = new Category("XBOX " + i, "엑스박스" + i);
+            Category category1 = categoryRepository.save(category);
+        }
+    }
 
 
 }

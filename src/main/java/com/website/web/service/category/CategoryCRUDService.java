@@ -6,22 +6,22 @@ import com.website.repository.category.CategoryRepository;
 //import com.website.repository.category.CategoryRepositoryByJpaAndQueryDsl;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiResponseBody;
-import com.website.web.dto.request.category.CreateCategoryRequest;
-import com.website.web.dto.request.category.CreateSubcategoryRequest;
-import com.website.web.dto.request.category.UpdateCategoryRequest;
-import com.website.web.dto.request.category.UpdateSubcategoryRequest;
-import com.website.web.dto.response.category.CategoryResponse;
+import com.website.web.dto.request.category.*;
+import com.website.web.dto.response.category.CategoryByCondResponse;
+import com.website.web.dto.response.category.SubcategoryByCondResponse;
+import com.website.web.dto.sqlcond.category.CategorySearchCond;
+import com.website.web.dto.sqlcond.category.SubCategorySearchCond;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -129,15 +129,25 @@ public class CategoryCRUDService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity findCategoriesAndSubCategories() {
-        List<Subcategory> subCategory = subcategoryRepository.findAll(100);
-        Map<Long, CategoryResponse> list = new HashMap<>();
-        for (Subcategory subcategory : subCategory) {
+    public ResponseEntity pagingCategoryByCond(CategorySearchCond categorySearchCond, Pageable pageable) {
+        Page<CategoryByCondResponse> categoryByCondResponses = categoryRepository.searchPageByCond(categorySearchCond, pageable);
+        ApiResponseBody<Page<CategoryByCondResponse>> body = ApiResponseBody.<Page<CategoryByCondResponse>>builder()
+                .data(categoryByCondResponses)
+                .message("ok")
+                .apiError(null)
+                .build();
+        return ResponseEntity.ok().body(body);
+    }
 
-        }
-        //ApiResponseBody body = ApiResponseBody.builder().data(findCategories).message("ok").build();
-        //return ResponseEntity.ok(body);
-        return null;
+    public ResponseEntity pagingSubCategoryByCond(SubCategorySearchCond subCategorySearchCond, Pageable pageable) {
+        Page<SubcategoryByCondResponse> subcategoryResponses = subcategoryRepository.searchPageByCond(subCategorySearchCond, pageable);
+        ApiResponseBody body = ApiResponseBody.builder()
+                .data(subcategoryResponses)
+                .message("ok")
+                .apiError(null)
+                .build();
+        log.info("subcategoryResponses = {}", subcategoryResponses);
+        return ResponseEntity.ok().body(body);
     }
 
     //do something..
