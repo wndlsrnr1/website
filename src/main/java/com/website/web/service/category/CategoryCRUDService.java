@@ -68,16 +68,20 @@ public class CategoryCRUDService {
 
     @Transactional
     public ResponseEntity updateCategory(UpdateCategoryRequest request) {
-        Category category = categoryRepository.findById(request.getId()).orElseGet(null);
+
+        Category category = categoryRepository.findById(request.getCategoryId()).orElseGet(null);
         if (category == null) {
             throw new IllegalArgumentException("데이터 없음");
         }
+
         category.setName(request.getName());
         category.setNameKor(request.getNameKor());
         categoryRepository.save(category);
-        return ResponseEntity.ok().build();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(null).data(category).message("updated").build();
+        return ResponseEntity.ok(body);
     }
 
+    @Transactional
     public ResponseEntity deleteCategory(Long id) {
         categoryRepository.deleteById(id);
         return ResponseEntity.ok().build();
@@ -85,6 +89,9 @@ public class CategoryCRUDService {
 
     @Transactional
     public ResponseEntity createSubcategory(CreateSubcategoryRequest request) {
+        if (request.getCategoryId() == -1) {
+            return ResponseEntity.badRequest().build();
+        }
         Long categoryId = request.getCategoryId();
         Category findCategory = categoryRepository.findById(categoryId).orElseGet(null);
         if (findCategory == null) {

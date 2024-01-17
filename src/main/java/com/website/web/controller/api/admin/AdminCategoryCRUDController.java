@@ -40,15 +40,10 @@ public class AdminCategoryCRUDController {
         return categoryCRUDService.findCategoryAll();
     }
 
-    //U
-    @PostMapping("/category/update")
-    public ResponseEntity updateCategory(UpdateCategoryRequest request) {
-        return categoryCRUDService.updateCategory(request);
-    }
 
-    //D
     @DeleteMapping("/category/delete/{category_id}")
     public ResponseEntity deleteCategory(@PathVariable("category_id") Long id) {
+        log.info("id = {}", id);
         return categoryCRUDService.deleteCategory(id);
     }
 
@@ -89,4 +84,10 @@ public class AdminCategoryCRUDController {
         ResponseEntity responseEntity = categoryCRUDService.pagingCategoryByCond(categorySearchCond, pageable);
         return responseEntity;
     }
+
+    @PostMapping("/categories/update")
+    public ResponseEntity updateCategoryByRequest(@ModelAttribute UpdateCategoryRequest updateCategoryRequest) {
+        return categoryCRUDService.updateCategory(updateCategoryRequest);
+    }
+
 }
