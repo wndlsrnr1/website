@@ -57,8 +57,7 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
     }
 
     private BooleanExpression nameOrKorNameLike(String searchName) {
-        log.info(searchName);
-        return searchName == null ? nameKorLike(null) : nameKorLike(searchName).or(nameLike(searchName));
+        return !StringUtils.hasText(searchName) ? nameKorLike(null) : nameKorLike(searchName).or(nameLike(searchName));
     }
 
     private BooleanExpression nameKorLike(String searchName) {
