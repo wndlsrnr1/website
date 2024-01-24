@@ -25,6 +25,7 @@ class CategoryRepositoryTest {
 
     @Autowired
     CategoryRepository categoryRepository;
+
     @Autowired
     EntityManager entityManager;
 

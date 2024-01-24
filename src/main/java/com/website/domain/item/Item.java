@@ -1,6 +1,7 @@
 package com.website.domain.item;
 
 import com.website.domain.category.Subcategory;
+import com.website.domain.common.AbstractBaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,8 +10,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Item {
-
+@ToString(callSuper = true)
+public class Item extends AbstractBaseEntity {
     @Id
     @Column(name = "item_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +23,8 @@ public class Item {
     private String status;
     private String description;
     private LocalDateTime releaseDate;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "subcategory_id", nullable = false)
     private Subcategory subcategory;
 
@@ -70,4 +71,6 @@ public class Item {
     public void setSubcategory(Subcategory subcategory) {
         this.subcategory = subcategory;
     }
+
+
 }

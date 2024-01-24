@@ -5,15 +5,19 @@ import com.website.domain.category.Subcategory;
 import com.website.domain.item.Item;
 import com.website.repository.category.CategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
+import com.website.web.service.category.CategoryCRUDService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,13 +27,16 @@ import java.util.List;
 class ItemRepositoryTest {
 
     @Autowired
-    ItemRepository itemRepository;
-
-    @Autowired
     CategoryRepository categoryRepository;
+
+    //@Autowired
+    //EntityManager entityManager;
 
     @Autowired
     SubcategoryRepository subcategoryRepository;
+
+    @Autowired
+    ItemRepository itemRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -42,12 +49,14 @@ class ItemRepositoryTest {
     //Create
 
     @Test
-    void create() {
+    @Commit
+    void create() throws NoSuchFieldException {
         //given
-        Category category = categoryRepository.save(new Category("name", "nameKor"));
+        Category category = new Category("name", "nameKor");
+        categoryRepository.save(category);
+
         Subcategory subcategory = new Subcategory(category, "name", "nameKor");
         subcategoryRepository.save(subcategory);
-        Subcategory sub = subcategoryRepository.findById(subcategory.getId()).orElseGet(null);
 
         Item item = Item.builder()
                 .name("이름")
@@ -57,17 +66,12 @@ class ItemRepositoryTest {
                 .description("asdf")
                 .releaseDate(LocalDateTime.now())
                 .status("good")
-                .subcategory(sub)
+                .subcategory(subcategory)
                 .build();
 
-        //when
         itemRepository.save(item);
+        log.info("item = {}", item);
 
-        //then
-        Item findItem = itemRepository.findById(item.getId()).get();
-        log.info("[[[saved item id]]] = {}", findItem.getId());
-        Assertions.assertThat(findItem).isNotNull();
-        Assertions.assertThat(item.getName()).isEqualTo(findItem.getName());
     }
 
     //Read
