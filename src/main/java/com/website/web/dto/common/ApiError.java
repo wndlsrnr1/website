@@ -29,6 +29,11 @@ public class ApiError {
         this.globalErrors = getGlobalErrors(bindingResult);
     }
 
+    public ApiError(String field, String message) {
+        this.fieldErrors = Map.of(field, message);
+    }
+
+
     private List<String> getGlobalErrors(BindingResult bindingResult) {
         List<String> globalErrors = new ArrayList<>();
         for (ObjectError globalError : bindingResult.getGlobalErrors()) {

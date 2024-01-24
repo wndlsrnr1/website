@@ -5,14 +5,19 @@ import com.website.domain.category.Subcategory;
 import com.website.repository.category.CategoryRepository;
 //import com.website.repository.category.CategoryRepositoryByJpaAndQueryDsl;
 import com.website.repository.subcategory.SubcategoryRepository;
+import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.category.*;
+import com.website.web.dto.request.category.subcategory.CreateSubcategoryRequest;
+import com.website.web.dto.request.category.subcategory.UpdateSubcategoryRequest;
 import com.website.web.dto.response.category.CategoryByCondResponse;
 import com.website.web.dto.response.category.SubcategoryByCondResponse;
 import com.website.web.dto.sqlcond.category.CategorySearchCond;
 import com.website.web.dto.sqlcond.category.SubCategorySearchCond;
+import com.website.web.service.common.BindingResultUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,8 +25,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -30,6 +37,8 @@ public class CategoryCRUDService {
 
     private final CategoryRepository categoryRepository;
     private final SubcategoryRepository subcategoryRepository;
+    private final BindingResultUtils bindingResultUtils;
+    private final MessageSource messageSource;
 
     @Transactional
     public ResponseEntity createCategory(CreateCategoryRequest request) {
@@ -48,12 +57,12 @@ public class CategoryCRUDService {
     }
 
     public ResponseEntity findCategory(Long id) {
-        Category findCategory = categoryRepository.findById(id).orElseGet(null);
+        Category findCategory = categoryRepository.findById(id).orElse(null);
         if (findCategory == null) {
             throw new IllegalArgumentException();
         }
         return ResponseEntity.ok().body(
-                ApiResponseBody.builder().data(findCategory).message("ok").apiError(null)
+                ApiResponseBody.builder().data(findCategory).message("ok").apiError(null).build()
         );
     }
 
@@ -92,16 +101,55 @@ public class CategoryCRUDService {
         if (request.getCategoryId() == -1) {
             return ResponseEntity.badRequest().build();
         }
+
         Long categoryId = request.getCategoryId();
         Category findCategory = categoryRepository.findById(categoryId).orElseGet(null);
+
         if (findCategory == null) {
             throw new IllegalArgumentException("subcategory에 매핑 되는 categoryId가 없음");
         }
+
         Subcategory subcategory = new Subcategory(findCategory, request.getName(), request.getNameKor());
         subcategoryRepository.save(subcategory);
         return ResponseEntity.ok(
                 ApiResponseBody.builder().data(subcategory).message("created").build()
         );
+    }
+
+    @Transactional
+    public ResponseEntity createSubcategoryByDTO(CreateSubcategoryRequest request, BindingResult bindingResult) {
+        if (request == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        //바인딩 결과에 문제가 있을 때
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody<Object> body = getApiReponseHasBindingError(bindingResult, null, "has binding Error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        //무결성에 문제가 있을때
+        Long categoryId = request.getCategoryId();
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category == null) {
+            bindingResultUtils.addFieldMessagesTo(bindingResult, "categoryId", "Nodata.categoryId");
+            ApiResponseBody<Object> body = getApiReponseHasBindingError(bindingResult, null, "no categoryId");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        //그외 서비스상 조건을 만족하지 못 했을 때
+
+        //성공 흐름
+        subcategoryRepository.save(new Subcategory(category, request.getName(), request.getNameKor()));
+
+        return ResponseEntity.ok().build();
+    }
+
+    private ApiResponseBody<Object> getApiReponseHasBindingError(BindingResult bindingResult, Object data, String message) {
+        return ApiResponseBody.builder()
+                .apiError(new ApiError(bindingResult))
+                .data(data)
+                .message(message)
+                .build();
     }
 
     public ResponseEntity findSubcategoriesByCategoryId(Long categoryId) {
@@ -154,6 +202,69 @@ public class CategoryCRUDService {
                 .apiError(null)
                 .build();
         log.info("subcategoryResponses = {}", subcategoryResponses);
+        return ResponseEntity.ok().body(body);
+    }
+
+    @Transactional
+    public ResponseEntity updateSubcategoryByDto(UpdateSubcategoryRequest request, BindingResult bindingResult) {
+        //바인딩 오류가 있을때
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody<Object> body = getApiReponseHasBindingError(bindingResult, null, "has binding Error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        //DB inconsistency
+        Long categoryId = request.getCategoryId();
+        Category category = categoryRepository.findById(categoryId).orElse(null);
+        if (category == null) {
+            bindingResultUtils.addFieldMessagesTo(bindingResult, "categoryId", "Nodata.categoryId");
+            ApiResponseBody<Object> body = getApiReponseHasBindingError(bindingResult, null, "has binding Error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        Long subcategoryId = request.getSubcategoryId();
+        Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
+        if (subcategory == null) {
+            bindingResultUtils.addFieldMessagesTo(bindingResult, "subcategoryId", "Nodata.subcategoryId");
+            ApiResponseBody<Object> body = getApiReponseHasBindingError(bindingResult, null, "has binding Error");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        //그외 서비스상 문제
+
+        //정상 흐름
+        subcategory.setCategory(category);
+        subcategory.setName(request.getName());
+        subcategory.setNameKor(request.getNameKor());
+        subcategoryRepository.save(subcategory);
+        ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(null).data(null).message("ok").build();
+        return ResponseEntity.ok().body(body);
+    }
+
+    @Transactional
+    public ResponseEntity deleteSubcategoryByPathVariable(Long subcategoryId) {
+        //parameter error
+        if (subcategoryId == null) {
+            String message = messageSource.getMessage("NotNull.subcategoryId", null, null);
+            String field = "subcategoryId";
+            ApiError error = new ApiError(field, message);
+            ApiResponseBody<Object> body = ApiResponseBody.builder().data(null).message("has binding error").apiError(error).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        //inconsis
+        Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
+        if (subcategory == null) {
+            String message = messageSource.getMessage("Nodata.subcategoryId", null, null);
+            String field = "subcategoryId";
+            ApiError error = new ApiError(field, message);
+            ApiResponseBody<Object> body = ApiResponseBody.builder().data(null).message("해당하는 서브카테고리가 없음").apiError(error).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        //성공 흐름
+        subcategoryRepository.delete(subcategory);
+        ApiResponseBody body = ApiResponseBody.builder().apiError(null).data(null).message("deleted").build();
         return ResponseEntity.ok().body(body);
     }
 

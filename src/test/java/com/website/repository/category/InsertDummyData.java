@@ -53,5 +53,26 @@ public class InsertDummyData {
         }
     }
 
+    @Commit
+    @Test
+    void insertCategory200_and_subcategory2000() {
+        for (int i = 0; i < 100; i++) {
+            Category category = new Category("XBOX", "엑스박스");
+            categoryRepository.save(category);
+            for (int j = 0; j < 100; j++) {
+                Subcategory subcategory = new Subcategory(category, "game" + i + j, "게임" + i + j);
+                subcategoryRepository.save(subcategory);
+            }
+        }
+
+        for (int i = 0; i < 100; i++) {
+            Category category = new Category("PLAYSTATION", "플레이스테이션");
+            categoryRepository.save(category);
+            for (int j = 0; j < 100; j++) {
+                Subcategory subcategory = new Subcategory(category, "게임" + i + j, "game" + i + j);
+                subcategoryRepository.save(subcategory);
+            }
+        }
+    }
 
 }

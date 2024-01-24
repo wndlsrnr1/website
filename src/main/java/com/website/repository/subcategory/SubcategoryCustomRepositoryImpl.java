@@ -3,6 +3,7 @@ package com.website.repository.subcategory;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.category.Subcategory;
+import com.website.web.dto.request.category.subcategory.CreateSubcategoryRequest;
 import com.website.web.dto.response.category.QSubcategoryByCondResponse;
 import com.website.web.dto.response.category.SubcategoryByCondResponse;
 import com.website.web.dto.response.category.CategoryByCondResponse;

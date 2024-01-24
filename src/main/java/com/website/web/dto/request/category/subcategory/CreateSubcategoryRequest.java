@@ -1,4 +1,4 @@
-package com.website.web.dto.request.category;
+package com.website.web.dto.request.category.subcategory;
 
 import lombok.Data;
 
