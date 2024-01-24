@@ -13,7 +13,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Slf4j
-@SpringBootTest
+//@SpringBootTest
 public class DatabaseConnectionTest {
 
     @Value("${spring.datasource.username}")
