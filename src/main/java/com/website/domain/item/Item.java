@@ -1,6 +1,5 @@
 package com.website.domain.item;
 
-import com.website.domain.category.Subcategory;
 import com.website.domain.common.AbstractBaseEntity;
 import lombok.*;
 
@@ -22,23 +21,19 @@ public class Item extends AbstractBaseEntity {
     private Integer quantity;
     private String status;
     private String description;
-    private LocalDateTime releaseDate;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "subcategory_id", nullable = false)
-    private Subcategory subcategory;
+    private LocalDateTime releasedAt;
 
     @Builder
-    public Item(String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releaseDate, Subcategory subcategory) {
+    public Item(String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releasedAt) {
         this.name = name;
         this.nameKor = nameKor;
         this.price = price;
         this.quantity = quantity;
         this.status = status;
         this.description = description;
-        this.releaseDate = releaseDate;
-        this.subcategory = subcategory;
+        this.releasedAt = releasedAt;
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -64,13 +59,8 @@ public class Item extends AbstractBaseEntity {
         this.description = description;
     }
 
-    public void setReleaseDate(LocalDateTime releaseDate) {
-        this.releaseDate = releaseDate;
+    public void setReleasedAt(LocalDateTime releaseDate) {
+        this.releasedAt = releaseDate;
     }
-
-    public void setSubcategory(Subcategory subcategory) {
-        this.subcategory = subcategory;
-    }
-
 
 }

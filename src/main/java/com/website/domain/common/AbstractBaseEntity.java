@@ -9,22 +9,21 @@ import java.util.Calendar;
 
 @MappedSuperclass
 public class AbstractBaseEntity {
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Calendar createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false, updatable = true)
-    private Calendar updatedAt;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreated() {
-        this.createdAt = Calendar.getInstance();
-        this.updatedAt = Calendar.getInstance();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updatedAt = Calendar.getInstance();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @Override

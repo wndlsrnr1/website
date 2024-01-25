@@ -2,6 +2,7 @@ package com.website.domain.attachment;
 
 import java.awt.*;
 
+
 public enum FileType {
     IMAGE("image"), THUMBNAIL("thumbnail"), FILE("file"), ;
 
