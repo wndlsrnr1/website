@@ -29,7 +29,6 @@ public class InsertDummyData {
     SubcategoryRepository subcategoryRepository;
 
     @Test
-    @Commit
     void insert() {
         List<Category> categories = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -45,7 +44,6 @@ public class InsertDummyData {
     }
 
     @Test
-    @Commit
     void insertCategory100() {
         for (int i = 101; i < 1000; i++) {
             Category category = new Category("XBOX " + i, "엑스박스" + i);
@@ -53,7 +51,6 @@ public class InsertDummyData {
         }
     }
 
-    @Commit
     @Test
     void insertCategory200_and_subcategory2000() {
         for (int i = 0; i < 100; i++) {

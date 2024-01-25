@@ -36,7 +36,7 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
 
     @Override
     public Page<CategoryByCondResponse> searchPageByCond(CategorySearchCond categorySearchCond, Pageable pageable) {
-
+        log.info("categorySearchCond = {}", categorySearchCond);
         //그냥 쿼리를 전송
         List<CategoryByCondResponse> elements = query
                 .select(new QCategoryByCondResponse(category.id, category.name, category.nameKor))

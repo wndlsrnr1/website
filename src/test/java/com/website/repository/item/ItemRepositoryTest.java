@@ -49,7 +49,6 @@ class ItemRepositoryTest {
     //Create
 
     @Test
-    @Commit
     void create() throws NoSuchFieldException {
         //given
         Category category = new Category("name", "nameKor");
@@ -64,14 +63,12 @@ class ItemRepositoryTest {
                 .price(100000)
                 .quantity(10000)
                 .description("asdf")
-                .releaseDate(LocalDateTime.now())
+                .releasedAt(LocalDateTime.now())
                 .status("good")
-                .subcategory(subcategory)
                 .build();
 
         itemRepository.save(item);
         log.info("item = {}", item);
-
     }
 
     //Read
@@ -91,9 +88,8 @@ class ItemRepositoryTest {
                     .price(100000 + i)
                     .quantity(10000 + i)
                     .description("asdf")
-                    .releaseDate(LocalDateTime.now())
+                    .releasedAt(LocalDateTime.now())
                     .status("good")
-                    .subcategory(sub)
                     .build();
 
             itemRepository.save(item);
@@ -123,9 +119,8 @@ class ItemRepositoryTest {
                 .price(100000)
                 .quantity(10000)
                 .description("asdf")
-                .releaseDate(LocalDateTime.now())
+                .releasedAt(LocalDateTime.now())
                 .status("good")
-                .subcategory(sub)
                 .build();
 
         //when
@@ -158,9 +153,8 @@ class ItemRepositoryTest {
                 .price(100000)
                 .quantity(10000)
                 .description("asdf")
-                .releaseDate(LocalDateTime.now())
+                .releasedAt(LocalDateTime.now())
                 .status("good")
-                .subcategory(sub)
                 .build();
 
         itemRepository.save(item);

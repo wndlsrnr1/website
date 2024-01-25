@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
-public class AdminCategoryCRUDController {
+public class CategoryCRUDAdminController {
 
     private final CategoryCRUDService categoryCRUDService;
 
