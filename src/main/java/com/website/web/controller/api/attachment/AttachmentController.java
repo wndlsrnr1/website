@@ -5,7 +5,7 @@ import com.website.repository.attachment.AttachmentRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.file.AttachmentUploadRequest;
-import com.website.web.service.attachment.SaveFileService;
+import com.website.web.service.attachment.FileService;
 import com.website.web.service.common.BindingResultUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/attachment")
 public class AttachmentController {
 
-    private final SaveFileService saveFileService;
+    private final FileService fileService;
     private final AttachmentRepository attachmentRepository;
     private final BindingResultUtils bindingResultUtils;
 
@@ -60,12 +60,12 @@ public class AttachmentController {
         MultipartFile multipartFile = attachmentUploadRequest.getMultipartFile();
         log.info("3");
         //if there is data inconsistency..
-        Attachment attachment = saveFileService.saveFile(requestFileName, multipartFile);
+        Attachment attachment = fileService.saveFile(requestFileName, multipartFile);
         if (attachment == null) {
             //some action
         }
         log.info("4");
-        Attachment savedAttachment = attachmentRepository.saveAttachment(attachment);
+        Attachment savedAttachment = attachmentRepository.save(attachment);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -75,7 +75,7 @@ public class AttachmentController {
     public ResponseEntity<Resource> responseFileToUser(@PathVariable("id") Long attachmentId) {
 
         //find from db
-        Attachment attachment = attachmentRepository.findById(attachmentId);
+        Attachment attachment = attachmentRepository.findById(attachmentId).orElse(null);
         String saveName = attachment.getSaveName();
         String requestName = attachment.getRequestName();
         log.info("attachment = {}", attachment.getSaveName());

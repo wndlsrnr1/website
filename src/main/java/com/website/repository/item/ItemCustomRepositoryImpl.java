@@ -45,9 +45,20 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     @Override
     public Page<ItemResponse> getItemResponseByCond(ItemSearchCond itemSearchCond, Pageable pageable) {
-
         QueryResults<ItemResponse> results = query.select(
-                        new QItemResponse(item.id, item.name, item.nameKor, item.price, item.quantity, item.status, item.description, item.releasedAt, item.updatedAt, item.createdAt, subcategory)
+                        new QItemResponse(
+                                item.id,
+                                item.name,
+                                item.nameKor,
+                                item.price,
+                                item.quantity,
+                                item.status,
+                                item.description,
+                                item.releasedAt,
+                                item.updatedAt,
+                                item.createdAt,
+                                subcategory
+                        )
                 )
                 .from(item)
                 .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))

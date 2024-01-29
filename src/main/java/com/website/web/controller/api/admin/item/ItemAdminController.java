@@ -1,4 +1,4 @@
-package com.website.web.controller.api.admin;
+package com.website.web.controller.api.admin.item;
 
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.item.ItemService;
@@ -31,5 +31,6 @@ public class ItemAdminController {
     public ResponseEntity sendItemDetails(@PathVariable Long itemId) {
         return itemService.sendItemDetailPageByItemId(itemId);
     }
+
 
 }
