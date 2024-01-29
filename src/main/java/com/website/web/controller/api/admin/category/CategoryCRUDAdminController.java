@@ -1,4 +1,4 @@
-package com.website.web.controller.api.admin;
+package com.website.web.controller.api.admin.category;
 
 import com.website.web.dto.request.category.CreateCategoryRequest;
 import com.website.web.dto.request.category.subcategory.CreateSubcategoryRequest;

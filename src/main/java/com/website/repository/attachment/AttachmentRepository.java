@@ -1,24 +1,10 @@
 package com.website.repository.attachment;
 
 import com.website.domain.attachment.Attachment;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AttachmentRepository {
+public interface AttachmentRepository extends JpaRepository<Attachment, Long>, AttachmentCustomRepository {
 
-    Attachment findById(Long id);
-
-    List<Attachment> findByRequestName(String requestName);
-
-    List<Attachment> findBySaveName(String saveName);
-
-    Attachment saveAttachment(String requestName, String saveName);
-
-    Attachment saveAttachment(Attachment attachmentParam);
-
-    List<Attachment> saveAttachments(List<Attachment> attachments);
-
-    boolean deleteAttachmentById(Long id);
-
-    Long deleteAttachmentBySaveName(String saveName);
 }
