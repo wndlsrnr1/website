@@ -16,9 +16,9 @@ public class Attachment {
     private String requestName;
     private String saveName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "file_type", nullable = false)
-    private FileType fileType;
+    //@Enumerated(EnumType.STRING)
+    //@Column(name = "file_type", nullable = false)
+    //private FileType fileType;
 
     @Builder
     public Attachment(String requestName, String saveName) {

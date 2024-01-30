@@ -26,4 +26,9 @@ public class ItemAttachment {
     @JoinColumn(name = "attachment_id", nullable = false)
     private Attachment attachment;
 
+
+    public ItemAttachment(Item item, Attachment attachment) {
+        this.item = item;
+        this.attachment = attachment;
+    }
 }
