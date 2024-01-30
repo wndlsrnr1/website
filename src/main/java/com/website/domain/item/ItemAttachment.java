@@ -18,7 +18,7 @@ public class ItemAttachment {
     @Column(name = "item_attachment_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 

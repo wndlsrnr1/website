@@ -3,10 +3,9 @@ package com.website.repository.item;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.category.QSubcategory;
-import com.website.domain.item.Item;
-import com.website.domain.item.QItemSubcategory;
+import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
+import com.website.web.dto.response.item.QItemDetailResponse;
 import com.website.web.dto.response.item.QItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import org.springframework.data.domain.Page;
@@ -19,8 +18,10 @@ import javax.persistence.EntityManager;
 
 import java.util.List;
 
+import static com.website.domain.attachment.QAttachment.attachment;
 import static com.website.domain.category.QSubcategory.subcategory;
 import static com.website.domain.item.QItem.*;
+import static com.website.domain.item.QItemAttachment.*;
 import static com.website.domain.item.QItemSubcategory.*;
 
 @Repository
@@ -81,6 +82,37 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public List<ItemDetailResponse> findItemDetailResponse(Long itemId) {
+        List<ItemDetailResponse> itemDetailResponse = query.select(
+                        new QItemDetailResponse(
+                                item.id,
+                                item.name,
+                                item.nameKor,
+                                item.price,
+                                item.quantity,
+                                item.status,
+                                item.description,
+                                item.releasedAt,
+                                item.updatedAt,
+                                item.createdAt,
+                                subcategory,
+                                attachment.saveName,
+                                attachment.requestName
+                        )
+                )
+                .from(item)
+                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .leftJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .leftJoin(itemAttachment).on(item.id.eq(itemAttachment.item.id))
+                .leftJoin(attachment).on(itemAttachment.attachment.id.eq(attachment.id))
+                .where(
+                        item.id.eq(itemId)
+                )
+                .fetch();
+        return itemDetailResponse;
     }
 
     private BooleanExpression nameOrNameKorLike(String searchName) {

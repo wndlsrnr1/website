@@ -3,6 +3,8 @@ package com.website.repository.category;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.category.Category;
+import com.website.domain.category.QSubcategory;
 import com.website.web.dto.response.category.CategoryByCondResponse;
 import com.website.web.dto.response.category.QCategoryByCondResponse;
 import com.website.web.dto.sqlcond.category.CategorySearchCond;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.website.domain.category.QCategory.category;
+import static com.website.domain.category.QSubcategory.subcategory;
 
 @Slf4j
 @Repository
@@ -54,6 +57,12 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
                 .fetchCount();
 
         return new PageImpl<>(elements, pageable, total);
+    }
+
+    @Override
+    public Category findBySubCategoryId(Long subcategoryIdLong) {
+        Category category = query.select(subcategory.category).from(subcategory).where(subcategory.id.eq(subcategoryIdLong)).fetchFirst();
+        return category;
     }
 
     private BooleanExpression nameOrKorNameLike(String searchName) {

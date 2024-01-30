@@ -13,6 +13,7 @@ import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.SaveItemRequest;
+import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.attachment.FileService;
@@ -113,8 +114,10 @@ public class ItemService {
         }
 
         //정상 흐름
+        List<ItemDetailResponse> itemDetailResponse = itemRepository.findItemDetailResponse(itemId);
+
         ApiResponseBody<Object> body = ApiResponseBody.builder()
-                .data(findItem)
+                .data(itemDetailResponse)
                 .apiError(null)
                 .message("ok")
                 .build();
@@ -152,15 +155,7 @@ public class ItemService {
         List<String> images = saveItemRequest.getImages();
         List<MultipartFile> imageFiles = saveItemRequest.getImageFiles();
         List<Attachment> attachmentList = new ArrayList<>();
-        //파일 정보 저장
-        attachmentRepository.saveAll(attachmentList);
 
-        //조인 테이블에 저장
-        for (Attachment attachment : attachmentList) {
-            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
-            Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
-            itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
-        }
 
         //파일 저장
         for (int i = 0; i < imageFiles.size(); i++) {
@@ -171,6 +166,19 @@ public class ItemService {
             Attachment attachment = fileService.saveFile(requestedName, file);
             attachmentList.add(attachment);
         }
+
+        //조인 테이블에 저장
+        Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
+        log.info("subcategory = {}", subcategory);
+        itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
+
+        //파일 정보 저장
+        attachmentRepository.saveAll(attachmentList);
+
+        for (Attachment attachment : attachmentList) {
+            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+        }
+
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(null)
