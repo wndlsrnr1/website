@@ -1,11 +1,21 @@
 package com.website.web.service.item;
 
+import com.website.domain.attachment.Attachment;
+import com.website.domain.category.Subcategory;
 import com.website.domain.item.Item;
+import com.website.domain.item.ItemAttachment;
+import com.website.domain.item.ItemSubcategory;
+import com.website.repository.attachment.AttachmentRepository;
+import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
+import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
+import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
+import com.website.web.service.attachment.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -13,7 +23,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +39,11 @@ public class ItemService {
     private final ItemRepository itemRepository;
     //private final BindingResultUtils bindingResultUtils;
     private final MessageSource messageSource;
+    private final FileService fileService;
+    private final AttachmentRepository attachmentRepository;
+    private final ItemAttachmentRepository itemAttachmentRepository;
+    private final ItemSubcategoryRepository itemSubcategoryRepository;
+    private final SubcategoryRepository subcategoryRepository;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -97,6 +118,64 @@ public class ItemService {
                 .apiError(null)
                 .message("ok")
                 .build();
+
+        return ResponseEntity.ok(body);
+    }
+
+    @Transactional
+    public ResponseEntity saveItemByItemFormRequest(SaveItemRequest saveItemRequest, BindingResult bindingResult) {
+        log.info("saveItemRequest = {}", saveItemRequest);
+        //binding error
+
+        //정합성 에러
+
+        //그외 서비스 에러
+
+        //정상흐름
+        //Long itemId = saveItemRequest.getItemId();
+        //Long categoryId = saveItemRequest.getCategoryId();
+
+        //파리미터 정보 가져오기
+        String name = saveItemRequest.getName();
+        Integer price = saveItemRequest.getPrice();
+        String description = saveItemRequest.getDescription();
+        String nameKor = saveItemRequest.getNameKor();
+        Integer quantity = saveItemRequest.getQuantity();
+        String status = saveItemRequest.getStatus();
+        LocalDateTime releasedAt = saveItemRequest.getReleasedAt();
+        Long subcategoryId = saveItemRequest.getSubcategoryId();
+
+        //아이템 저장
+        Item item = new Item(name, nameKor, price, quantity, status, description, releasedAt);
+        itemRepository.save(item);
+
+        List<String> images = saveItemRequest.getImages();
+        List<MultipartFile> imageFiles = saveItemRequest.getImageFiles();
+        List<Attachment> attachmentList = new ArrayList<>();
+        //파일 정보 저장
+        attachmentRepository.saveAll(attachmentList);
+
+        //조인 테이블에 저장
+        for (Attachment attachment : attachmentList) {
+            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+            Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
+            itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
+        }
+
+        //파일 저장
+        for (int i = 0; i < imageFiles.size(); i++) {
+            MultipartFile file = imageFiles.get(i);
+            String requestedName = images.get(i);
+
+            //파일 정보 추출
+            Attachment attachment = fileService.saveFile(requestedName, file);
+            attachmentList.add(attachment);
+        }
+
+        ApiResponseBody<Object> body = ApiResponseBody.builder()
+                .data(null)
+                .message("ok")
+                .apiError(null).build();
 
         return ResponseEntity.ok(body);
     }
