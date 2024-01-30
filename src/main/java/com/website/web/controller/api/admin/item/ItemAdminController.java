@@ -26,7 +26,11 @@ public class ItemAdminController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity sendItemDetails(@PathVariable Long itemId) {
+    public ResponseEntity sendItemDetails(
+            @PathVariable Long itemId,
+            @RequestParam(value = "images", required = false) Boolean images,
+            @RequestParam(value = "subcategories", required = false) Boolean subcategories
+    ) {
         return itemService.sendItemDetailPageByItemId(itemId);
     }
 

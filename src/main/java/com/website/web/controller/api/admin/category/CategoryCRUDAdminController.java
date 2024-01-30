@@ -16,6 +16,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @Slf4j
 @RestController
 @RequestMapping("/admin")
@@ -36,11 +39,15 @@ public class CategoryCRUDAdminController {
         return categoryCRUDService.findCategory(id);
     }
 
-    @GetMapping("/category")
+    //@GetMapping("/category")
     public ResponseEntity getCategories() {
         return categoryCRUDService.findCategoryAll();
     }
 
+    @GetMapping("/category")
+    public ResponseEntity getCategory(HttpServletRequest request, HttpServletResponse response) {
+        return categoryCRUDService.sendCategory(request, response);
+    }
 
     @DeleteMapping("/category/delete/{category_id}")
     public ResponseEntity deleteCategory(@PathVariable("category_id") Long id) {
