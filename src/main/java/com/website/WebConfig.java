@@ -10,6 +10,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.persistence.EntityManager;
 import javax.servlet.DispatcherType;
 
 @Configuration
@@ -29,6 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
         localValidatorFactoryBean.setValidationMessageSource(messageSource());
         return localValidatorFactoryBean;
     }
+
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
