@@ -21,9 +21,10 @@ public class ItemDetailResponse {
     private Subcategory subcategory;
     private String savedFileName;
     private String requestName;
+    private Long fileId;
 
     @QueryProjection
-    public ItemDetailResponse(Long id, String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releasedAt, LocalDateTime updatedAt, LocalDateTime createdAt, Subcategory subcategory, String savedFileName, String requestName) {
+    public ItemDetailResponse(Long id, String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releasedAt, LocalDateTime updatedAt, LocalDateTime createdAt, Subcategory subcategory, Long fileId, String savedFileName, String requestName) {
         this.id = id;
         this.name = name;
         this.nameKor = nameKor;
@@ -35,6 +36,7 @@ public class ItemDetailResponse {
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
         this.subcategory = subcategory;
+        this.fileId = fileId;
         this.savedFileName = savedFileName;
         this.requestName = requestName;
     }
