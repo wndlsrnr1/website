@@ -1,6 +1,7 @@
 package com.website.domain.item;
 
 import com.website.domain.common.AbstractBaseEntity;
+import com.website.repository.item.entitylisteners.ItemListener;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
 public class Item extends AbstractBaseEntity {
+
     @Id
     @Column(name = "item_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

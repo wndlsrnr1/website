@@ -187,4 +187,26 @@ public class ItemService {
 
         return ResponseEntity.ok(body);
     }
+
+    @Transactional
+    public ResponseEntity removeItemByItemId(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("itemId = {}", itemId);
+        itemSubcategoryRepository.deleteByItemId(itemId);
+        itemAttachmentRepository.deleteByItemId(itemId);
+        itemRepository.deleteById(itemId);
+
+        //item 삭제
+        //조인 테이블 삭제
+        return ResponseEntity.ok().build();
+    }
+
+
 }

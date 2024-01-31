@@ -39,4 +39,9 @@ public class ItemAdminController {
         return itemService.saveItemByItemFormRequest(saveItemRequest, bindingResult);
     }
 
+    @DeleteMapping("/remove/{itemId}")
+    public ResponseEntity removeItemRequestByItemId(@PathVariable Long itemId) {
+        return itemService.removeItemByItemId(itemId);
+    }
+
 }

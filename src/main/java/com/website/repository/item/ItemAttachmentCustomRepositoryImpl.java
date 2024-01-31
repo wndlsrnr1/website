@@ -1,0 +1,27 @@
+package com.website.repository.item;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.item.QItemAttachment;
+import com.website.repository.item.ItemAttachmentCustomRepository;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+
+import static com.website.domain.item.QItemAttachment.*;
+
+@Repository
+public class ItemAttachmentCustomRepositoryImpl implements ItemAttachmentCustomRepository {
+
+    private final EntityManager entityManager;
+    private final JPAQueryFactory query;
+
+    public ItemAttachmentCustomRepositoryImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.query = new JPAQueryFactory(entityManager);
+    }
+
+    @Override
+    public void deleteByItemId(Long itemId) {
+        query.delete(itemAttachment).where(itemAttachment.item.id.eq(itemId)).execute();
+    }
+}
