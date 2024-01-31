@@ -116,6 +116,14 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return itemDetailResponse;
     }
 
+    @Override
+    public void deleteFileOnItem(List<Long> fileIdList) {
+        for (Long fileId : fileIdList) {
+            query.delete(itemAttachment).where(itemAttachment.attachment.id.eq(fileId));
+            query.delete(attachment).where(attachment.id.eq(fileId)).execute();
+        }
+    }
+
     private BooleanExpression nameOrNameKorLike(String searchName) {
         return searchName != null && StringUtils.hasText(searchName) ? item.name.contains(searchName).or(item.nameKor.contains(searchName)) : null;
     }
