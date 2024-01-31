@@ -12,6 +12,7 @@ import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
+import com.website.web.dto.request.item.DeleteFileOnItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
@@ -209,4 +210,9 @@ public class ItemService {
     }
 
 
+    public ResponseEntity deleteFileOnItem(List<Long> fileIdList) {
+        //db에 있는 지
+        itemRepository.deleteFileOnItem(fileIdList);
+        return ResponseEntity.ok().build();
+    }
 }

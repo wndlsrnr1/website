@@ -1,5 +1,6 @@
 package com.website.web.controller.api.admin.item;
 
+import com.website.web.dto.request.item.DeleteFileOnItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.item.ItemService;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +45,11 @@ public class ItemAdminController {
     @DeleteMapping("/remove/{itemId}")
     public ResponseEntity removeItemRequestByItemId(@PathVariable Long itemId) {
         return itemService.removeItemByItemId(itemId);
+    }
+
+    @DeleteMapping("/image/remove")
+    public ResponseEntity removeAttachmentOnItemByAttachmentId(List<Long> fileIdList) {
+        return itemService.deleteFileOnItem(fileIdList);
     }
 
 }
