@@ -99,6 +99,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                                 item.updatedAt,
                                 item.createdAt,
                                 subcategory,
+                                attachment.id,
                                 attachment.saveName,
                                 attachment.requestName
                         )
