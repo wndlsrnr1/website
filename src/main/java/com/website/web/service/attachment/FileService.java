@@ -98,4 +98,16 @@ public class FileService {
         }
         return -1;
     }
+
+    public void deleteFile(String fileName) {
+        File file = new File(fileDir + fileName);
+        boolean delete = file.delete();
+    }
+
+    public void deleteFiles(List<Attachment> attachmentList) {
+        for (Attachment attachment : attachmentList) {
+            String fileName = attachment.getSaveName();
+            deleteFile(fileName);
+        }
+    }
 }

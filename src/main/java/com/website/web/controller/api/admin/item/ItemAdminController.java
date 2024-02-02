@@ -1,6 +1,7 @@
 package com.website.web.controller.api.admin.item;
 
 import com.website.web.dto.request.item.DeleteFileOnItemRequest;
+import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.item.ItemService;
@@ -52,4 +53,8 @@ public class ItemAdminController {
         return itemService.deleteFileOnItem(fileIdList);
     }
 
+    @PostMapping("/edit/{itemId}")
+    public ResponseEntity editItemRequest(@PathVariable(name = "itemId", required = true) Long itemId, @Validated EditItemRequest editItemRequest, BindingResult bindingResult) {
+        return itemService.editItemFormOnAdmin(itemId, editItemRequest, bindingResult);
+    }
 }

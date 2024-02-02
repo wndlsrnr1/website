@@ -14,4 +14,6 @@ public interface AttachmentCustomRepository {
     Long deleteAttachmentBySaveName(String saveName);
 
     List<Attachment> getAttachmentByItemId(Long itemId);
+
+    List<Attachment> getListByIdList(List<Long> fileIdList);
 }

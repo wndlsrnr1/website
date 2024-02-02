@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true)
+//@EntityListeners(ItemListener.class)
 public class Item extends AbstractBaseEntity {
 
     @Id
