@@ -2,6 +2,8 @@ package com.website.repository.attachment;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.attachment.Attachment;
+import com.website.domain.attachment.QAttachment;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -63,6 +65,16 @@ public class AttachmentCustomRepositoryImpl implements AttachmentCustomRepositor
                 .where(itemAttachment.attachment.id.eq(itemId))
                 .orderBy(attachment.requestName.asc())
                 .fetch();
+    }
+
+    @Override
+    public List<Attachment> getListByIdList(List<Long> fileIdList) {
+        List<Attachment> attachmentList = new ArrayList<>();
+        for (Long fileId : fileIdList) {
+            Attachment findAttachment = em.find(Attachment.class, fileId);
+            attachmentList.add(findAttachment);
+        }
+        return attachmentList;
     }
 
 

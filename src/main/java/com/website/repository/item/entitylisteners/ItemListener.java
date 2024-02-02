@@ -19,8 +19,8 @@ import static com.website.domain.item.QItemAttachment.*;
 import static com.website.domain.item.QItemSubcategory.*;
 
 //나중에 사용하기 ㅠㅠ
-//@Repository
 @Slf4j
+//@Repository
 public class ItemListener {
 
     @Autowired

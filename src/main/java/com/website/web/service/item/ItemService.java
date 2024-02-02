@@ -13,11 +13,13 @@ import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.DeleteFileOnItemRequest;
+import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.attachment.FileService;
+import com.website.web.service.common.BindingResultUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -29,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +49,7 @@ public class ItemService {
     private final ItemAttachmentRepository itemAttachmentRepository;
     private final ItemSubcategoryRepository itemSubcategoryRepository;
     private final SubcategoryRepository subcategoryRepository;
+    private final BindingResultUtils bindingResultUtils;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -211,8 +215,66 @@ public class ItemService {
 
 
     public ResponseEntity deleteFileOnItem(List<Long> fileIdList) {
-        //db에 있는 지
+        //DB에서 삭제
         itemRepository.deleteFileOnItem(fileIdList);
+
+        //파일 삭제
+        List<Attachment> attachmentList = attachmentRepository.getListByIdList(fileIdList);
+
+        fileService.deleteFiles(attachmentList);
         return ResponseEntity.ok().build();
+    }
+
+    @Transactional
+    public ResponseEntity editItemFormOnAdmin(Long itemId, EditItemRequest editItemRequest, BindingResult bindingResult) {
+        if (itemId == null) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .apiError(new ApiError("itemId", messageSource.getMessage("Nodata", null, null)))
+                    .message("badRequest").build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError(bindingResult)).build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .apiError(new ApiError("itemId", messageSource.getMessage("Nodata", null, null)))
+                    .message("badRequest").build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        //파일 업데이트
+        itemRepository.updateItemByDto(itemId, editItemRequest);
+
+        //서브카테고리 정리
+        Long subcategoryId = editItemRequest.getSubcategoryId();
+        itemSubcategoryRepository.updateSubcategory(itemId, subcategoryId);
+
+        //사진 업로드
+        List<String> images = editItemRequest.getImages();
+        List<MultipartFile> imageFiles = editItemRequest.getImageFiles();
+        List<Attachment> attachmentList = new ArrayList<>();
+        for (int i = 0; i < imageFiles.size(); i++) {
+            MultipartFile file = imageFiles.get(i);
+            String requestedName = images.get(i);
+            Attachment attachment = fileService.saveFile(requestedName, file);
+            attachmentList.add(attachment);
+        }
+
+        attachmentRepository.saveAll(attachmentList);
+        for (Attachment attachment : attachmentList) {
+            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+        }
+
+        //사진 지우기
+        //연관관계 지우기
+        //실제 파일 지우기
+
+        //정상 흐름
+        return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
     }
 }

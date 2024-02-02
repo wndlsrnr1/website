@@ -1,5 +1,6 @@
 package com.website;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.web.filter.ExceptionLogFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
@@ -15,6 +16,11 @@ import javax.servlet.DispatcherType;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory(EntityManager entityManager) {
+        return new JPAQueryFactory(entityManager);
+    }
 
     @Bean
     public MessageSource messageSource() {

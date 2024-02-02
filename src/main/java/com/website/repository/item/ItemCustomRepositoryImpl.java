@@ -1,8 +1,12 @@
 package com.website.repository.item;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.response.item.QItemDetailResponse;
@@ -17,6 +21,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.website.domain.attachment.QAttachment.attachment;
 import static com.website.domain.category.QSubcategory.subcategory;
@@ -119,10 +124,32 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     @Override
     public void deleteFileOnItem(List<Long> fileIdList) {
         for (Long fileId : fileIdList) {
-            query.delete(itemAttachment).where(itemAttachment.attachment.id.eq(fileId));
+            query.delete(itemAttachment).where(itemAttachment.attachment.id.eq(fileId)).execute();
             query.delete(attachment).where(attachment.id.eq(fileId)).execute();
         }
     }
+
+    @Override
+    public void updateItemByDto(Long itemId, EditItemRequest editItemRequest) {
+        /*
+    private Long subcategoryId;
+    private List<MultipartFile> imageFiles;
+    private List<String> images;
+         */
+        query.update(item)
+                .set(item.name, item.name)
+                .set(item.nameKor, editItemRequest.getNameKor())
+                .set(item.status, editItemRequest.getStatus())
+                .set(item.description, editItemRequest.getDescription())
+                .set(item.quantity, editItemRequest.getQuantity())
+                .set(item.price, editItemRequest.getPrice())
+                .set(item.releasedAt, editItemRequest.getReleasedAt())
+                .where(item.id.eq(itemId))
+                .execute();
+
+
+    }
+
 
     private BooleanExpression nameOrNameKorLike(String searchName) {
         return searchName != null && StringUtils.hasText(searchName) ? item.name.contains(searchName).or(item.nameKor.contains(searchName)) : null;

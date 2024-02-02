@@ -1,6 +1,6 @@
 package com.website.repository.item;
 
-import com.website.web.dto.request.item.DeleteFileOnItemRequest;
+import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -17,4 +17,6 @@ public interface ItemCustomRepository {
     List<ItemDetailResponse> findItemDetailResponse(Long itemId);
 
     void deleteFileOnItem(List<Long> fileIdList);
+
+    void updateItemByDto(Long itemId, EditItemRequest editItemRequest);
 }
