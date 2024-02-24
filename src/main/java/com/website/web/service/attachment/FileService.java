@@ -1,8 +1,12 @@
 package com.website.web.service.attachment;
 
 import com.website.domain.attachment.Attachment;
+import com.website.domain.item.Item;
+import com.website.domain.item.ItemAttachment;
 import com.website.repository.attachment.AttachmentRepository;
+import com.website.repository.item.ItemAttachmentRepository;
 import com.website.web.dto.common.ApiResponseBody;
+import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.AttachmentByItemIdResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,7 @@ import java.util.UUID;
 public class FileService {
 
     private final AttachmentRepository attachmentRepository;
+    private final ItemAttachmentRepository itemAttachmentRepository;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -108,6 +113,22 @@ public class FileService {
         for (Attachment attachment : attachmentList) {
             String fileName = attachment.getSaveName();
             deleteFile(fileName);
+        }
+    }
+
+    public void uploadFile(List<String> images, List<MultipartFile> imageFiles, Item item) {
+
+        List<Attachment> attachmentList = new ArrayList<>();
+        for (int i = 0; i < imageFiles.size(); i++) {
+            MultipartFile file = imageFiles.get(i);
+            String requestedName = images.get(i);
+            Attachment attachment = saveFile(requestedName, file);
+            attachmentList.add(attachment);
+        }
+
+        attachmentRepository.saveAll(attachmentList);
+        for (Attachment attachment : attachmentList) {
+            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
         }
     }
 }
