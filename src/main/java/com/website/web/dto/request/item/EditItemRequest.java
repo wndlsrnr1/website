@@ -1,12 +1,10 @@
 package com.website.web.dto.request.item;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.website.web.dto.request.file.AttachmentDelete;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.NumberFormat;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -33,4 +31,6 @@ public class EditItemRequest {
     private List<String> images;
     private String status;
     private String description;
+    private List<MultipartFile> imageFilesForDelete;
+    private List<AttachmentDelete> imagesForDelete;
 }

@@ -12,6 +12,7 @@ import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
+import com.website.web.dto.request.file.AttachmentDelete;
 import com.website.web.dto.request.item.DeleteFileOnItemRequest;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
@@ -254,27 +255,26 @@ public class ItemService {
         Long subcategoryId = editItemRequest.getSubcategoryId();
         itemSubcategoryRepository.updateSubcategory(itemId, subcategoryId);
 
-        //사진 업로드
+        //사진 업로드: 예외를 발생시키고 로그를 찍어야 할 것 같음.
         List<String> images = editItemRequest.getImages();
         List<MultipartFile> imageFiles = editItemRequest.getImageFiles();
-        List<Attachment> attachmentList = new ArrayList<>();
-        for (int i = 0; i < imageFiles.size(); i++) {
-            MultipartFile file = imageFiles.get(i);
-            String requestedName = images.get(i);
-            Attachment attachment = fileService.saveFile(requestedName, file);
-            attachmentList.add(attachment);
-        }
-
-        attachmentRepository.saveAll(attachmentList);
-        for (Attachment attachment : attachmentList) {
-            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+        if (images != null && imageFiles != null) {
+            fileService.uploadFile(images, imageFiles, item);
         }
 
         //사진 지우기
+        List<AttachmentDelete> imagesForDelete = editItemRequest.getImagesForDelete();
+        log.info("imagesForDelete = {}", imagesForDelete);
+        for (AttachmentDelete attachmentDelete : imagesForDelete) {
+            log.info("imagesForDelete = {}", attachmentDelete);
+        }
+
         //연관관계 지우기
+
         //실제 파일 지우기
 
         //정상 흐름
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
     }
+
 }
