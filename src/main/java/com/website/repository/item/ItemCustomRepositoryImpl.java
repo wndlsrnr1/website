@@ -7,14 +7,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.website.web.dto.request.item.EditItemRequest;
-import com.website.web.dto.response.item.ItemDetailResponse;
-import com.website.web.dto.response.item.ItemResponse;
-import com.website.web.dto.response.item.QItemDetailResponse;
-import com.website.web.dto.response.item.QItemResponse;
+import com.website.web.dto.response.item.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -148,6 +146,11 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .execute();
 
 
+    }
+
+    @Override
+    public ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome() {
+        return null;
     }
 
 

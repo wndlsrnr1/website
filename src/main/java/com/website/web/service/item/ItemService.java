@@ -14,6 +14,7 @@ import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
+import com.website.web.dto.response.item.CarouselItemResponse;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -268,4 +269,7 @@ public class ItemService {
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
     }
 
+    public ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome() {
+        return itemRepository.getCarouselItemsInHome();
+    }
 }
