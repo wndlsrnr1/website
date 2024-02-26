@@ -12,8 +12,6 @@ import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
-import com.website.web.dto.request.file.AttachmentDelete;
-import com.website.web.dto.request.item.DeleteFileOnItemRequest;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.ItemDetailResponse;
@@ -262,16 +260,9 @@ public class ItemService {
             fileService.uploadFile(images, imageFiles, item);
         }
 
-        //사진 지우기
-        List<AttachmentDelete> imagesForDelete = editItemRequest.getImagesForDelete();
-        log.info("imagesForDelete = {}", imagesForDelete);
-        for (AttachmentDelete attachmentDelete : imagesForDelete) {
-            log.info("imagesForDelete = {}", attachmentDelete);
-        }
-
-        //연관관계 지우기
-
-        //실제 파일 지우기
+        //사진 지우기, 연관관계 지우기, 실제 파일 지우기
+        List<Long> imagesForDelete = editItemRequest.getImagesForDelete();
+        fileService.deleteFilesAndDbData(imagesForDelete);
 
         //정상 흐름
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());

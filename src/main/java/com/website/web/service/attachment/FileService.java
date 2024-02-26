@@ -1,12 +1,15 @@
 package com.website.web.service.attachment;
 
+import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.attachment.Attachment;
 import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
+import com.website.domain.item.QItemAttachment;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.web.dto.common.ApiResponseBody;
-import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.AttachmentByItemIdResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +17,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Id;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.website.domain.item.QItemAttachment.*;
 
 @Slf4j
 @Component
@@ -29,6 +36,7 @@ public class FileService {
 
     private final AttachmentRepository attachmentRepository;
     private final ItemAttachmentRepository itemAttachmentRepository;
+    private final JPAQueryFactory query;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -80,7 +88,7 @@ public class FileService {
     private String getFileName(String requestFileName) {
         String uuid = UUID.randomUUID().toString();
         String ext = getExt(requestFileName);
-        return uuid + "." +ext;
+        return uuid + "." + ext;
     }
 
     private String getExt(String name) {
@@ -116,8 +124,54 @@ public class FileService {
         }
     }
 
-    public void uploadFile(List<String> images, List<MultipartFile> imageFiles, Item item) {
+    /**
+     * delete 실패시에 로그 남길지 생각해보기
+     */
+    @Transactional
+    public void deleteFilesAndDbData(List<Long> attachmentIdListForDelete) {
+        if (attachmentIdListForDelete == null || attachmentIdListForDelete.size() == 0) {
+            return;
+        }
 
+        List<Attachment> attachmentListForDelete = attachmentRepository.getListByIdList(attachmentIdListForDelete);
+
+        //DB에서 먼저 삭제
+        deleteFilesDbData(attachmentListForDelete);
+
+        //File 삭제
+        deleteFiles(attachmentListForDelete);
+    }
+
+    /**
+     * @param attachment delete 실패시에 로그 남길지 생각해보기
+     *                   DB와 파일 둘다 삭제
+     */
+    @Transactional
+    public void deleteFileAndDbDatum(Attachment attachment) {
+        if (attachment.getRequestName() == null || attachment.getId() == null) {
+            return;
+        }
+    }
+
+    /**
+     * @param fileId DB에서만 삭제
+     */
+    @Transactional
+    public void deleteFileDbDatum(Long fileId) {
+        query.delete(itemAttachment).where(itemAttachment.attachment.id.eq(fileId)).execute();
+        attachmentRepository.deleteById(fileId);
+    }
+
+
+    @Transactional
+    public void deleteFilesDbData(List<Attachment> attachmentList) {
+        for (Attachment attachment : attachmentList) {
+            Long attachmentId = attachment.getId();
+            deleteFileDbDatum(attachmentId);
+        }
+    }
+
+    public void uploadFile(List<String> images, List<MultipartFile> imageFiles, Item item) {
         List<Attachment> attachmentList = new ArrayList<>();
         for (int i = 0; i < imageFiles.size(); i++) {
             MultipartFile file = imageFiles.get(i);
@@ -131,4 +185,6 @@ public class FileService {
             itemAttachmentRepository.save(new ItemAttachment(item, attachment));
         }
     }
+
+
 }
