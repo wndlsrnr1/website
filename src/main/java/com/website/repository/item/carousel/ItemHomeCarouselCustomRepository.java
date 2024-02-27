@@ -4,7 +4,7 @@ import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
 
 import java.util.List;
 
-public interface ItemCarouselHomeCustomRepository {
+public interface ItemHomeCarouselCustomRepository {
 
     void updateCarousel(CarouselUpdateRequest carouselUpdateRequests);
 

@@ -1,13 +1,15 @@
 package com.website.web.service.item.carousel;
 
-import com.website.domain.item.ItemCarouselHome;
-import com.website.repository.item.carousel.ItemCarouselHomeRepository;
+import com.website.domain.item.ItemHomeCarousel;
+import com.website.repository.item.carousel.ItemHomeCarouselRepository;
 import com.website.web.dto.request.item.carousel.CarouselAddRequest;
 import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,53 +20,54 @@ import java.util.List;
 /**
  * HomeCarousel 작업 하는 도중 이었음. ResponseEntity형태로 return 하려면 서비스 하나하나 처리 하기
  */
-public class ItemCarouselHomeService {
+public class ItemHomeCarouselService {
 
-    private final ItemCarouselHomeRepository itemCarouselHomeRepository;
+    private final ItemHomeCarouselRepository itemHomeCarouselRepository;
 
     @Transactional
-    public void addCarousel(CarouselAddRequest carouselAddRequest) {
-        ItemCarouselHome itemCarouselHome = getItemCarouselHome(carouselAddRequest);
-        itemCarouselHomeRepository.save(itemCarouselHome);
+    public ResponseEntity addCarousel(CarouselAddRequest carouselAddRequest, BindingResult bindingResult) {
+        ItemHomeCarousel itemHomeCarousel = getItemCarouselHome(carouselAddRequest);
+        itemHomeCarouselRepository.save(itemHomeCarousel);
+        return null;
     }
 
     @Transactional
     public void addCarousels(List<CarouselAddRequest> carouselAddRequests) {
-        List<ItemCarouselHome> itemCarouselHomeList = new ArrayList<>();
+        List<ItemHomeCarousel> itemHomeCarouselList = new ArrayList<>();
 
         for (CarouselAddRequest carouselAddRequest : carouselAddRequests) {
-            ItemCarouselHome itemCarouselHome = getItemCarouselHome(carouselAddRequest);
-            itemCarouselHomeList.add(itemCarouselHome);
+            ItemHomeCarousel itemHomeCarousel = getItemCarouselHome(carouselAddRequest);
+            itemHomeCarouselList.add(itemHomeCarousel);
         }
 
-        itemCarouselHomeRepository.saveAll(itemCarouselHomeList);
+        itemHomeCarouselRepository.saveAll(itemHomeCarouselList);
     }
 
     @Transactional
     public void deleteCarousel(Long carouselId) {
-        itemCarouselHomeRepository.deleteById(carouselId);
+        itemHomeCarouselRepository.deleteById(carouselId);
     }
 
     @Transactional
     public void deleteCarousels(List<Long> carouselIds) {
-        itemCarouselHomeRepository.deleteAllById(carouselIds);
+        itemHomeCarouselRepository.deleteAllById(carouselIds);
     }
 
     @Transactional
     public void updateCarousel(CarouselUpdateRequest carouselUpdateRequest) {
-        itemCarouselHomeRepository.updateCarousel(carouselUpdateRequest);
+        itemHomeCarouselRepository.updateCarousel(carouselUpdateRequest);
     }
 
     @Transactional
     public void updateCarousels(List<CarouselUpdateRequest> carouselUpdateRequestList) {
-        itemCarouselHomeRepository.updateCarousels(carouselUpdateRequestList);
+        itemHomeCarouselRepository.updateCarousels(carouselUpdateRequestList);
     }
 
-    private ItemCarouselHome getItemCarouselHome(CarouselAddRequest carouselAddRequest) {
+    private ItemHomeCarousel getItemCarouselHome(CarouselAddRequest carouselAddRequest) {
         Long itemId = carouselAddRequest.getItemId();
         Long attachmentId = carouselAddRequest.getAttachmentId();
         Integer priority = carouselAddRequest.getPriority();
-        ItemCarouselHome itemCarouselHome = new ItemCarouselHome(itemId, attachmentId, priority);
-        return itemCarouselHome;
+        ItemHomeCarousel itemHomeCarousel = new ItemHomeCarousel(itemId, attachmentId, priority);
+        return itemHomeCarousel;
     }
 }

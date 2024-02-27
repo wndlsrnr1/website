@@ -7,21 +7,21 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.website.domain.item.QItemCarouselHome.*;
+import static com.website.domain.item.QItemHomeCarousel.*;
 
 @Repository
 @RequiredArgsConstructor
-public class ItemCarouselHomeCustomRepositoryImpl implements ItemCarouselHomeCustomRepository{
+public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCustomRepository {
 
     private final JPAQueryFactory query;
 
     @Override
     public void updateCarousel(CarouselUpdateRequest carouselUpdateRequests) {
-        query.update(itemCarouselHome)
-                .set(itemCarouselHome.id, carouselUpdateRequests.getId())
-                .set(itemCarouselHome.itemId, carouselUpdateRequests.getItemId())
-                .set(itemCarouselHome.attachmentId, carouselUpdateRequests.getAttachmentId())
-                .set(itemCarouselHome.priority, carouselUpdateRequests.getPriority())
+        query.update(itemHomeCarousel)
+                .set(itemHomeCarousel.id, carouselUpdateRequests.getId())
+                .set(itemHomeCarousel.itemId, carouselUpdateRequests.getItemId())
+                .set(itemHomeCarousel.attachmentId, carouselUpdateRequests.getAttachmentId())
+                .set(itemHomeCarousel.priority, carouselUpdateRequests.getPriority())
                 .execute();
     }
 
