@@ -3,7 +3,7 @@ package com.website.domain.item;
 import javax.persistence.*;
 
 @Entity
-public class ItemCarouselHome {
+public class ItemHomeCarousel {
     @Id
     @GeneratedValue
     private Long id;
@@ -16,9 +16,12 @@ public class ItemCarouselHome {
 
     private Integer priority;
 
-    public ItemCarouselHome(Long itemId, Long attachmentId, Integer priority) {
+    public ItemHomeCarousel(Long itemId, Long attachmentId, Integer priority) {
         this.itemId = itemId;
         this.attachmentId = attachmentId;
         this.priority = priority;
+    }
+
+    public ItemHomeCarousel() {
     }
 }
