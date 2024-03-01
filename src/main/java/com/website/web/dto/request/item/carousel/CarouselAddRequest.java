@@ -6,11 +6,14 @@ import lombok.Data;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.validation.constraints.NotNull;
 
 @Data
 public class CarouselAddRequest {
 
+    @NotNull
     private Long itemId;
+    @NotNull
     private Long attachmentId;
     private Integer priority;
 

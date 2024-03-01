@@ -1,11 +1,18 @@
 package com.website.web.service.item.carousel;
 
+import com.website.domain.item.Item;
+import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.ItemHomeCarousel;
+import com.website.repository.item.ItemAttachmentRepository;
+import com.website.repository.item.ItemRepository;
 import com.website.repository.item.carousel.ItemHomeCarouselRepository;
+import com.website.web.dto.common.ApiError;
+import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.carousel.CarouselAddRequest;
 import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +30,40 @@ import java.util.List;
 public class ItemHomeCarouselService {
 
     private final ItemHomeCarouselRepository itemHomeCarouselRepository;
+    private final ItemRepository itemRepository;
+    private final ItemAttachmentRepository itemAttachmentRepository;
+    private final MessageSource messageSource;
 
     @Transactional
     public ResponseEntity addCarousel(CarouselAddRequest carouselAddRequest, BindingResult bindingResult) {
+        //binding Error
+        if (bindingResult.hasErrors()) {
+            ApiError apiError = new ApiError(bindingResult);
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .apiError(apiError)
+                    .message("binding Error")
+                    .build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        //정합성 에러
+        Long itemId = carouselAddRequest.getItemId();
+        Long attachmentId = carouselAddRequest.getAttachmentId();
+        ItemAttachment itemAttachment = itemAttachmentRepository.findByItemIdAndAttachmentId(itemId, attachmentId);
+        if (itemAttachment == null) {
+            String message = messageSource.getMessage("Nodata.itemId", null, null);
+            String field = "itemId";
+            ApiError apiError = new ApiError(field, message);
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .apiError(apiError)
+                    .build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        //Ok
         ItemHomeCarousel itemHomeCarousel = getItemCarouselHome(carouselAddRequest);
-        itemHomeCarouselRepository.save(itemHomeCarousel);
-        return null;
+        itemHomeCarouselRepository.addCarousel(itemHomeCarousel.getItemId(), itemHomeCarousel.getAttachmentId());
+        return ResponseEntity.ok().build();
     }
 
     @Transactional

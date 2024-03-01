@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin")
 public class HomeCarouselManagementController {
 
-    private final ItemHomeCarouselRepository itemHomeCarouselRepository;
+    //private final ItemHomeCarouselRepository itemHomeCarouselRepository;
     private final ItemHomeCarouselService itemHomeCarouselService;
 
-    @PostMapping("/admin/home/carousel/add")
+    @PostMapping("/home/carousel/add")
     public ResponseEntity addHomeCarousel(@Validated CarouselAddRequest carouselAddRequest, BindingResult bindingResult) {
         return itemHomeCarouselService.addCarousel(carouselAddRequest, bindingResult);
     }

@@ -8,6 +8,9 @@ public interface ItemHomeCarouselCustomRepository {
 
     void updateCarousel(CarouselUpdateRequest carouselUpdateRequests);
 
-
     void updateCarousels(List<CarouselUpdateRequest> carouselUpdateRequestList);
+
+    void addCarousel(Long itemId, Long imageId);
+
+
 }
