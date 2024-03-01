@@ -1,6 +1,7 @@
 package com.website.repository.item;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.QItemAttachment;
 import com.website.repository.item.ItemAttachmentCustomRepository;
 import org.springframework.stereotype.Repository;
@@ -23,5 +24,12 @@ public class ItemAttachmentCustomRepositoryImpl implements ItemAttachmentCustomR
     @Override
     public void deleteByItemId(Long itemId) {
         query.delete(itemAttachment).where(itemAttachment.item.id.eq(itemId)).execute();
+    }
+
+    @Override
+    public ItemAttachment findByItemIdAndAttachmentId(Long itemId, Long attachmentId) {
+        return query.selectFrom(QItemAttachment.itemAttachment)
+                .where(QItemAttachment.itemAttachment.item.id.eq(itemId), QItemAttachment.itemAttachment.attachment.id.eq(attachmentId))
+                .fetchFirst();
     }
 }

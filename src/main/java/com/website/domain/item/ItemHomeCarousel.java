@@ -1,8 +1,11 @@
 package com.website.domain.item;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
+@Getter
 public class ItemHomeCarousel {
     @Id
     @GeneratedValue
@@ -22,6 +25,12 @@ public class ItemHomeCarousel {
         this.priority = priority;
     }
 
+    public ItemHomeCarousel(Long itemId, Long attachmentId) {
+        this.itemId = itemId;
+        this.attachmentId = attachmentId;
+    }
+
     public ItemHomeCarousel() {
     }
+
 }
