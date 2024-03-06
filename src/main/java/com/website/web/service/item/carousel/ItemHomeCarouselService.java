@@ -1,6 +1,5 @@
 package com.website.web.service.item.carousel;
 
-import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.ItemHomeCarousel;
 import com.website.repository.item.ItemAttachmentRepository;
@@ -9,10 +8,14 @@ import com.website.repository.item.carousel.ItemHomeCarouselRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.carousel.CarouselAddRequest;
+import com.website.web.dto.request.item.carousel.CarouselSearchCond;
 import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
+import com.website.web.dto.response.item.CarouselItemResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,5 +107,28 @@ public class ItemHomeCarouselService {
         Integer priority = carouselAddRequest.getPriority();
         ItemHomeCarousel itemHomeCarousel = new ItemHomeCarousel(itemId, attachmentId, priority);
         return itemHomeCarousel;
+    }
+
+    public ResponseEntity getCarousels(CarouselSearchCond carouselSearchCond, BindingResult bindingResult, Pageable pageable) {
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody body = ApiResponseBody.builder()
+                    .apiError(new ApiError(bindingResult))
+                    .data(null)
+                    .message("binding error")
+                    .build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        //서비스 에러
+
+        //정상 흐름
+
+        Page<CarouselItemResponse> carouselResponseList = itemHomeCarouselRepository.getCarouselResponseListByCond(carouselSearchCond, pageable);
+        ApiResponseBody<Object> body = ApiResponseBody.builder()
+                .data(carouselResponseList)
+                .apiError(null)
+                .message("ok").build();
+
+        return ResponseEntity.ok(body);
     }
 }
