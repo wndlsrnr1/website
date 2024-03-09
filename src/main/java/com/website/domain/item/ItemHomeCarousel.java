@@ -1,12 +1,13 @@
 package com.website.domain.item;
 
+import com.website.domain.common.AbstractBaseEntity;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class ItemHomeCarousel {
+public class ItemHomeCarousel extends AbstractBaseEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -31,6 +32,7 @@ public class ItemHomeCarousel {
     }
 
     public ItemHomeCarousel() {
+
     }
 
 }

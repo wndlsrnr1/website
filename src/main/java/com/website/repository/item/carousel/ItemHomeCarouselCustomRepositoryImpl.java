@@ -38,15 +38,16 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
     @Override
     public void updateCarousel(CarouselUpdateRequest carouselUpdateRequests) {
         query.update(itemHomeCarousel)
-                .set(itemHomeCarousel.id, carouselUpdateRequests.getId())
-                .set(itemHomeCarousel.itemId, carouselUpdateRequests.getItemId())
                 .set(itemHomeCarousel.attachmentId, carouselUpdateRequests.getAttachmentId())
                 .set(itemHomeCarousel.priority, carouselUpdateRequests.getPriority())
+                .set(itemHomeCarousel.itemId, carouselUpdateRequests.getItemId())
+                .where(itemHomeCarousel.id.eq(carouselUpdateRequests.getId()))
                 .execute();
     }
 
     @Override
     public void updateCarousels(List<CarouselUpdateRequest> carouselUpdateRequestList) {
+
         for (CarouselUpdateRequest carouselUpdateRequest : carouselUpdateRequestList) {
             updateCarousel(carouselUpdateRequest);
         }
