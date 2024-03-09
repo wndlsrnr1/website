@@ -13,5 +13,4 @@ public class CarouselUpdateRequest {
     private Long itemId;
     private Long attachmentId;
     private Integer priority;
-
 }
