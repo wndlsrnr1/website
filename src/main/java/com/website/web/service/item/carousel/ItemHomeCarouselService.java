@@ -11,7 +11,6 @@ import com.website.repository.item.carousel.ItemHomeCarouselRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.carousel.CarouselAddRequest;
-import com.website.web.dto.request.item.carousel.CarouselPriorityUpdateRequest;
 import com.website.web.dto.request.item.carousel.CarouselSearchCond;
 import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
 import com.website.web.dto.response.item.CarouselItemResponse;
@@ -86,8 +85,19 @@ public class ItemHomeCarouselService {
     }
 
     @Transactional
-    public void deleteCarousel(Long carouselId) {
+    public ResponseEntity deleteCarouselById(Long carouselId) {
+        if (carouselId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ItemHomeCarousel itemHomeCarousel = itemHomeCarouselRepository.findById(carouselId).orElse(null);
+        if (itemHomeCarousel == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+
         itemHomeCarouselRepository.deleteById(carouselId);
+        return ResponseEntity.ok().build();
     }
 
     @Transactional
@@ -170,5 +180,27 @@ public class ItemHomeCarouselService {
 
         ApiResponseBody<Object> body = ApiResponseBody.builder().data(carouselResponseListById).build();
         return ResponseEntity.ok(body);
+    }
+
+    @Transactional
+    public ResponseEntity updateHomeCarouselImage(Long carouselId, Long attachmentId) {
+        //파리미터 문제
+        if (carouselId == null || attachmentId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        //DB에서 없을 경우
+        ItemHomeCarousel itemHomeCarousel = itemHomeCarouselRepository.findById(carouselId).orElse(null);
+        if (itemHomeCarousel == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Attachment attachment = attachmentRepository.findById(attachmentId).orElse(null);
+        if (attachment == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        itemHomeCarouselRepository.updateCarouselAttachment(carouselId, attachmentId);
+        return ResponseEntity.ok().build();
     }
 }

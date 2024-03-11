@@ -19,4 +19,6 @@ public interface ItemHomeCarouselCustomRepository {
     Page<CarouselItemResponse> getCarouselResponseListByCond(CarouselSearchCond carouselSearchCond, Pageable pageable);
 
     CarouselItemResponse getCarouselResponseListById(Long carouselId);
+
+    void updateCarouselAttachment(Long carouselId, Long attachmentId);
 }
