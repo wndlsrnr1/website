@@ -115,6 +115,20 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
                 .execute();
     }
 
+    @Override
+    public List<CarouselItemResponse> getCarouselResponseList() {
+
+        return query.select(
+                        new QCarouselItemResponse(
+                                itemHomeCarousel.id, itemHomeCarousel.itemId, item.name, item.nameKor, attachment.id, attachment.saveName, attachment.requestName, itemHomeCarousel.priority, itemHomeCarousel.createdAt, itemHomeCarousel.updatedAt
+                        )
+                ).from(itemHomeCarousel)
+                .leftJoin(item).on(item.id.eq(itemHomeCarousel.itemId))
+                .leftJoin(attachment).on(attachment.id.eq(itemHomeCarousel.attachmentId))
+                .orderBy(itemHomeCarousel.priority.asc())
+                .fetch();
+    }
+
     private BooleanExpression priceGoe(Integer priceMinCond) {
         return priceMinCond != null ? item.price.goe(priceMinCond) : null;
     }

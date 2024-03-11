@@ -32,7 +32,7 @@ public class HomeCarouselManagementController {
 
     @GetMapping("/home/carousels")
     public ResponseEntity requestHomeCarouselList(@Validated CarouselSearchCond carouselSearchCond, BindingResult bindingResult, Pageable pageable) {
-        return itemHomeCarouselService.getCarousels(carouselSearchCond, bindingResult, pageable);
+        return itemHomeCarouselService.getCarouselsByCond(carouselSearchCond, bindingResult, pageable);
     }
 
     @GetMapping("/home/carousels/{carouselId}")
