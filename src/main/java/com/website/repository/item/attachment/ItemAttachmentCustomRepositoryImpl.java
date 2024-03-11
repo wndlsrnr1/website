@@ -1,9 +1,8 @@
-package com.website.repository.item;
+package com.website.repository.item.attachment;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.QItemAttachment;
-import com.website.repository.item.ItemAttachmentCustomRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

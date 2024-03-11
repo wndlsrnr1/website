@@ -6,7 +6,7 @@ import com.website.domain.item.Item;
 import com.website.domain.item.ItemSubcategory;
 import com.website.repository.category.CategoryRepository;
 import com.website.repository.item.ItemRepository;
-import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
+import com.website.repository.item.subcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,14 +1,11 @@
 package com.website.web.service.attachment;
 
-import com.querydsl.core.QueryFactory;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.attachment.Attachment;
 import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
-import com.website.domain.item.QItemAttachment;
 import com.website.repository.attachment.AttachmentRepository;
-import com.website.repository.item.ItemAttachmentRepository;
+import com.website.repository.item.attachment.ItemAttachmentRepository;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.AttachmentByItemIdResponse;
@@ -20,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Id;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

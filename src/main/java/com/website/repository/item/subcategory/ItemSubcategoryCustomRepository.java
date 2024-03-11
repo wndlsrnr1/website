@@ -1,4 +1,4 @@
-package com.website.repository.item;
+package com.website.repository.item.subcategory;
 
 public interface ItemSubcategoryCustomRepository {
     void deleteByItemId(Long itemId);

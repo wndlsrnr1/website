@@ -1,7 +1,6 @@
-package com.website.repository.item;
+package com.website.repository.item.subcategory;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.QItemSubcategory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

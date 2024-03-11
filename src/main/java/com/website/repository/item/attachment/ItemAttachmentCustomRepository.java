@@ -1,4 +1,4 @@
-package com.website.repository.item;
+package com.website.repository.item.attachment;
 
 import com.website.domain.item.ItemAttachment;
 

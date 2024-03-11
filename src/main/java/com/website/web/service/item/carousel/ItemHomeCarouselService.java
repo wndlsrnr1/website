@@ -5,7 +5,7 @@ import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.ItemHomeCarousel;
 import com.website.repository.attachment.AttachmentRepository;
-import com.website.repository.item.ItemAttachmentRepository;
+import com.website.repository.item.attachment.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.item.carousel.ItemHomeCarouselRepository;
 import com.website.web.dto.common.ApiError;
