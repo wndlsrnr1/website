@@ -113,7 +113,13 @@ public class ItemHomeCarouselService {
         return itemHomeCarousel;
     }
 
-    public ResponseEntity getCarousels(CarouselSearchCond carouselSearchCond, BindingResult bindingResult, Pageable pageable) {
+    public ResponseEntity getCarousels() {
+        List<CarouselItemResponse> carouselResponseList = itemHomeCarouselRepository.getCarouselResponseList();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(carouselResponseList).message("ok").build();
+        return ResponseEntity.ok(body);
+    }
+
+    public ResponseEntity getCarouselsByCond(CarouselSearchCond carouselSearchCond, BindingResult bindingResult, Pageable pageable) {
         if (bindingResult.hasErrors()) {
             ApiResponseBody body = ApiResponseBody.builder()
                     .apiError(new ApiError(bindingResult))

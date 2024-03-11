@@ -20,6 +20,7 @@ import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.attachment.FileService;
 import com.website.web.service.common.BindingResultUtils;
+import com.website.web.service.item.carousel.ItemHomeCarouselService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -31,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +50,7 @@ public class ItemService {
     private final ItemSubcategoryRepository itemSubcategoryRepository;
     private final SubcategoryRepository subcategoryRepository;
     private final BindingResultUtils bindingResultUtils;
+    private final ItemHomeCarouselService itemHomeCarouselService;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -270,6 +271,7 @@ public class ItemService {
     }
 
     public ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome() {
+        itemHomeCarouselService.getCarouselsByCond(null, null, null);
         return itemRepository.getCarouselItemsInHome();
     }
 }

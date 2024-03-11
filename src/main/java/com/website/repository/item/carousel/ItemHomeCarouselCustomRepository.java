@@ -21,4 +21,7 @@ public interface ItemHomeCarouselCustomRepository {
     CarouselItemResponse getCarouselResponseListById(Long carouselId);
 
     void updateCarouselAttachment(Long carouselId, Long attachmentId);
+
+    List<CarouselItemResponse> getCarouselResponseList();
+
 }
