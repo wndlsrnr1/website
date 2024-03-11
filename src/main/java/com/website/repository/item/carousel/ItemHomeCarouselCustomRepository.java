@@ -17,4 +17,6 @@ public interface ItemHomeCarouselCustomRepository {
     void addCarousel(Long itemId, Long imageId);
 
     Page<CarouselItemResponse> getCarouselResponseListByCond(CarouselSearchCond carouselSearchCond, Pageable pageable);
+
+    CarouselItemResponse getCarouselResponseListById(Long carouselId);
 }

@@ -57,4 +57,5 @@ public class ItemAdminController {
     public ResponseEntity editItemRequest(@PathVariable(name = "itemId", required = true) Long itemId, @Validated EditItemRequest editItemRequest, BindingResult bindingResult) {
         return itemService.editItemFormOnAdmin(itemId, editItemRequest, bindingResult);
     }
+
 }

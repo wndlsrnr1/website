@@ -23,4 +23,5 @@ public interface ItemCustomRepository {
     void updateItemByDto(Long itemId, EditItemRequest editItemRequest);
 
     ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome();
+
 }

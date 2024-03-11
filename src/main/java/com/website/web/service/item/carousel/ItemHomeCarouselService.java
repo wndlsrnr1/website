@@ -162,12 +162,13 @@ public class ItemHomeCarouselService {
             return ResponseEntity.badRequest().build();
         }
 
-        ItemHomeCarousel itemHomeCarousel = itemHomeCarouselRepository.findById(carouselId).orElse(null);
-        if (itemHomeCarousel == null) {
+        CarouselItemResponse carouselResponseListById = itemHomeCarouselRepository.getCarouselResponseListById(carouselId);
+
+        if (carouselResponseListById == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        ApiResponseBody<Object> body = ApiResponseBody.builder().data(itemHomeCarousel).build();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(carouselResponseListById).build();
         return ResponseEntity.ok(body);
     }
 }

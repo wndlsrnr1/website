@@ -1,11 +1,8 @@
 package com.website.repository.item;
 
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -19,7 +16,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.website.domain.attachment.QAttachment.attachment;
 import static com.website.domain.category.QSubcategory.subcategory;
@@ -152,6 +148,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     public ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome() {
         return null;
     }
+
 
 
     private BooleanExpression nameOrNameKorLike(String searchName) {
