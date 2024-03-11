@@ -27,8 +27,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -266,6 +267,22 @@ public class CategoryCRUDService {
         subcategoryRepository.delete(subcategory);
         ApiResponseBody body = ApiResponseBody.builder().apiError(null).data(null).message("deleted").build();
         return ResponseEntity.ok().body(body);
+    }
+
+    public ResponseEntity sendCategory(HttpServletRequest request, HttpServletResponse response) {
+        String subcategoryId = request.getParameter("subcategoryId");
+        if (subcategoryId == null) {
+            ResponseEntity.badRequest();
+        }
+
+        Long subcategoryIdLong = Long.parseLong(request.getParameter("subcategoryId"));
+        Category category = categoryRepository.findBySubCategoryId(subcategoryIdLong);
+        ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(null)
+                .message("ok")
+                .data(category).build();
+
+
+        return ResponseEntity.ok(body);
     }
 
     //do something..
