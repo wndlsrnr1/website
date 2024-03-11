@@ -20,6 +20,7 @@ public class ItemHomeCarousel extends AbstractBaseEntity {
 
     private Integer priority;
 
+
     public ItemHomeCarousel(Long itemId, Long attachmentId, Integer priority) {
         this.itemId = itemId;
         this.attachmentId = attachmentId;

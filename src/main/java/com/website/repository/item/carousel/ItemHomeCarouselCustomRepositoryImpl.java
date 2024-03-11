@@ -1,20 +1,15 @@
 package com.website.repository.item.carousel;
 
 import com.querydsl.core.QueryResults;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.category.QSubcategory;
 import com.website.domain.item.ItemHomeCarousel;
-import com.website.domain.item.QItemHomeCarousel;
-import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.carousel.CarouselSearchCond;
 import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
 import com.website.web.dto.response.item.CarouselItemResponse;
 import com.website.web.dto.response.item.QCarouselItemResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.net.jsse.PEMFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -78,7 +73,7 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
 
         QueryResults<CarouselItemResponse> results = query.select(
                         new QCarouselItemResponse(
-                                itemHomeCarousel.id, itemHomeCarousel.itemId, item.name, item.nameKor, attachment.id, attachment.saveName, attachment.requestName, itemHomeCarousel.priority
+                                itemHomeCarousel.id, itemHomeCarousel.itemId, item.name, item.nameKor, attachment.id, attachment.saveName, attachment.requestName, itemHomeCarousel.priority, itemHomeCarousel.createdAt, itemHomeCarousel.updatedAt
                         )
                 ).from(itemHomeCarousel)
                 .leftJoin(item).on(item.id.eq(itemHomeCarousel.itemId))
@@ -98,6 +93,18 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public CarouselItemResponse getCarouselResponseListById(Long carouselId) {
+        return query.select(
+                        new QCarouselItemResponse(
+                                itemHomeCarousel.id, itemHomeCarousel.itemId, item.name, item.nameKor, attachment.id, attachment.saveName, attachment.requestName, itemHomeCarousel.priority, itemHomeCarousel.createdAt, itemHomeCarousel.updatedAt
+                        )
+                ).from(itemHomeCarousel)
+                .leftJoin(item).on(item.id.eq(itemHomeCarousel.itemId))
+                .leftJoin(attachment).on(attachment.id.eq(itemHomeCarousel.attachmentId))
+                .where(itemHomeCarousel.id.eq(carouselId)).fetchOne();
     }
 
     private BooleanExpression priceGoe(Integer priceMinCond) {
