@@ -107,6 +107,14 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
                 .where(itemHomeCarousel.id.eq(carouselId)).fetchOne();
     }
 
+    @Override
+    public void updateCarouselAttachment(Long carouselId, Long attachmentId) {
+        query.update(itemHomeCarousel)
+                .set(itemHomeCarousel.attachmentId, attachmentId)
+                .where(itemHomeCarousel.id.eq(carouselId))
+                .execute();
+    }
+
     private BooleanExpression priceGoe(Integer priceMinCond) {
         return priceMinCond != null ? item.price.goe(priceMinCond) : null;
     }
