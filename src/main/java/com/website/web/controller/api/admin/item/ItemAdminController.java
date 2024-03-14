@@ -23,10 +23,16 @@ public class ItemAdminController {
 
     private final ItemService itemService;
 
+    //@GetMapping
+    //public ResponseEntity sendItemDtoBySearchCond(@Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
+    //    log.info("itemSearchCond = {}", itemSearchCond);
+    //    return itemService.sendItemResponseByCond(itemSearchCond, bindingResult, pageable);
+    //}
+
     @GetMapping
-    public ResponseEntity sendItemDtoBySearchCond(@Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
+    public ResponseEntity sendItemDtoBySearchCond(@Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, @RequestParam(required = false) Long lastItemId, @RequestParam(required = false) Integer lastPageNumber, @RequestParam(required = false) Integer pageChunk) {
         log.info("itemSearchCond = {}", itemSearchCond);
-        return itemService.sendItemResponseByCond(itemSearchCond, bindingResult, pageable);
+        return itemService.sendItemResponseByCondByLastItemId(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk);
     }
 
     @GetMapping("/{itemId}")
