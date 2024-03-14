@@ -3,9 +3,11 @@ package com.website.repository.item;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.item.QItemThumbnail;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +24,10 @@ import static com.website.domain.category.QSubcategory.subcategory;
 import static com.website.domain.item.QItem.*;
 import static com.website.domain.item.QItemAttachment.*;
 import static com.website.domain.item.QItemSubcategory.*;
+import static com.website.domain.item.QItemThumbnail.itemThumbnail;
 
 @Repository
+@Slf4j
 public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     private final EntityManager entityManager;
@@ -45,6 +49,8 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     @Override
     public Page<ItemResponse> getItemResponseByCond(ItemSearchCond itemSearchCond, Pageable pageable) {
+        log.info("itemSearchCond = {}", itemSearchCond);
+
         QueryResults<ItemResponse> results = query.select(
                         new QItemResponse(
                                 item.id,
@@ -61,8 +67,8 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                         )
                 )
                 .from(item)
-                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
-                .leftJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .join(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .join(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
                 .where(
                         nameOrNameKorLike(itemSearchCond.getSearchName()),
                         priceGoe(itemSearchCond.getPriceMin()),
@@ -71,7 +77,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                         quantityLoe(itemSearchCond.getQuantityMax()),
                         categoryEq(itemSearchCond.getCategoryId())
                 )
-                .orderBy(item.nameKor.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -82,6 +87,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
         return new PageImpl<>(content, pageable, total);
     }
+
 
     @Override
     public List<ItemDetailResponse> findItemDetailResponse(Long itemId) {
@@ -100,7 +106,8 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                                 subcategory,
                                 attachment.id,
                                 attachment.saveName,
-                                attachment.requestName
+                                attachment.requestName,
+                                itemThumbnail.attachment.id
                         )
                 )
                 .from(item)
@@ -108,6 +115,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .leftJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
                 .leftJoin(itemAttachment).on(item.id.eq(itemAttachment.item.id))
                 .leftJoin(attachment).on(itemAttachment.attachment.id.eq(attachment.id))
+                .leftJoin(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
                 .where(
                         item.id.eq(itemId)
                 )

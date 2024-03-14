@@ -22,9 +22,10 @@ public class ItemDetailResponse {
     private String savedFileName;
     private String requestName;
     private Long fileId;
+    private Long attachmentIdOfThumbnail;
 
     @QueryProjection
-    public ItemDetailResponse(Long id, String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releasedAt, LocalDateTime updatedAt, LocalDateTime createdAt, Subcategory subcategory, Long fileId, String savedFileName, String requestName) {
+    public ItemDetailResponse(Long id, String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releasedAt, LocalDateTime updatedAt, LocalDateTime createdAt, Subcategory subcategory, Long fileId, String savedFileName, String requestName, Long attachmentIdOfThumbnail) {
         this.id = id;
         this.name = name;
         this.nameKor = nameKor;
@@ -39,5 +40,6 @@ public class ItemDetailResponse {
         this.fileId = fileId;
         this.savedFileName = savedFileName;
         this.requestName = requestName;
+        this.attachmentIdOfThumbnail = attachmentIdOfThumbnail;
     }
 }

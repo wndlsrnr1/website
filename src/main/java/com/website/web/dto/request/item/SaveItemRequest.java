@@ -27,5 +27,6 @@ public class SaveItemRequest {
     private List<String> images;
     private String status;
     private String description;
+    private MultipartFile thumbnailFile;
 
 }

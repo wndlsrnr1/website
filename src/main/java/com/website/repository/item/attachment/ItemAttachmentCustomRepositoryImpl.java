@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
+import java.util.List;
+
 import static com.website.domain.item.QItemAttachment.*;
 
 @Repository
@@ -30,5 +32,10 @@ public class ItemAttachmentCustomRepositoryImpl implements ItemAttachmentCustomR
         return query.selectFrom(QItemAttachment.itemAttachment)
                 .where(QItemAttachment.itemAttachment.item.id.eq(itemId), QItemAttachment.itemAttachment.attachment.id.eq(attachmentId))
                 .fetchFirst();
+    }
+
+    @Override
+    public List<ItemAttachment> findByItemId(Long itemId) {
+        return query.selectFrom(itemAttachment).where(itemAttachment.item.id.eq(itemId)).fetch();
     }
 }

@@ -5,10 +5,12 @@ import com.website.domain.category.Subcategory;
 import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.ItemSubcategory;
+import com.website.domain.item.ItemThumbnail;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.attachment.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.item.subcategory.ItemSubcategoryRepository;
+import com.website.repository.item.thumbnail.ItemThumbnailRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
@@ -51,6 +53,7 @@ public class ItemService {
     private final SubcategoryRepository subcategoryRepository;
     private final BindingResultUtils bindingResultUtils;
     private final ItemHomeCarouselService itemHomeCarouselService;
+    private final ItemThumbnailRepository itemThumbnailRepository;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -162,28 +165,45 @@ public class ItemService {
         List<MultipartFile> imageFiles = saveItemRequest.getImageFiles();
         List<Attachment> attachmentList = new ArrayList<>();
 
+        MultipartFile thumbnailFile = saveItemRequest.getThumbnailFile();
+
 
         //파일 저장
-        for (int i = 0; i < imageFiles.size(); i++) {
-            MultipartFile file = imageFiles.get(i);
-            String requestedName = images.get(i);
+        //1. 그냥 이미지 파일 저장
+        if (imageFiles != null) {
+            for (int i = 0; i < imageFiles.size(); i++) {
+                MultipartFile file = imageFiles.get(i);
+                String requestedName = images.get(i);
 
-            //파일 정보 추출
-            Attachment attachment = fileService.saveFile(requestedName, file);
-            attachmentList.add(attachment);
+                //파일 정보 추출
+                Attachment attachment = fileService.saveFile(requestedName, file);
+                attachmentList.add(attachment);
+            }
         }
+
+
+        //2. 썸네일 저장
+
+        if (saveItemRequest.getThumbnailFile() != null) {
+            String requestedNameOfThumbnail = thumbnailFile.getOriginalFilename();
+            Attachment attachmentOfThumbnail = fileService.saveFile(requestedNameOfThumbnail, thumbnailFile);
+            //파일 정보 저장
+            attachmentRepository.saveAll(attachmentList);
+            attachmentRepository.save(attachmentOfThumbnail);
+
+            for (Attachment attachment : attachmentList) {
+                itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+            }
+            itemAttachmentRepository.save(new ItemAttachment(item, attachmentOfThumbnail));
+
+            itemThumbnailRepository.save(new ItemThumbnail(item, attachmentOfThumbnail));
+        }
+
 
         //조인 테이블에 저장
         Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
         log.info("subcategory = {}", subcategory);
         itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
-
-        //파일 정보 저장
-        attachmentRepository.saveAll(attachmentList);
-
-        for (Attachment attachment : attachmentList) {
-            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
-        }
 
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
@@ -205,12 +225,25 @@ public class ItemService {
             return ResponseEntity.badRequest().build();
         }
         log.info("itemId = {}", itemId);
+
+
+        //item에 붙어 있는 파일 삭제
+        List<ItemAttachment> itemAttachmentList = itemAttachmentRepository.findByItemId(itemId);
+        log.info("itemAttachmentList = {}", itemAttachmentList);
+        List<Long> attachmentIdList = new ArrayList<Long>();
+        for (ItemAttachment itemAttachment : itemAttachmentList) {
+            Long attachmentId = itemAttachment.getAttachment().getId();
+            attachmentIdList.add(attachmentId);
+            log.info("attachmentId = {}", attachmentId);
+        }
+        log.info("attachmentIdList = {}", attachmentIdList);
+        fileService.deleteFilesAndDbData(attachmentIdList);
+
+        //조인 테이블 삭제
         itemSubcategoryRepository.deleteByItemId(itemId);
         itemAttachmentRepository.deleteByItemId(itemId);
+        itemThumbnailRepository.deleteByItemId(itemId);
         itemRepository.deleteById(itemId);
-
-        //item 삭제
-        //조인 테이블 삭제
         return ResponseEntity.ok().build();
     }
 
@@ -228,6 +261,7 @@ public class ItemService {
 
     @Transactional
     public ResponseEntity editItemFormOnAdmin(Long itemId, EditItemRequest editItemRequest, BindingResult bindingResult) {
+        log.info("editItemRequest = {}", editItemRequest);
         if (itemId == null) {
             ApiResponseBody<Object> body = ApiResponseBody.builder()
                     .apiError(new ApiError("itemId", messageSource.getMessage("Nodata", null, null)))
@@ -262,9 +296,31 @@ public class ItemService {
             fileService.uploadFile(images, imageFiles, item);
         }
 
+
         //사진 지우기, 연관관계 지우기, 실제 파일 지우기
         List<Long> imagesForDelete = editItemRequest.getImagesForDelete();
         fileService.deleteFilesAndDbData(imagesForDelete);
+
+        //연관관계 업데이트
+        Long thumbnailId = editItemRequest.getThumbnailId();
+        ItemAttachment itemAttachmentForThumbnail = itemAttachmentRepository.findByItemIdAndAttachmentId(itemId, thumbnailId);
+        Attachment attachmentForThumbnail = itemAttachmentForThumbnail.getAttachment();
+
+        if (itemAttachmentForThumbnail == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        for (Long imageIdForDelete : imagesForDelete) {
+            if (imageIdForDelete.equals(thumbnailId)) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
+        ItemThumbnail itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        if (itemThumbnail == null) {
+            itemThumbnailRepository.save(new ItemThumbnail(item, attachmentForThumbnail));
+        }
+        itemThumbnailRepository.updateByItemIdAndAttachmentId(itemId, thumbnailId);
 
         //정상 흐름
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
