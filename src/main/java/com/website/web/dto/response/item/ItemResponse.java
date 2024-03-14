@@ -36,4 +36,11 @@ public class ItemResponse {
         this.subcategory = subcategory;
     }
 
+    @QueryProjection
+    public ItemResponse(Long id, String name, String nameKor, Subcategory subcategory) {
+        this.id = id;
+        this.name = name;
+        this.nameKor = nameKor;
+        this.subcategory = subcategory;
+    }
 }

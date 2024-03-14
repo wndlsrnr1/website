@@ -1,11 +1,13 @@
 package com.website.repository.item;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,9 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.website.domain.attachment.QAttachment.attachment;
 import static com.website.domain.category.QSubcategory.subcategory;
@@ -24,6 +28,7 @@ import static com.website.domain.item.QItemAttachment.*;
 import static com.website.domain.item.QItemSubcategory.*;
 
 @Repository
+@Slf4j
 public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     private final EntityManager entityManager;
@@ -41,6 +46,110 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         query.update(item)
                 .set(item.name, updateName)
                 .where(item.id.eq(id));
+    }
+
+    @Override
+    public Page<ItemResponse> getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk) {
+        if (pageChunk == null) {
+            pageChunk = 5;
+        }
+
+        List<ItemResponse> content = query.select(
+                        new QItemResponse(
+                                item.id,
+                                item.name,
+                                item.nameKor,
+                                itemSubcategory.subcategory
+                        )
+                )
+                .from(item)
+                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .where(
+                        nameOrNameKorLike(itemSearchCond.getSearchName()),
+                        priceGoe(itemSearchCond.getPriceMin()),
+                        priceLoe(itemSearchCond.getPriceMax()),
+                        quantityGoe(itemSearchCond.getQuantityMin()),
+                        quantityLoe(itemSearchCond.getQuantityMax()),
+                        categoryEq(itemSearchCond.getCategoryId()),
+                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber())
+                )
+                .orderBy(getOrder(lastPageNumber, pageable.getPageNumber()))
+                .offset(getOffSet(pageable, lastPageNumber))
+                .limit(pageable.getPageSize())
+                .fetch()
+                .stream().sorted(Comparator.comparingLong(ItemResponse::getId)).collect(Collectors.toList());
+
+
+        Long total = getTotal(itemSearchCond, pageable.getPageNumber(), pageChunk, content, pageable);
+
+        if (total == null) {
+            total = 0L;
+        }
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    private Long getTotal(ItemSearchCond itemSearchCond, int pageNumber, Integer pageChunk, List<ItemResponse> content, Pageable pageable) {
+        if (content.size() < pageable.getPageSize()) {
+            return pageNumber * (long) pageChunk + content.size();
+        }
+        ItemResponse lastItem = content.get(content.size() - 1);
+        Long lastId = lastItem.getId();
+        long forNow = ((long) pageNumber + 1) * pageable.getPageSize();
+        Integer limit = (pageChunk - pageNumber - 1) * pageable.getPageSize() + 1;
+        log.info("lastId = {}, forNow={}, limit = {}", lastId, forNow, limit);
+
+        Integer additional = query.select(item)
+                .from(
+                        item
+                )
+                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .leftJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .where(
+                        nameOrNameKorLike(itemSearchCond.getSearchName()),
+                        priceGoe(itemSearchCond.getPriceMin()),
+                        priceLoe(itemSearchCond.getPriceMax()),
+                        quantityGoe(itemSearchCond.getQuantityMin()),
+                        quantityLoe(itemSearchCond.getQuantityMax()),
+                        categoryEq(itemSearchCond.getCategoryId()),
+                        item.id.gt(lastId)
+                )
+                .limit(limit)
+                .fetch().size();
+        log.info("forNow + additional = {}", forNow + additional);
+        return forNow + additional;
+    }
+
+
+    private BooleanExpression itemIdGtOrLt(Long lastItemId, Integer lastPageNumber, Integer pageNumber) {
+        if (lastItemId == null || lastPageNumber == null) {
+            return null;
+        }
+        if (lastPageNumber <= pageNumber) {
+            return item.id.loe(lastItemId);
+        }
+        return item.id.gt(lastItemId);
+    }
+
+    private OrderSpecifier<Long> getOrder(Integer lastPageNumber, Integer pageNumber) {
+        if (lastPageNumber == null || pageNumber == null) {
+            return item.id.asc();
+        }
+
+        if (lastPageNumber >= pageNumber) {
+            return item.id.desc();
+        }
+        return item.id.asc();
+    }
+
+    private Long getOffSet(Pageable pageable, Integer lastPageNumber) {
+        if (lastPageNumber == null) {
+            return 0L;
+        }
+
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+        return (long) Math.abs(pageNumber - lastPageNumber) * pageSize;
     }
 
     @Override
@@ -150,7 +259,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
 
-
     private BooleanExpression nameOrNameKorLike(String searchName) {
         return searchName != null && StringUtils.hasText(searchName) ? item.name.contains(searchName).or(item.nameKor.contains(searchName)) : null;
     }
@@ -176,6 +284,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     private BooleanExpression categoryEq(Long categoryIdCond) {
-        return (categoryIdCond != null && categoryIdCond != -1) ? subcategory.category.id.eq(categoryIdCond) : null;
+        return (categoryIdCond != null && categoryIdCond != -1) ? itemSubcategory.subcategory.category.id.eq(categoryIdCond) : null;
     }
 }

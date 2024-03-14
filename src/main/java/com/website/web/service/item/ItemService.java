@@ -274,4 +274,45 @@ public class ItemService {
         itemHomeCarouselService.getCarouselsByCond(null, null, null);
         return itemRepository.getCarouselItemsInHome();
     }
+
+    public ResponseEntity sendItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk) {
+        //바이딩 에러
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError(bindingResult)).data(null).message("binding error").build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+
+        //서비스 에러
+        if (itemSearchCond.getPriceMin() != null && itemSearchCond.getPriceMax() != null) {
+
+            if (itemSearchCond.getPriceMin() > itemSearchCond.getPriceMax()) {
+                String message = messageSource.getMessage("InvalidRange", null, null);
+                ApiResponseBody<Object> body = ApiResponseBody.builder()
+                        .apiError(new ApiError("priceMin", message))
+                        .data(null)
+                        .message("has error").build();
+                return ResponseEntity.badRequest().body(body);
+            }
+        }
+
+        if (itemSearchCond.getQuantityMin() != null && itemSearchCond.getQuantityMax() != null) {
+            if (itemSearchCond.getQuantityMin() > itemSearchCond.getQuantityMax()) {
+                String message = messageSource.getMessage("InvalidRange", null, null);
+                ApiResponseBody<Object> body = ApiResponseBody.builder()
+                        .apiError(new ApiError("quantityMin", message))
+                        .data(null)
+                        .message("has error").build();
+                return ResponseEntity.badRequest().body(body);
+            }
+        }
+
+        //정상 흐름
+        Page<ItemResponse> itemResponseList = itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
+        ApiResponseBody<Object> body = ApiResponseBody.builder()
+                .data(itemResponseList)
+                .apiError(null)
+                .message("ok").build();
+        return ResponseEntity.ok(body);
+    }
 }

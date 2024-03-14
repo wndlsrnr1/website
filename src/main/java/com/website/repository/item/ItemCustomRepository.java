@@ -14,6 +14,8 @@ import java.util.List;
 public interface ItemCustomRepository {
     void updateNameById(String updateName, Long id);
 
+    Page<ItemResponse> getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPage, Integer pageChunk);
+
     Page<ItemResponse> getItemResponseByCond(ItemSearchCond itemSearchCond, Pageable pageable);
 
     List<ItemDetailResponse> findItemDetailResponse(Long itemId);
