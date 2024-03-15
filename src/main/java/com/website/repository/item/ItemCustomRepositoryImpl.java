@@ -228,6 +228,10 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return null;
     }
 
+    @Override
+    public void getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk) {
+
+    }
 
     private BooleanExpression nameOrNameKorLike(String searchName) {
         return searchName != null && StringUtils.hasText(searchName) ? item.name.contains(searchName).or(item.nameKor.contains(searchName)) : null;

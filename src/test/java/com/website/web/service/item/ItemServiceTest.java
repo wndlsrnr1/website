@@ -44,7 +44,7 @@ class ItemServiceTest {
     ItemService itemService;
 
     @Autowired
-    ItemRepository itemRepository;
+    JPAQueryFactory query;
 
     @Autowired
     JPAQueryFactory query;
