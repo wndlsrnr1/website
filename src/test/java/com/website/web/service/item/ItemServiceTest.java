@@ -3,8 +3,11 @@ package com.website.web.service.item;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.category.Subcategory;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.utils.MethodTimeCheck;
+import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.response.item.QItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Commit;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.BindingResultUtils;
@@ -24,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.website.domain.category.QSubcategory.subcategory;
@@ -43,6 +48,9 @@ class ItemServiceTest {
 
     @Autowired
     JPAQueryFactory query;
+
+    @Autowired
+    SubcategoryRepository subcategoryRepository;
 
     @Test
     void pagingByCursorLike() {
@@ -125,7 +133,25 @@ class ItemServiceTest {
         Assertions.assertThat(timeDiff2).isLessThan(timeDiff);
     }
 
-
+    @Test
+    @Commit
+    void insertItem1000000() {
+        Subcategory subcategory = subcategoryRepository.findAll().get(0);
+        Long subcategoryId = subcategory.getId();
+        for (int i = 0; i < 1000000; i++) {
+            SaveItemRequest saveItemRequest = new SaveItemRequest();
+            saveItemRequest.setSubcategoryId(subcategoryId);
+            int randomNumber = new Random().nextInt(10000);
+            saveItemRequest.setNameKor("테스트" + randomNumber);
+            saveItemRequest.setName("test" + randomNumber);
+            saveItemRequest.setReleasedAt(LocalDateTime.now());
+            saveItemRequest.setPrice(new Random().nextInt(10000));
+            saveItemRequest.setQuantity(new Random().nextInt(10000));
+            saveItemRequest.setStatus("good");
+            saveItemRequest.setDescription("very good");
+            itemService.saveItemByItemFormRequest(saveItemRequest, BindingResultUtils.getBindingResult(Map.of("name", "name"), "name"));
+        }
+    }
 
     public static Long measureTime(Runnable task) {
         long before = System.currentTimeMillis();

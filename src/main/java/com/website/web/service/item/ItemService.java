@@ -162,28 +162,28 @@ public class ItemService {
         List<MultipartFile> imageFiles = saveItemRequest.getImageFiles();
         List<Attachment> attachmentList = new ArrayList<>();
 
+        if (imageFiles != null) {
+            for (int i = 0; i < imageFiles.size(); i++) {
+                MultipartFile file = imageFiles.get(i);
+                String requestedName = images.get(i);
 
-        //파일 저장
-        for (int i = 0; i < imageFiles.size(); i++) {
-            MultipartFile file = imageFiles.get(i);
-            String requestedName = images.get(i);
-
-            //파일 정보 추출
-            Attachment attachment = fileService.saveFile(requestedName, file);
-            attachmentList.add(attachment);
+                //파일 정보 추출
+                Attachment attachment = fileService.saveFile(requestedName, file);
+                attachmentList.add(attachment);
+            }
+            for (Attachment attachment : attachmentList) {
+                itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+            }
+            //파일 정보 저장
+            attachmentRepository.saveAll(attachmentList);
         }
+        //파일 저장
 
         //조인 테이블에 저장
         Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
         log.info("subcategory = {}", subcategory);
         itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
 
-        //파일 정보 저장
-        attachmentRepository.saveAll(attachmentList);
-
-        for (Attachment attachment : attachmentList) {
-            itemAttachmentRepository.save(new ItemAttachment(item, attachment));
-        }
 
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
