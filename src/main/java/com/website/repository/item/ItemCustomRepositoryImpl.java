@@ -63,16 +63,17 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                         )
                 )
                 .from(item)
-                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .innerJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .innerJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
                 .where(
                         nameOrNameKorLike(itemSearchCond.getSearchName()),
                         priceGoe(itemSearchCond.getPriceMin()),
                         priceLoe(itemSearchCond.getPriceMax()),
                         quantityGoe(itemSearchCond.getQuantityMin()),
                         quantityLoe(itemSearchCond.getQuantityMax()),
-                        categoryEq(itemSearchCond.getCategoryId()),
-                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber())
-                )
+                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber()),
+                        categoryEq(itemSearchCond.getCategoryId())
+                        )
                 .orderBy(getOrder(lastPageNumber, pageable.getPageNumber()))
                 .offset(getOffSet(pageable, lastPageNumber))
                 .limit(pageable.getPageSize())
@@ -103,8 +104,8 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .from(
                         item
                 )
-                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
-                .leftJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .innerJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .innerJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
                 .where(
                         nameOrNameKorLike(itemSearchCond.getSearchName()),
                         priceGoe(itemSearchCond.getPriceMin()),
@@ -120,37 +121,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return forNow + additional;
     }
 
-
-    private BooleanExpression itemIdGtOrLt(Long lastItemId, Integer lastPageNumber, Integer pageNumber) {
-        if (lastItemId == null || lastPageNumber == null) {
-            return null;
-        }
-        if (lastPageNumber <= pageNumber) {
-            return item.id.loe(lastItemId);
-        }
-        return item.id.gt(lastItemId);
-    }
-
-    private OrderSpecifier<Long> getOrder(Integer lastPageNumber, Integer pageNumber) {
-        if (lastPageNumber == null || pageNumber == null) {
-            return item.id.asc();
-        }
-
-        if (lastPageNumber >= pageNumber) {
-            return item.id.desc();
-        }
-        return item.id.asc();
-    }
-
-    private Long getOffSet(Pageable pageable, Integer lastPageNumber) {
-        if (lastPageNumber == null) {
-            return 0L;
-        }
-
-        int pageSize = pageable.getPageSize();
-        int pageNumber = pageable.getPageNumber();
-        return (long) Math.abs(pageNumber - lastPageNumber) * pageSize;
-    }
 
     @Override
     public Page<ItemResponse> getItemResponseByCond(ItemSearchCond itemSearchCond, Pageable pageable) {
@@ -284,6 +254,37 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     private BooleanExpression categoryEq(Long categoryIdCond) {
-        return (categoryIdCond != null && categoryIdCond != -1) ? itemSubcategory.subcategory.category.id.eq(categoryIdCond) : null;
+        return (categoryIdCond != null && categoryIdCond != -1) ? subcategory.category.id.eq(categoryIdCond) : null;
+    }
+
+    private BooleanExpression itemIdGtOrLt(Long lastItemId, Integer lastPageNumber, Integer pageNumber) {
+        if (lastItemId == null || lastPageNumber == null) {
+            return null;
+        }
+        if (lastPageNumber <= pageNumber) {
+            return item.id.loe(lastItemId);
+        }
+        return item.id.gt(lastItemId);
+    }
+
+    private OrderSpecifier<Long> getOrder(Integer lastPageNumber, Integer pageNumber) {
+        if (lastPageNumber == null || pageNumber == null) {
+            return item.id.asc();
+        }
+
+        if (lastPageNumber >= pageNumber) {
+            return item.id.desc();
+        }
+        return item.id.asc();
+    }
+
+    private Long getOffSet(Pageable pageable, Integer lastPageNumber) {
+        if (lastPageNumber == null) {
+            return 0L;
+        }
+
+        int pageSize = pageable.getPageSize();
+        int pageNumber = pageable.getPageNumber();
+        return (long) Math.abs(pageNumber - lastPageNumber) * pageSize;
     }
 }
