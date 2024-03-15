@@ -26,4 +26,5 @@ public interface ItemCustomRepository {
 
     ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome();
 
+    void getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk);
 }
