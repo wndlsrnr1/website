@@ -73,7 +73,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                         quantityLoe(itemSearchCond.getQuantityMax()),
                         itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber()),
                         categoryEq(itemSearchCond.getCategoryId())
-                        )
+                )
                 .orderBy(getOrder(lastPageNumber, pageable.getPageNumber()))
                 .offset(getOffSet(pageable, lastPageNumber))
                 .limit(pageable.getPageSize())
@@ -140,8 +140,8 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                         )
                 )
                 .from(item)
-                .leftJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
-                .leftJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .innerJoin(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .innerJoin(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
                 .where(
                         nameOrNameKorLike(itemSearchCond.getSearchName()),
                         priceGoe(itemSearchCond.getPriceMin()),
@@ -228,10 +228,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return null;
     }
 
-    @Override
-    public void getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk) {
 
-    }
 
     private BooleanExpression nameOrNameKorLike(String searchName) {
         return searchName != null && StringUtils.hasText(searchName) ? item.name.contains(searchName).or(item.nameKor.contains(searchName)) : null;
