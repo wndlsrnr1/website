@@ -47,10 +47,10 @@ class ItemServiceTest {
     JPAQueryFactory query;
 
     @Autowired
-    JPAQueryFactory query;
+    SubcategoryRepository subcategoryRepository;
 
     @Autowired
-    SubcategoryRepository subcategoryRepository;
+    ItemRepository itemRepository;
 
     @Test
     void pagingByCursorLike() {
@@ -92,7 +92,7 @@ class ItemServiceTest {
     @Test
     void timeCheck() {
         ItemSearchCond itemSearchCond = new ItemSearchCond();
-        itemSearchCond.setCategoryId(1L);
+        itemSearchCond.setCategoryId(2L);
         Long timeDiff = measureTime(() -> query.select(
                         new QItemResponse(
                                 item.id,
@@ -110,6 +110,7 @@ class ItemServiceTest {
                 .offset(200000)
                 .limit(100)
                 .fetch());
+
         Long timeDiff2 = measureTime(() -> query.select(
                         new QItemResponse(
                                 item.id,
@@ -133,25 +134,26 @@ class ItemServiceTest {
         Assertions.assertThat(timeDiff2).isLessThan(timeDiff);
     }
 
-    @Test
-    @Commit
-    void insertItem1000000() {
-        Subcategory subcategory = subcategoryRepository.findAll().get(0);
-        Long subcategoryId = subcategory.getId();
-        for (int i = 0; i < 1000000; i++) {
-            SaveItemRequest saveItemRequest = new SaveItemRequest();
-            saveItemRequest.setSubcategoryId(subcategoryId);
-            int randomNumber = new Random().nextInt(10000);
-            saveItemRequest.setNameKor("테스트" + randomNumber);
-            saveItemRequest.setName("test" + randomNumber);
-            saveItemRequest.setReleasedAt(LocalDateTime.now());
-            saveItemRequest.setPrice(new Random().nextInt(10000));
-            saveItemRequest.setQuantity(new Random().nextInt(10000));
-            saveItemRequest.setStatus("good");
-            saveItemRequest.setDescription("very good");
-            itemService.saveItemByItemFormRequest(saveItemRequest, BindingResultUtils.getBindingResult(Map.of("name", "name"), "name"));
-        }
-    }
+    //
+    //@Test
+    //@Commit
+    //void insertItem1000000() {
+    //    Subcategory subcategory = subcategoryRepository.findAll().get(0);
+    //    Long subcategoryId = subcategory.getId();
+    //    for (int i = 0; i < 1000000; i++) {
+    //        SaveItemRequest saveItemRequest = new SaveItemRequest();
+    //        saveItemRequest.setSubcategoryId(subcategoryId);
+    //        int randomNumber = new Random().nextInt(10000);
+    //        saveItemRequest.setNameKor("테스트" + randomNumber);
+    //        saveItemRequest.setName("test" + randomNumber);
+    //        saveItemRequest.setReleasedAt(LocalDateTime.now());
+    //        saveItemRequest.setPrice(new Random().nextInt(10000));
+    //        saveItemRequest.setQuantity(new Random().nextInt(10000));
+    //        saveItemRequest.setStatus("good");
+    //        saveItemRequest.setDescription("very good");
+    //        itemService.saveItemByItemFormRequest(saveItemRequest, BindingResultUtils.getBindingResult(Map.of("name", "name"), "name"));
+    //    }
+    //}
 
     public static Long measureTime(Runnable task) {
         long before = System.currentTimeMillis();
