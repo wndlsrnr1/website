@@ -8,6 +8,7 @@ import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
@@ -26,4 +27,5 @@ public interface ItemCustomRepository {
 
     ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome();
 
+    Page<ItemResponse> getItemResponseByCondWhenLastPage(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage);
 }

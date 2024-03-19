@@ -30,9 +30,15 @@ public class ItemAdminController {
     //}
 
     @GetMapping
-    public ResponseEntity sendItemDtoBySearchCond(@Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, @RequestParam(required = false) Long lastItemId, @RequestParam(required = false) Integer lastPageNumber, @RequestParam(required = false) Integer pageChunk) {
+    public ResponseEntity sendItemDtoBySearchCond(
+            @Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable,
+            @RequestParam(required = false) Long lastItemId,
+            @RequestParam(required = false) Integer lastPageNumber,
+            @RequestParam(required = false) Integer pageChunk,
+            @RequestParam(required = false, defaultValue = "false") Boolean isLastPage
+    ) {
         log.info("itemSearchCond = {}", itemSearchCond);
-        return itemService.sendItemResponseByCondByLastItemId(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk);
+        return itemService.sendItemResponseByCondByLastItemId(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
     }
 
     @GetMapping("/{itemId}")

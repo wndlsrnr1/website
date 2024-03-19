@@ -3,12 +3,8 @@ package com.website.web.service.item;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.category.Subcategory;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
-import com.website.utils.MethodTimeCheck;
-import com.website.web.dto.request.item.SaveItemRequest;
-import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.response.item.QItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import lombok.extern.slf4j.Slf4j;
@@ -18,23 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.Commit;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.BindingResultUtils;
-
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 import static com.website.domain.category.QSubcategory.subcategory;
 import static com.website.domain.item.QItem.item;
 import static com.website.domain.item.QItemSubcategory.itemSubcategory;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest
@@ -64,6 +48,7 @@ class ItemServiceTest {
         long endTime1 = System.currentTimeMillis();
 
         long startTime2 = System.currentTimeMillis();
+        boolean isLastPage = false;
         itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
         long endTime2 = System.currentTimeMillis();
 

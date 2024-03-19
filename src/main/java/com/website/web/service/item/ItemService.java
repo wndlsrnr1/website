@@ -275,7 +275,7 @@ public class ItemService {
         return itemRepository.getCarouselItemsInHome();
     }
 
-    public ResponseEntity sendItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk) {
+    public ResponseEntity sendItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage) {
         //바이딩 에러
         if (bindingResult.hasErrors()) {
             ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError(bindingResult)).data(null).message("binding error").build();
@@ -305,6 +305,15 @@ public class ItemService {
                         .message("has error").build();
                 return ResponseEntity.badRequest().body(body);
             }
+        }
+
+        if (isLastPage) {
+            Page<ItemResponse> itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .data(itemResponseList)
+                    .apiError(null)
+                    .message("ok").build();
+            return ResponseEntity.ok(body);
         }
 
         //정상 흐름
