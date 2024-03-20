@@ -307,21 +307,19 @@ public class ItemService {
             }
         }
 
+        Page<ItemResponse> itemResponseList = null;
         if (isLastPage) {
-            Page<ItemResponse> itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
-            ApiResponseBody<Object> body = ApiResponseBody.builder()
-                    .data(itemResponseList)
-                    .apiError(null)
-                    .message("ok").build();
-            return ResponseEntity.ok(body);
+             itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
+        } else {
+            itemResponseList = itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
         }
 
         //정상 흐름
-        Page<ItemResponse> itemResponseList = itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(itemResponseList)
                 .apiError(null)
                 .message("ok").build();
+
         return ResponseEntity.ok(body);
     }
 }
