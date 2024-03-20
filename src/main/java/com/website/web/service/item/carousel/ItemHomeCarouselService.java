@@ -40,6 +40,7 @@ public class ItemHomeCarouselService {
     private final MessageSource messageSource;
     private final ItemRepository itemRepository;
     private final AttachmentRepository attachmentRepository;
+
     @Transactional
     public ResponseEntity addCarousel(CarouselAddRequest carouselAddRequest, BindingResult bindingResult) {
         //binding Error
@@ -178,13 +179,13 @@ public class ItemHomeCarouselService {
             return ResponseEntity.badRequest().build();
         }
 
-        CarouselItemResponse carouselResponseListById = itemHomeCarouselRepository.getCarouselResponseListById(carouselId);
+        CarouselItemResponse carouselItemResponse = itemHomeCarouselRepository.getCarouselResponseById(carouselId);
 
-        if (carouselResponseListById == null) {
+        if (carouselItemResponse == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        ApiResponseBody<Object> body = ApiResponseBody.builder().data(carouselResponseListById).build();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(carouselItemResponse).build();
         return ResponseEntity.ok(body);
     }
 
@@ -208,5 +209,20 @@ public class ItemHomeCarouselService {
 
         itemHomeCarouselRepository.updateCarouselAttachment(carouselId, attachmentId);
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity getCarouselInfoByItemId(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ItemHomeCarousel carouselItemResponse = itemHomeCarouselRepository.getCarouselResponseByItemId(itemId);
+
+        if (carouselItemResponse == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(carouselItemResponse).build();
+        return ResponseEntity.ok(body);
     }
 }

@@ -96,7 +96,7 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
     }
 
     @Override
-    public CarouselItemResponse getCarouselResponseListById(Long carouselId) {
+    public CarouselItemResponse getCarouselResponseById(Long carouselId) {
         return query.select(
                         new QCarouselItemResponse(
                                 itemHomeCarousel.id, itemHomeCarousel.itemId, item.name, item.nameKor, attachment.id, attachment.saveName, attachment.requestName, itemHomeCarousel.priority, itemHomeCarousel.createdAt, itemHomeCarousel.updatedAt
@@ -129,6 +129,31 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
                 .fetch();
     }
 
+    @Override
+    public ItemHomeCarousel findByItemId(Long itemId) {
+        return query.select(itemHomeCarousel).from(itemHomeCarousel)
+                .where(itemHomeCarousel.itemId.eq(itemId))
+                .fetchOne();
+    }
+
+    @Override
+    public void updateCarousel(Long id, Long attachmentId) {
+        query.update(itemHomeCarousel)
+                .set(itemHomeCarousel.attachmentId, attachmentId)
+                .where(itemHomeCarousel.id.eq(id))
+                .execute();
+    }
+
+    @Override
+    public ItemHomeCarousel getCarouselResponseByItemId(Long itemIdParam) {
+        return query.select(
+                        itemHomeCarousel
+                )
+                .from(itemHomeCarousel)
+                .where(itemHomeCarousel.itemId.eq(itemIdParam)).fetchOne();
+    }
+
+
     private BooleanExpression priceGoe(Integer priceMinCond) {
         return priceMinCond != null ? item.price.goe(priceMinCond) : null;
     }
@@ -138,7 +163,7 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
     }
 
     private BooleanExpression quantityGoe(Integer quantityGoeCond) {
-        return quantityGoeCond != null ?  item.quantity.goe(quantityGoeCond) : null;
+        return quantityGoeCond != null ? item.quantity.goe(quantityGoeCond) : null;
     }
 
     private BooleanExpression quantityLoe(Integer quantityLoeCond) {

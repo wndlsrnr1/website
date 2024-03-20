@@ -5,6 +5,7 @@ import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.item.ItemService;
+import com.website.web.service.item.carousel.ItemHomeCarouselService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,7 @@ import java.util.List;
 public class ItemAdminController {
 
     private final ItemService itemService;
+    private final ItemHomeCarouselService itemHomeCarouselService;
 
     //@GetMapping
     //public ResponseEntity sendItemDtoBySearchCond(@Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -69,5 +71,12 @@ public class ItemAdminController {
     public ResponseEntity editItemRequest(@PathVariable(name = "itemId", required = true) Long itemId, @Validated EditItemRequest editItemRequest, BindingResult bindingResult) {
         return itemService.editItemFormOnAdmin(itemId, editItemRequest, bindingResult);
     }
+
+    @GetMapping("/thumbnail/{itemId}")
+    public ResponseEntity responseThumbNail(@PathVariable Long itemId) {
+        return itemHomeCarouselService.getCarouselInfoByItemId(itemId);
+    }
+
+
 
 }

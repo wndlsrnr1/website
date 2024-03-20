@@ -4,16 +4,19 @@ import com.website.domain.attachment.Attachment;
 import com.website.domain.category.Subcategory;
 import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
+import com.website.domain.item.ItemHomeCarousel;
 import com.website.domain.item.ItemSubcategory;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.item.carousel.ItemHomeCarouselRepository;
 import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
+import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
 import com.website.web.dto.response.item.CarouselItemResponse;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
@@ -51,6 +54,7 @@ public class ItemService {
     private final SubcategoryRepository subcategoryRepository;
     private final BindingResultUtils bindingResultUtils;
     private final ItemHomeCarouselService itemHomeCarouselService;
+    private final ItemHomeCarouselRepository itemHomeCarouselRepository;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -265,6 +269,18 @@ public class ItemService {
         //사진 지우기, 연관관계 지우기, 실제 파일 지우기
         List<Long> imagesForDelete = editItemRequest.getImagesForDelete();
         fileService.deleteFilesAndDbData(imagesForDelete);
+
+        if (editItemRequest.getCarouselAttachmentId() != null) {
+            log.info("editItemRequest.getCarouselAttachmentId() = {}", editItemRequest.getCarouselAttachmentId());
+            Long attachmentId = editItemRequest.getCarouselAttachmentId();
+            ItemHomeCarousel itemHomeCarousel = itemHomeCarouselRepository.findByItemId(itemId);
+            if (itemHomeCarousel == null) {
+                itemHomeCarouselRepository.addCarousel(itemId, attachmentId);
+            } else {
+                Long itemHomeCarouselId = itemHomeCarousel.getId();
+                itemHomeCarouselRepository.updateCarousel(itemHomeCarouselId, attachmentId);
+            }
+        }
 
         //정상 흐름
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
