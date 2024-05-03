@@ -8,6 +8,7 @@ import com.website.domain.item.ItemSubcategory;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.item.thumbnail.ItemThumbnailRepository;
 import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
@@ -51,6 +52,7 @@ public class ItemService {
     private final SubcategoryRepository subcategoryRepository;
     private final BindingResultUtils bindingResultUtils;
     private final ItemHomeCarouselService itemHomeCarouselService;
+    private final ItemThumbnailRepository itemThumbnailRepository;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -248,12 +250,15 @@ public class ItemService {
             return ResponseEntity.badRequest().body(body);
         }
 
+
         //파일 업데이트
         itemRepository.updateItemByDto(itemId, editItemRequest);
 
         //서브카테고리 정리
         Long subcategoryId = editItemRequest.getSubcategoryId();
         itemSubcategoryRepository.updateSubcategory(itemId, subcategoryId);
+
+        itemThumbnailRepository.updateItemThumbnail(editItemRequest.getThumbnailId(), editItemRequest.getImageIdForThumbnail(), itemId);
 
         //사진 업로드: 예외를 발생시키고 로그를 찍어야 할 것 같음.
         List<String> images = editItemRequest.getImages();

@@ -31,4 +31,6 @@ public class EditItemRequest {
     private String status;
     private String description;
     private List<Long> imagesForDelete;
+    private Long imageIdForThumbnail;
+    private Long thumbnailId;
 }
