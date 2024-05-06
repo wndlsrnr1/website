@@ -1,6 +1,8 @@
 package com.website.repository.item.thumbnail;
 
+import com.website.domain.item.ItemThumbnail;
+
 public interface ItemThumbnailCustomRepository {
 
-    void updateItemThumbnail(Long itemThumbnailId, Long attachmentIdParam, Long itemIdParam);
+    ItemThumbnail findByItemId(Long itemId);
 }

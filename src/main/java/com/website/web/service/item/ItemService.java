@@ -5,6 +5,7 @@ import com.website.domain.category.Subcategory;
 import com.website.domain.item.Item;
 import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.ItemSubcategory;
+import com.website.domain.item.ItemThumbnail;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
@@ -258,8 +259,6 @@ public class ItemService {
         Long subcategoryId = editItemRequest.getSubcategoryId();
         itemSubcategoryRepository.updateSubcategory(itemId, subcategoryId);
 
-        itemThumbnailRepository.updateItemThumbnail(editItemRequest.getThumbnailId(), editItemRequest.getImageIdForThumbnail(), itemId);
-
         //사진 업로드: 예외를 발생시키고 로그를 찍어야 할 것 같음.
         List<String> images = editItemRequest.getImages();
         List<MultipartFile> imageFiles = editItemRequest.getImageFiles();
@@ -324,6 +323,35 @@ public class ItemService {
                 .data(itemResponseList)
                 .apiError(null)
                 .message("ok").build();
+
+        return ResponseEntity.ok(body);
+    }
+
+    public ResponseEntity sendThumbnailResponse(Long itemId) {
+        if (itemId == null) {
+            String message = messageSource.getMessage("Nodata", null, null);
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError("itemId", message)).build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
+            String message = messageSource.getMessage("Nodata", null, null);
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError("itemId", message)).build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        log.info("itemId = {}", itemId);
+
+        ItemThumbnail itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+
+        if (itemThumbnail == null) {
+            String message = messageSource.getMessage("Nodata", null, null);
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError("itemThumbnailId", message)).build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(itemThumbnail).build();
 
         return ResponseEntity.ok(body);
     }

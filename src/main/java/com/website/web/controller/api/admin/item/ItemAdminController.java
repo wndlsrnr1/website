@@ -70,4 +70,14 @@ public class ItemAdminController {
         return itemService.editItemFormOnAdmin(itemId, editItemRequest, bindingResult);
     }
 
+    @GetMapping("/thumbnail/{itemId}")
+    public ResponseEntity sendThumbnailResponse(@PathVariable("itemId") Long itemId) {
+        return itemService.sendThumbnailResponse(itemId);
+    }
+
+    @PostMapping("/thumbnail/edit/{itemId}")
+    public ResponseEntity editThumbnailResponse(@PathVariable("itemId") Long itemId, @RequestParam("imageId") Long imageId) {
+
+    }
+
 }

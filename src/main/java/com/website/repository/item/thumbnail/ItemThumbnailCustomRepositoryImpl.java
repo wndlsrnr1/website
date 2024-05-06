@@ -2,9 +2,12 @@ package com.website.repository.item.thumbnail;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.ItemThumbnail;
+import com.website.domain.item.QItemThumbnail;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+
+import java.util.List;
 
 import static com.website.domain.item.QItemThumbnail.itemThumbnail;
 
@@ -20,19 +23,31 @@ public class ItemThumbnailCustomRepositoryImpl implements ItemThumbnailCustomRep
     }
 
     @Override
-    public void updateItemThumbnail(Long itemThumbnailId, Long attachmentIdParam, Long itemIdParam) {
-        if (itemThumbnailId == null) {
-            query.insert(itemThumbnail)
-                    .columns(itemThumbnail.attachment.id, itemThumbnail.item.id)
-                    .values(attachmentIdParam, itemIdParam)
-                    .execute();
+    public ItemThumbnail findByItemId(Long itemId) {
+        List<ItemThumbnail> result = query
+                .select(itemThumbnail).from(itemThumbnail)
+                .where(itemThumbnail.item.id.eq(itemId))
+                .fetch();
+        if (result.size() == 0) {
+            return null;
         }
-
-        query.update(itemThumbnail)
-                .set(itemThumbnail.attachment.id, attachmentIdParam)
-                .set(itemThumbnail.item.id, itemIdParam)
-                .where(itemThumbnail.id.eq(itemThumbnailId))
-                .execute();
+        return result.get(0);
     }
+
+    //@Override
+    //public void updateItemThumbnail(Long itemThumbnailId, Long attachmentIdParam, Long itemIdParam) {
+    //    if (itemThumbnailId == null) {
+    //        query.insert(itemThumbnail)
+    //                .columns(itemThumbnail.attachment.id, itemThumbnail.item.id)
+    //                .values(attachmentIdParam, itemIdParam)
+    //                .execute();
+    //    }
+    //
+    //    query.update(itemThumbnail)
+    //            .set(itemThumbnail.attachment.id, attachmentIdParam)
+    //            .set(itemThumbnail.item.id, itemIdParam)
+    //            .where(itemThumbnail.id.eq(itemThumbnailId))
+    //            .execute();
+    //}
 
 }
