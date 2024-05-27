@@ -11,10 +11,12 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemThumbnail {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "item_thumbnail_id", nullable = false)
     private Long id;
 
@@ -23,8 +25,9 @@ public class ItemThumbnail {
     private Attachment attachment;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "itemId", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
+
 
     public ItemThumbnail(Attachment attachment, Item item) {
         this.attachment = attachment;

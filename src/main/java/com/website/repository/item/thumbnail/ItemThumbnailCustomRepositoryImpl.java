@@ -1,6 +1,8 @@
 package com.website.repository.item.thumbnail;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.attachment.Attachment;
+import com.website.domain.item.Item;
 import com.website.domain.item.ItemThumbnail;
 import com.website.domain.item.QItemThumbnail;
 import org.springframework.stereotype.Repository;
@@ -32,6 +34,22 @@ public class ItemThumbnailCustomRepositoryImpl implements ItemThumbnailCustomRep
             return null;
         }
         return result.get(0);
+    }
+
+    @Override
+    public void updateThumbnail(Long itemId, Long imageId) {
+        query.update(itemThumbnail)
+                .set(itemThumbnail.attachment.id, imageId)
+                .where(itemThumbnail.item.id.eq(itemId))
+                .execute();
+    }
+
+    @Override
+    public void insertItemThumbnail(Attachment attachment, Item item) {
+        query.insert(itemThumbnail)
+                .columns(itemThumbnail.attachment.id, itemThumbnail.item.id)
+                .values(attachment.getId(), item.getId())
+                .execute();
     }
 
     //@Override

@@ -1,6 +1,5 @@
 package com.website.web.controller.api.admin.item;
 
-import com.website.web.dto.request.item.DeleteFileOnItemRequest;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -77,7 +76,8 @@ public class ItemAdminController {
 
     @PostMapping("/thumbnail/edit/{itemId}")
     public ResponseEntity editThumbnailResponse(@PathVariable("itemId") Long itemId, @RequestParam("imageId") Long imageId) {
-
+        //썸네일이 이미 없는 경우 insert하기
+        return itemService.editThumbnail(itemId, imageId);
     }
 
 }

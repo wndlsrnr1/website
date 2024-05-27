@@ -156,6 +156,8 @@ public class ItemService {
         String status = saveItemRequest.getStatus();
         LocalDateTime releasedAt = saveItemRequest.getReleasedAt();
         Long subcategoryId = saveItemRequest.getSubcategoryId();
+        MultipartFile thumbnailFile = saveItemRequest.getThumbnailFile();
+        String thumbnailImage = saveItemRequest.getThumbnailImage();
 
         //아이템 저장
         Item item = new Item(name, nameKor, price, quantity, status, description, releasedAt);
@@ -174,13 +176,20 @@ public class ItemService {
                 Attachment attachment = fileService.saveFile(requestedName, file);
                 attachmentList.add(attachment);
             }
+            //파일 정보 저장
+            attachmentRepository.saveAll(attachmentList);
             for (Attachment attachment : attachmentList) {
                 itemAttachmentRepository.save(new ItemAttachment(item, attachment));
             }
-            //파일 정보 저장
-            attachmentRepository.saveAll(attachmentList);
         }
-        //파일 저장
+
+        if (thumbnailFile != null) {
+            Attachment thumbnailAttachment = fileService.saveFile(thumbnailImage, thumbnailFile);
+            attachmentRepository.save(thumbnailAttachment);
+            itemAttachmentRepository.save(new ItemAttachment(item, thumbnailAttachment));
+            itemThumbnailRepository.save(new ItemThumbnail(thumbnailAttachment, item));
+        }
+
 
         //조인 테이블에 저장
         Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
@@ -354,5 +363,32 @@ public class ItemService {
         ApiResponseBody<Object> body = ApiResponseBody.builder().data(itemThumbnail).build();
 
         return ResponseEntity.ok(body);
+    }
+
+    @Transactional
+    public ResponseEntity editThumbnail(Long itemId, Long imageId) {
+        if (itemId == null || imageId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Attachment attachment = attachmentRepository.findById(imageId).orElse(null);
+        if (attachment == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ItemThumbnail itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        log.info("itemThumbnail = {}", itemThumbnail);
+
+        if (itemThumbnail == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        itemThumbnailRepository.updateThumbnail(itemId, imageId);
+        return ResponseEntity.ok().build();
     }
 }
