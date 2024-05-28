@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemSubcategory {
+
     @Id
     @GeneratedValue
     private Long id;
