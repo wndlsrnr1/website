@@ -19,6 +19,7 @@ import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.CarouselItemResponse;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
+import com.website.web.dto.response.item.ItemThumbnailResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.attachment.FileService;
 import com.website.web.service.common.BindingResultUtils;
@@ -196,8 +197,6 @@ public class ItemService {
         log.info("subcategory = {}", subcategory);
         itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
 
-
-
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(null)
                 .message("ok")
@@ -218,7 +217,12 @@ public class ItemService {
         }
         log.info("itemId = {}", itemId);
         itemSubcategoryRepository.deleteByItemId(itemId);
-        itemAttachmentRepository.deleteByItemId(itemId);
+
+        //파일 삭제, attachmet와 연관된 파일 삭제, 연관 관계 삭제
+        List<Long> attachmentIdList = itemAttachmentRepository.findAttachmentIdByItemId(itemId);
+        deleteImages(itemId, attachmentIdList);
+
+        itemThumbnailRepository.deleteByItemId(itemId);
         itemRepository.deleteById(itemId);
 
         //item 삭제
@@ -277,7 +281,7 @@ public class ItemService {
 
         //사진 지우기, 연관관계 지우기, 실제 파일 지우기
         List<Long> imagesForDelete = editItemRequest.getImagesForDelete();
-        fileService.deleteFilesAndDbData(imagesForDelete);
+        deleteImages(itemId, imagesForDelete);
 
         //정상 흐름
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
@@ -298,7 +302,6 @@ public class ItemService {
 
         //서비스 에러
         if (itemSearchCond.getPriceMin() != null && itemSearchCond.getPriceMax() != null) {
-
             if (itemSearchCond.getPriceMin() > itemSearchCond.getPriceMax()) {
                 String message = messageSource.getMessage("InvalidRange", null, null);
                 ApiResponseBody<Object> body = ApiResponseBody.builder()
@@ -322,7 +325,7 @@ public class ItemService {
 
         Page<ItemResponse> itemResponseList = null;
         if (isLastPage) {
-             itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
+            itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
         } else {
             itemResponseList = itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
         }
@@ -350,17 +353,15 @@ public class ItemService {
             return ResponseEntity.badRequest().body(body);
         }
 
-        log.info("itemId = {}", itemId);
+        ItemThumbnailResponse itemThumbnailResponse = itemThumbnailRepository.findByItemId(itemId);
 
-        ItemThumbnail itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
-
-        if (itemThumbnail == null) {
+        if (itemThumbnailResponse == null) {
             String message = messageSource.getMessage("Nodata", null, null);
             ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError("itemThumbnailId", message)).build();
             return ResponseEntity.badRequest().body(body);
         }
 
-        ApiResponseBody<Object> body = ApiResponseBody.builder().data(itemThumbnail).build();
+        ApiResponseBody<Object> body = ApiResponseBody.builder().data(itemThumbnailResponse).build();
 
         return ResponseEntity.ok(body);
     }
@@ -368,6 +369,11 @@ public class ItemService {
     @Transactional
     public ResponseEntity editThumbnail(Long itemId, Long imageId) {
         if (itemId == null || imageId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        ItemThumbnailResponse itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        if (itemThumbnail == null) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -381,14 +387,47 @@ public class ItemService {
             return ResponseEntity.badRequest().build();
         }
 
-        ItemThumbnail itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
-        log.info("itemThumbnail = {}", itemThumbnail);
-
-        if (itemThumbnail == null) {
-            return ResponseEntity.badRequest().build();
-        }
+        //ItemThumbnail itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        //log.info("itemThumbnail = {}", itemThumbnail);
+        //
+        //if (itemThumbnail == null) {
+        //    return ResponseEntity.badRequest().build();
+        //}
 
         itemThumbnailRepository.updateThumbnail(itemId, imageId);
         return ResponseEntity.ok().build();
+    }
+
+    private void deleteImages(Long itemId, List<Long> imagesForDelete) {
+        deleteThumbnailInDb(itemId, imagesForDelete);
+        fileService.deleteFilesAndDbData(imagesForDelete);
+    }
+
+    public ResponseEntity addThumbnail(Long itemId, Long imageId) {
+
+        ItemAttachment itemAttachment = itemAttachmentRepository.findByItemIdAndAttachmentId(itemId, imageId);
+        if (itemAttachment == null) {
+            log.info("null");
+            return ResponseEntity.badRequest().build();
+        }
+        log.info("do insert");
+
+        itemThumbnailRepository.save(
+                new ItemThumbnail(itemAttachment.getAttachment(), itemAttachment.getItem())
+        );
+
+        return ResponseEntity.ok().build();
+    }
+
+    private void deleteThumbnailInDb(Long itemId, List<Long> imagesForDelete) {
+        ItemThumbnailResponse itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        if (itemThumbnail == null) {
+            log.info("itemThumbnail is null");
+            return;
+        }
+        Long fileId = itemThumbnail.getFileId();
+        if (fileId != null && imagesForDelete.contains(fileId)) {
+            itemThumbnailRepository.deleteById(itemThumbnail.getItemThumbnailId());
+        }
     }
 }

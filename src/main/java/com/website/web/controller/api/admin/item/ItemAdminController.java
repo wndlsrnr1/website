@@ -80,4 +80,9 @@ public class ItemAdminController {
         return itemService.editThumbnail(itemId, imageId);
     }
 
+    @PostMapping("/thumbnail/add/{itemId}")
+    public ResponseEntity addThumbnailResponse(@PathVariable("itemId") Long itemId, @RequestParam("imageId") Long imageId) {
+        return itemService.addThumbnail(itemId, imageId);
+    }
+
 }
