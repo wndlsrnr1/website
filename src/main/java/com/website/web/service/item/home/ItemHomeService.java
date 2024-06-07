@@ -20,7 +20,6 @@ public class ItemHomeService {
     public ResponseEntity getItemLatest() {
 
         List<ItemLatestResponse> itemList = itemRepository.getLatestProducts();
-
         return ResponseEntity.ok(itemList);
     }
 }
