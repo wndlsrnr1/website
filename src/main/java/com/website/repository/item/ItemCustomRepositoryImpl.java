@@ -4,8 +4,13 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.item.Item;
+import com.website.domain.item.QItemInfo;
+import com.website.domain.item.QItemThumbnail;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.*;
+import com.website.web.dto.response.item.home.ItemLatestResponse;
+import com.website.web.dto.response.item.home.QItemLatestResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +32,9 @@ import static com.website.domain.attachment.QAttachment.attachment;
 import static com.website.domain.category.QSubcategory.subcategory;
 import static com.website.domain.item.QItem.*;
 import static com.website.domain.item.QItemAttachment.*;
+import static com.website.domain.item.QItemInfo.itemInfo;
 import static com.website.domain.item.QItemSubcategory.*;
+import static com.website.domain.item.QItemThumbnail.itemThumbnail;
 
 @Repository
 @Slf4j
@@ -148,6 +155,20 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         int pageNumber = getPageNumber(total, pageSize);
         PageRequest obj = PageRequest.of(pageNumber, pageSize);
         return new PageImpl<>(content, obj, total);
+    }
+
+    @Override
+    public List<ItemLatestResponse> getLatestProducts() {
+        return query
+                .select(new QItemLatestResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
+                .from(item)
+                .innerJoin(itemThumbnail)
+                .on(itemThumbnail.item.id.eq(item.id))
+                .innerJoin(itemInfo)
+                .on(itemInfo.item.id.eq(item.id))
+                .orderBy(item.releasedAt.desc())
+                .limit(10)
+                .fetch();
     }
 
     private long getLimit(int pageSize, long total) {
