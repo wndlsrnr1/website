@@ -22,4 +22,10 @@ public class ItemInfo {
 
     private Long views;
     private Integer salesRate;
+
+    public ItemInfo(Item item, Long views, Integer salesRate) {
+        this.item = item;
+        this.views = views;
+        this.salesRate = salesRate;
+    }
 }

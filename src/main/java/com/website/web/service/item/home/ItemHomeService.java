@@ -1,27 +1,26 @@
 package com.website.web.service.item.home;
 
-import com.website.domain.item.ItemThumbnail;
-import com.website.repository.item.ItemAttachmentRepository;
+import com.website.domain.item.Item;
 import com.website.repository.item.ItemRepository;
-import com.website.repository.item.info.ItemInfoRepository;
-import com.website.repository.item.thumbnail.ItemThumbnailRepository;
+import com.website.web.dto.response.item.home.ItemLatestResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class ItemHomeService {
 
     private final ItemRepository itemRepository;
-    private final ItemInfoRepository itemInfoRepository;
-    private final ItemAttachmentRepository itemAttachmentRepository;
-    private final ItemThumbnailRepository itemThumbnailRepository;
 
-    public ResponseEntity getRecentItem(Integer count) {
+    public ResponseEntity getItemLatest() {
 
-        return null;
+        List<ItemLatestResponse> itemList = itemRepository.getLatestProducts();
+
+        return ResponseEntity.ok(itemList);
     }
 }

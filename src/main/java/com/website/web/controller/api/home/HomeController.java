@@ -32,10 +32,8 @@ public class HomeController {
     }
 
     @GetMapping("/main/item/recent")
-    public ResponseEntity responseRequestForRecentItem(@RequestParam("count") Integer count) {
-        return itemHomeService.getRecentItem(count);
+    public ResponseEntity responseRequestForRecentItem() {
+        return itemHomeService.getItemLatest();
     }
-
-
 
 }
