@@ -9,8 +9,7 @@ import com.website.domain.item.QItemInfo;
 import com.website.domain.item.QItemThumbnail;
 import com.website.web.dto.request.item.EditItemRequest;
 import com.website.web.dto.response.item.*;
-import com.website.web.dto.response.item.home.ItemLatestResponse;
-import com.website.web.dto.response.item.home.QItemLatestResponse;
+import com.website.web.dto.response.item.home.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -167,6 +166,34 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .innerJoin(itemInfo)
                 .on(itemInfo.item.id.eq(item.id))
                 .orderBy(item.releasedAt.desc())
+                .limit(10)
+                .fetch();
+    }
+
+    @Override
+    public List<ItemSpecialResponse> getSpecialSaleProducts() {
+        return query
+                .select(new QItemSpecialResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
+                .from(item)
+                .innerJoin(itemThumbnail)
+                .on(itemThumbnail.item.id.eq(item.id))
+                .innerJoin(itemInfo)
+                .on(itemInfo.item.id.eq(item.id))
+                .orderBy(itemInfo.salesRate.desc())
+                .limit(10)
+                .fetch();
+    }
+
+    @Override
+    public List<ItemPopularResponse> getPopularProducts() {
+        return query
+                .select(new QItemPopularResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
+                .from(item)
+                .innerJoin(itemThumbnail)
+                .on(itemThumbnail.item.id.eq(item.id))
+                .innerJoin(itemInfo)
+                .on(itemInfo.item.id.eq(item.id))
+                .orderBy(itemInfo.views.desc())
                 .limit(10)
                 .fetch();
     }
