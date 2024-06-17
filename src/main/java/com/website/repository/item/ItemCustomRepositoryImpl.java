@@ -4,10 +4,8 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.Item;
-import com.website.domain.item.QItemInfo;
-import com.website.domain.item.QItemThumbnail;
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.home.ItemHomeSearchCond;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.response.item.home.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -57,7 +55,9 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     @Override
-    public Page<ItemResponse> getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk) {
+    public Page<ItemResponse> getItemResponseByCondByLastItemId(
+            ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk
+    ) {
         if (pageChunk == null) {
             pageChunk = 5;
         }
@@ -126,7 +126,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         ItemResponse itemResponse = results.stream().findAny().orElse(null);
 
         long limit = getLimit(pageSize, total);
-
         List<ItemResponse> content = query.select(
                         new QItemResponse(
                                 item.id,
@@ -154,6 +153,80 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         int pageNumber = getPageNumber(total, pageSize);
         PageRequest obj = PageRequest.of(pageNumber, pageSize);
         return new PageImpl<>(content, obj, total);
+    }
+
+    @Override
+    public Page<ItemsForCustomerResponse> getItemsForCustomerResponseByCondByLastItemId(String sortedBy, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Long subcategoryId) {
+        long total = query
+                .select(item.id)
+                .from(item)
+                .join(itemSubcategory)
+                .on(item.id.eq(itemSubcategory.item.id))
+                .join(itemInfo)
+                .on(item.id.eq(itemInfo.item.id))
+                .join(itemThumbnail)
+                .on(item.id.eq(itemThumbnail.item.id))
+                .where(
+                        subcategoryEq(subcategoryId),
+                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber())
+                )
+                .fetchResults().getTotal();
+
+        List<ItemsForCustomerResponse> content = query
+                .select(
+                        new QItemsForCustomerResponse(
+                                item.id, item.name, item.nameKor, item.price, item.quantity, item.status, item.description, item.releasedAt, item.releasedAt,
+                                item.createdAt, itemSubcategory.subcategory, itemInfo.salesRate, itemInfo.views, itemThumbnail.attachment.id
+                        )
+                ).from(item)
+                .join(itemSubcategory)
+                .on(item.id.eq(itemSubcategory.item.id))
+                .join(subcategory)
+                .on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .join(itemInfo)
+                .on(item.id.eq(itemInfo.item.id))
+                .join(itemThumbnail)
+                .on(item.id.eq(itemThumbnail.item.id))
+                .where(
+                        subcategoryEq(subcategoryId),
+                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber())
+                )
+                .orderBy(getSortedByInCustomerItems(sortedBy))
+                .offset(getOffSet(pageable, lastPageNumber))
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        int pageNumber = getPageNumber(total, pageable.getPageSize());
+        PageRequest obj = PageRequest.of(pageNumber, pageable.getPageSize());
+        return new PageImpl<>(content, obj, total);
+    }
+
+    private OrderSpecifier<?> getSortedByInCustomerItems(String sortedByString) {
+        if (sortedByString == null) {
+            return null;
+        }
+        switch (sortedByString) {
+            case "maxPrice":
+                return item.price.desc();
+            case "minPrice":
+                return item.price.asc();
+            case "name":
+                return item.nameKor.asc();
+            case "released":
+                return item.releasedAt.desc();
+            case "created":
+                return item.createdAt.desc();
+            default:
+                return item.id.asc();
+        }
+    }
+
+    private BooleanExpression subcategoryEq(Long subcategoryId) {
+        if (subcategoryId == null) {
+            return null;
+        }
+        log.info("subcategoryId = {}", subcategoryId);
+        return itemSubcategory.subcategory.id.eq(subcategoryId);
     }
 
     @Override
@@ -197,6 +270,8 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .limit(10)
                 .fetch();
     }
+
+
 
     private long getLimit(int pageSize, long total) {
         long limit = (total % pageSize);
@@ -380,7 +455,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
     }
 
     private BooleanExpression itemIdGtOrLt(Long lastItemId, Integer lastPageNumber, Integer pageNumber) {
-        if (lastItemId == null || lastPageNumber == null || pageNumber == 0) {
+        if (lastItemId == null || lastPageNumber == null || pageNumber == 0 || lastItemId < 0) {
             return null;
         }
         if (lastPageNumber < pageNumber) {
@@ -403,6 +478,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         if (lastPageNumber == null || pageable.getPageNumber() == 0) {
             return 0L;
         }
+
         int pageSize = pageable.getPageSize();
         int pageNumber = pageable.getPageNumber();
         if (pageable.getPageNumber() <= lastPageNumber) {

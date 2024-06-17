@@ -230,6 +230,55 @@ public class ItemService {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity sendItemResponseByCondByLastItemId(
+            ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage
+    ) {
+        //바이딩 에러
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError(bindingResult)).data(null).message("binding error").build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+
+        //서비스 에러
+        if (itemSearchCond.getPriceMin() != null && itemSearchCond.getPriceMax() != null) {
+            if (itemSearchCond.getPriceMin() > itemSearchCond.getPriceMax()) {
+                String message = messageSource.getMessage("InvalidRange", null, null);
+                ApiResponseBody<Object> body = ApiResponseBody.builder()
+                        .apiError(new ApiError("priceMin", message))
+                        .data(null)
+                        .message("has error").build();
+                return ResponseEntity.badRequest().body(body);
+            }
+        }
+
+        if (itemSearchCond.getQuantityMin() != null && itemSearchCond.getQuantityMax() != null) {
+            if (itemSearchCond.getQuantityMin() > itemSearchCond.getQuantityMax()) {
+                String message = messageSource.getMessage("InvalidRange", null, null);
+                ApiResponseBody<Object> body = ApiResponseBody.builder()
+                        .apiError(new ApiError("quantityMin", message))
+                        .data(null)
+                        .message("has error").build();
+                return ResponseEntity.badRequest().body(body);
+            }
+        }
+
+        Page<ItemResponse> itemResponseList = null;
+        if (isLastPage) {
+            itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
+        } else {
+            itemResponseList = itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
+        }
+
+        //정상 흐름
+        ApiResponseBody<Object> body = ApiResponseBody.builder()
+                .data(itemResponseList)
+                .apiError(null)
+                .message("ok").build();
+
+        return ResponseEntity.ok(body);
+    }
+
 
     public ResponseEntity deleteFileOnItem(List<Long> fileIdList) {
         //DB에서 삭제
@@ -290,53 +339,6 @@ public class ItemService {
     public ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome() {
         itemHomeCarouselService.getCarouselsByCond(null, null, null);
         return itemRepository.getCarouselItemsInHome();
-    }
-
-    public ResponseEntity sendItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage) {
-        //바이딩 에러
-        if (bindingResult.hasErrors()) {
-            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError(bindingResult)).data(null).message("binding error").build();
-            return ResponseEntity.badRequest().body(body);
-        }
-
-
-        //서비스 에러
-        if (itemSearchCond.getPriceMin() != null && itemSearchCond.getPriceMax() != null) {
-            if (itemSearchCond.getPriceMin() > itemSearchCond.getPriceMax()) {
-                String message = messageSource.getMessage("InvalidRange", null, null);
-                ApiResponseBody<Object> body = ApiResponseBody.builder()
-                        .apiError(new ApiError("priceMin", message))
-                        .data(null)
-                        .message("has error").build();
-                return ResponseEntity.badRequest().body(body);
-            }
-        }
-
-        if (itemSearchCond.getQuantityMin() != null && itemSearchCond.getQuantityMax() != null) {
-            if (itemSearchCond.getQuantityMin() > itemSearchCond.getQuantityMax()) {
-                String message = messageSource.getMessage("InvalidRange", null, null);
-                ApiResponseBody<Object> body = ApiResponseBody.builder()
-                        .apiError(new ApiError("quantityMin", message))
-                        .data(null)
-                        .message("has error").build();
-                return ResponseEntity.badRequest().body(body);
-            }
-        }
-
-        Page<ItemResponse> itemResponseList = null;
-        if (isLastPage) {
-            itemResponseList = itemRepository.getItemResponseByCondWhenLastPage(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
-        } else {
-            itemResponseList = itemRepository.getItemResponseByCondByLastItemId(itemSearchCond, pageable, lastItemId, lastPageNumber, pageChunk);
-        }
-
-        //정상 흐름
-        ApiResponseBody<Object> body = ApiResponseBody.builder()
-                .data(itemResponseList)
-                .apiError(null)
-                .message("ok").build();
-
-        return ResponseEntity.ok(body);
     }
 
     public ResponseEntity sendThumbnailResponse(Long itemId) {

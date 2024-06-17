@@ -3,8 +3,16 @@ package com.website.web.service.item;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.attachment.Attachment;
+import com.website.domain.category.Subcategory;
+import com.website.domain.item.*;
+import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.item.info.ItemInfoRepository;
+import com.website.repository.item.thumbnail.ItemThumbnailRepository;
+import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
+import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.response.item.QItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +22,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.Commit;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.BindingResultUtils;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Random;
 
 import static com.website.domain.category.QSubcategory.subcategory;
 import static com.website.domain.item.QItem.item;
@@ -35,6 +50,18 @@ class ItemServiceTest {
 
     @Autowired
     ItemRepository itemRepository;
+
+    @Autowired
+    ItemThumbnailRepository itemThumbnailRepository;
+
+    @Autowired
+    ItemAttachmentRepository itemAttachmentRepository;
+
+    @Autowired
+    ItemInfoRepository itemInfoRepository;
+
+    @Autowired
+    ItemSubcategoryRepository itemSubcategoryRepository;
 
     @Test
     void pagingByCursorLike() {
@@ -117,6 +144,31 @@ class ItemServiceTest {
         log.info("timeDiff1 = {}", timeDiff);
         log.info("timeDiff2 = {}", timeDiff2);
         Assertions.assertThat(timeDiff2).isLessThan(timeDiff);
+    }
+
+    @Test
+    @Commit
+    void insertItem200() {
+        Subcategory subcategory = subcategoryRepository.findAll().get(0);
+        for (int i = 0; i < 200; i++) {
+            int randomNumber = new Random().nextInt(10000);
+            Item itemSaved = itemRepository.save(
+                    new Item(
+                            "test" + randomNumber,
+                            "테스트" + randomNumber,
+                            new Random().nextInt(10000),
+                            new Random().nextInt(10000),
+                            "good",
+                            "good",
+                            LocalDateTime.now()
+                    )
+            );
+            Attachment attachment = itemAttachmentRepository.findAll().get(0).getAttachment();
+            itemAttachmentRepository.save(new ItemAttachment(itemSaved, attachment));
+            itemThumbnailRepository.save(new ItemThumbnail(attachment, itemSaved));
+            itemSubcategoryRepository.save(new ItemSubcategory(itemSaved, subcategory));
+            itemInfoRepository.save(new ItemInfo(itemSaved, 1000L, 10));
+        }
     }
 
     //

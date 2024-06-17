@@ -1,11 +1,15 @@
 package com.website.web.service.item.home;
 
 import com.website.repository.item.ItemRepository;
+import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.response.item.home.ItemLatestResponse;
 import com.website.web.dto.response.item.home.ItemPopularResponse;
 import com.website.web.dto.response.item.home.ItemSpecialResponse;
+import com.website.web.dto.response.item.home.ItemsForCustomerResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +35,33 @@ public class ItemHomeService {
     public ResponseEntity getItemsResponsePopular() {
         List<ItemPopularResponse> itemList = itemRepository.getPopularProducts();
         return ResponseEntity.ok(itemList);
+    }
+
+    public ResponseEntity sendItemsResponseByCondByLastItemId(
+            String sortedBy, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage,
+            Long subcategoryId) {
+
+        log.info("sortedBy = {}", sortedBy);
+        log.info("Pageable = {}", pageable);
+        log.info("lastItemId = {}", lastItemId);
+        log.info("lastPageNumber = {}", lastPageNumber);
+        log.info("pageChunk = {}", pageChunk);
+        log.info("isLastPage = {}", isLastPage);
+        log.info("subcategoryId = {}", subcategoryId);
+        //if (isLastPage == null || lastItemId == null || lastItemId < 0) {
+        //    return ResponseEntity.badRequest().build();
+        //}
+
+        //정상 흐름
+        log.info("sadfasdfasdf");
+        Page<ItemsForCustomerResponse> itemsForCustomerResponsePage = itemRepository.getItemsForCustomerResponseByCondByLastItemId(sortedBy, pageable, lastItemId, lastPageNumber, pageChunk, subcategoryId);
+
+        ApiResponseBody<Object> body = ApiResponseBody.builder()
+                .data(itemsForCustomerResponsePage)
+                .apiError(null)
+                .message("ok")
+                .build();
+
+        return ResponseEntity.ok(body);
     }
 }
