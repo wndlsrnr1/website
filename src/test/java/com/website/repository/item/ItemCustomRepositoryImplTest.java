@@ -10,6 +10,7 @@ import com.website.domain.item.ItemInfo;
 import com.website.domain.item.QItem;
 import com.website.domain.item.QItemSubcategory;
 import com.website.repository.item.info.ItemInfoRepository;
+import com.website.web.dto.request.item.home.ItemSortedByType;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.response.item.QItemResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -49,7 +50,8 @@ class ItemCustomRepositoryImplTest {
     @Test
     @Transactional
     void querydslItemUpdateTest() {
-
+        ItemSortedByType itemSortedByType = ItemSortedByType.valueOf("NAME");
+        System.out.println("itemSortedByType = " + itemSortedByType);
     }
 
 }

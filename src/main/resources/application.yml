@@ -13,8 +13,8 @@ spring:
 
         dialect: org.hibernate.dialect.MySQL5Dialect
         format_sql: true
-        show_sql: true
-        use_sql_comments: true
+#        show_sql: true
+#        use_sql_comments: true
   thymeleaf:
     cache: false
   servlet:

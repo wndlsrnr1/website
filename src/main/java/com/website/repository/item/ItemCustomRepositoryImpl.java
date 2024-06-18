@@ -3,9 +3,12 @@ package com.website.repository.item;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.domain.item.QItem;
 import com.website.web.dto.request.item.EditItemRequest;
-import com.website.web.dto.request.item.home.ItemHomeSearchCond;
+import com.website.web.dto.request.item.home.ItemSortedByType;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.response.item.home.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -32,6 +35,7 @@ import static com.website.domain.item.QItemAttachment.*;
 import static com.website.domain.item.QItemInfo.itemInfo;
 import static com.website.domain.item.QItemSubcategory.*;
 import static com.website.domain.item.QItemThumbnail.itemThumbnail;
+import static com.website.web.dto.request.item.home.ItemSortedByType.*;
 
 @Repository
 @Slf4j
@@ -61,7 +65,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         if (pageChunk == null) {
             pageChunk = 5;
         }
-
+        log.info("getItemResponseByCondByLastItemId");
         List<ItemResponse> content = query.select(
                         new QItemResponse(
                                 item.id,
@@ -99,6 +103,7 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
 
     @Override
     public Page<ItemResponse> getItemResponseByCondWhenLastPage(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage) {
+        log.info("getItemResponseByCondWhenLastPage");
         int pageSize = pageable.getPageSize();
 
         QueryResults<ItemResponse> result = query.select(
@@ -155,22 +160,18 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return new PageImpl<>(content, obj, total);
     }
 
+    /*
+  const [subcategoryId, setSubcategoryId] = useState(null);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [sortedBy, setSortedBy] = useState("name");
+  //sorted 검색 값이 달라 질 경우 초기화
+  const [totalItems, setTotalItems] = useState(-1);
+  //sortedBy에서 검색 값이 달라 질 경우 -1로 초기화 시켜주어야 함.
+  const [lastItemId, setLastItemId] = useState(-1);
+     */
     @Override
-    public Page<ItemsForCustomerResponse> getItemsForCustomerResponseByCondByLastItemId(String sortedBy, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Long subcategoryId) {
-        long total = query
-                .select(item.id)
-                .from(item)
-                .join(itemSubcategory)
-                .on(item.id.eq(itemSubcategory.item.id))
-                .join(itemInfo)
-                .on(item.id.eq(itemInfo.item.id))
-                .join(itemThumbnail)
-                .on(item.id.eq(itemThumbnail.item.id))
-                .where(
-                        subcategoryEq(subcategoryId),
-                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber())
-                )
-                .fetchResults().getTotal();
+    public Page<ItemsForCustomerResponse> getItemsForCustomerResponseByCondByLastItemId(Long subcategoryId, String sortedBy, Long totalItems, Long lastItemId, Pageable pageable) {
+        long total = getTotalForItemCustomer(subcategoryId, totalItems, lastItemId);
 
         List<ItemsForCustomerResponse> content = query
                 .select(
@@ -189,32 +190,103 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .on(item.id.eq(itemThumbnail.item.id))
                 .where(
                         subcategoryEq(subcategoryId),
-                        itemIdGtOrLt(lastItemId, lastPageNumber, pageable.getPageNumber())
+                        //이름이 같으면서 아이디가 더 큰 경우 + 이름 값이 더 큰 경우
+                        itemListStartFrom(sortedBy, lastItemId)
                 )
                 .orderBy(getSortedByInCustomerItems(sortedBy))
-                .offset(getOffSet(pageable, lastPageNumber))
+                .orderBy(item.id.asc())
                 .limit(pageable.getPageSize())
                 .fetch();
 
         int pageNumber = getPageNumber(total, pageable.getPageSize());
-        PageRequest obj = PageRequest.of(pageNumber, pageable.getPageSize());
-        return new PageImpl<>(content, obj, total);
+        PageRequest newPageable = PageRequest.of(pageNumber, pageable.getPageSize());
+        return new PageImpl<>(content, newPageable, total);
     }
+
+    //total 구하기 이미 토탈로 값이 넘어오면 계산 하지 않음.
+    private long getTotalForItemCustomer(Long subcategoryId, Long totalItems, Long lastItemId) {
+        return lastItemId != -1 ? totalItems : (
+                query
+                        .select(item.id)
+                        .from(item)
+                        .join(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                        .join(itemInfo).on(item.id.eq(itemInfo.item.id))
+                        .join(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
+                        .where(
+                                subcategoryEq(subcategoryId)
+                        )
+                        .fetchResults().getTotal()
+        );
+    }
+    //정렬 방식에 따른 서브 쿼리.. 너무 빡셈
+    private BooleanExpression itemListStartFrom(String sortedBy, Long lastItemId) {
+        log.info("sortedBy = {}", sortedBy);
+        log.info("lastItemId = {}", lastItemId);
+
+        if (lastItemId == null || lastItemId == -1) {
+            return null;
+        }
+
+        ItemSortedByType itemSortedByType = ItemSortedByType.fromString(sortedBy);
+        QItem itemSub = new QItem("itemSub");
+        if (CREATED.equals(itemSortedByType)) {
+            return item.createdAt.lt(
+                    JPAExpressions
+                            .select(item.createdAt)
+                            .from(itemSub)
+                            .where(item.id.eq(lastItemId))
+            );
+        }
+        if (MAX_PRICE.equals(itemSortedByType)) {
+            return item.price.gt(
+                    JPAExpressions
+                            .select(item.price)
+                            .from(itemSub)
+                            .where(item.id.eq(lastItemId))
+            );
+        }
+        if (MIN_PRICE.equals(itemSortedByType)) {
+            return item.price.lt(
+                    JPAExpressions
+                            .select(item.price)
+                            .from(itemSub)
+                            .where(item.id.eq(lastItemId))
+            );
+        }
+        if (NAME.equals(itemSortedByType)) {
+            return item.name.gt(
+                    JPAExpressions
+                            .select(item.name)
+                            .from(itemSub)
+                            .where(item.id.eq(lastItemId))
+            );
+        }
+        if (RELEASED.equals(itemSortedByType)) {
+            return item.releasedAt.gt(
+                    JPAExpressions
+                            .select(item.releasedAt)
+                            .from(itemSub)
+                            .where(item.id.eq(lastItemId))
+            );
+        }
+        return null;
+    }
+
 
     private OrderSpecifier<?> getSortedByInCustomerItems(String sortedByString) {
         if (sortedByString == null) {
             return null;
         }
-        switch (sortedByString) {
-            case "maxPrice":
+        switch (ItemSortedByType.fromString(sortedByString)) {
+            case MAX_PRICE:
                 return item.price.desc();
-            case "minPrice":
+            case MIN_PRICE:
                 return item.price.asc();
-            case "name":
+            case NAME:
                 return item.nameKor.asc();
-            case "released":
+            case RELEASED:
                 return item.releasedAt.desc();
-            case "created":
+            case CREATED:
                 return item.createdAt.desc();
             default:
                 return item.id.asc();
@@ -270,7 +342,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .limit(10)
                 .fetch();
     }
-
 
 
     private long getLimit(int pageSize, long total) {

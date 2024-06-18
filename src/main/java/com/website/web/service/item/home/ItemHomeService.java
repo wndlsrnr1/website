@@ -39,22 +39,18 @@ public class ItemHomeService {
 
     public ResponseEntity sendItemsResponseByCondByLastItemId(
             String sortedBy, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage,
-            Long subcategoryId) {
+            Long subcategoryId, Long totalItems) {
 
-        log.info("sortedBy = {}", sortedBy);
-        log.info("Pageable = {}", pageable);
-        log.info("lastItemId = {}", lastItemId);
-        log.info("lastPageNumber = {}", lastPageNumber);
-        log.info("pageChunk = {}", pageChunk);
-        log.info("isLastPage = {}", isLastPage);
-        log.info("subcategoryId = {}", subcategoryId);
-        //if (isLastPage == null || lastItemId == null || lastItemId < 0) {
-        //    return ResponseEntity.badRequest().build();
-        //}
+        //log.info("sortedBy = {}", sortedBy);
+        //log.info("Pageable = {}", pageable);
+        //log.info("lastItemId = {}", lastItemId);
+        //log.info("lastPageNumber = {}", lastPageNumber);
+        //log.info("pageChunk = {}", pageChunk);
+        //log.info("isLastPage = {}", isLastPage);
+        //log.info("subcategoryId = {}", subcategoryId);
 
         //정상 흐름
-        log.info("sadfasdfasdf");
-        Page<ItemsForCustomerResponse> itemsForCustomerResponsePage = itemRepository.getItemsForCustomerResponseByCondByLastItemId(sortedBy, pageable, lastItemId, lastPageNumber, pageChunk, subcategoryId);
+        Page<ItemsForCustomerResponse> itemsForCustomerResponsePage = itemRepository.getItemsForCustomerResponseByCondByLastItemId(subcategoryId, sortedBy, totalItems, lastItemId, pageable);
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(itemsForCustomerResponsePage)
