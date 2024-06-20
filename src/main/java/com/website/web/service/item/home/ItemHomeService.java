@@ -1,8 +1,12 @@
 package com.website.web.service.item.home;
 
+import com.website.domain.category.Category;
+import com.website.domain.category.Subcategory;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.item.customer.ItemCustomerRepository;
+import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiResponseBody;
+import com.website.web.dto.response.category.home.SubcategoryResponse;
 import com.website.web.dto.response.item.home.ItemLatestResponse;
 import com.website.web.dto.response.item.home.ItemPopularResponse;
 import com.website.web.dto.response.item.home.ItemSpecialResponse;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -23,6 +28,7 @@ public class ItemHomeService {
 
     private final ItemRepository itemRepository;
     private final ItemCustomerRepository itemCustomerRepository;
+    private final SubcategoryRepository subcategoryRepository;
 
     public ResponseEntity getItemsResponseLatest() {
         //List<ItemLatestResponse> itemList = itemRepository.getLatestProducts();
@@ -62,5 +68,41 @@ public class ItemHomeService {
                 .build();
 
         return ResponseEntity.ok(body);
+    }
+
+
+    //public ResponseEntity<? extends ApiResponseBody<?>> getSubcategoryInfoResponse(Long subcategoryId) {
+    public ResponseEntity getSubcategoryInfoResponse(Long subcategoryId) {
+        if (subcategoryId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (subcategoryId < 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
+
+        if (subcategory == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Category category = subcategory.getCategory();
+        if (category == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().body(
+                ApiResponseBody.builder().data(
+                        new SubcategoryResponse(
+                                category.getId(),
+                                category.getName(),
+                                category.getNameKor(),
+                                subcategory.getId(),
+                                subcategory.getName(),
+                                subcategory.getNameKor()
+                        )
+                ).build()
+        );
     }
 }
