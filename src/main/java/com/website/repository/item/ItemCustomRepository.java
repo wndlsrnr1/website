@@ -40,5 +40,4 @@ public interface ItemCustomRepository {
 
     List<ItemPopularResponse> getPopularProducts();
 
-    Page<ItemsForCustomerResponse> getItemsForCustomerResponseByCondByLastItemId(Long subcategoryId, String sortedBy, Long totalItems, Long lastItemId, Pageable pageable);
 }

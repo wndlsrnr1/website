@@ -4,11 +4,9 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.QItem;
 import com.website.web.dto.request.item.EditItemRequest;
-import com.website.web.dto.request.item.home.ItemSortedByType;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.response.item.home.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -169,137 +167,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
   //sortedBy에서 검색 값이 달라 질 경우 -1로 초기화 시켜주어야 함.
   const [lastItemId, setLastItemId] = useState(-1);
      */
-    @Override
-    public Page<ItemsForCustomerResponse> getItemsForCustomerResponseByCondByLastItemId(Long subcategoryId, String sortedBy, Long totalItems, Long lastItemId, Pageable pageable) {
-        long total = getTotalForItemCustomer(subcategoryId, totalItems, lastItemId);
-
-        List<ItemsForCustomerResponse> content = query
-                .select(
-                        new QItemsForCustomerResponse(
-                                item.id, item.name, item.nameKor, item.price, item.quantity, item.status, item.description, item.releasedAt, item.releasedAt,
-                                item.createdAt, itemSubcategory.subcategory, itemInfo.salesRate, itemInfo.views, itemThumbnail.attachment.id
-                        )
-                ).from(item)
-                .join(itemSubcategory)
-                .on(item.id.eq(itemSubcategory.item.id))
-                .join(subcategory)
-                .on(itemSubcategory.subcategory.id.eq(subcategory.id))
-                .join(itemInfo)
-                .on(item.id.eq(itemInfo.item.id))
-                .join(itemThumbnail)
-                .on(item.id.eq(itemThumbnail.item.id))
-                .where(
-                        subcategoryEq(subcategoryId),
-                        //이름이 같으면서 아이디가 더 큰 경우 + 이름 값이 더 큰 경우
-                        itemListStartFrom(sortedBy, lastItemId)
-                )
-                .orderBy(getSortedByInCustomerItems(sortedBy))
-                .orderBy(item.id.asc())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        int pageNumber = getPageNumber(total, pageable.getPageSize());
-        PageRequest newPageable = PageRequest.of(pageNumber, pageable.getPageSize());
-        return new PageImpl<>(content, newPageable, total);
-    }
-
-    //total 구하기 이미 토탈로 값이 넘어오면 계산 하지 않음.
-    private long getTotalForItemCustomer(Long subcategoryId, Long totalItems, Long lastItemId) {
-        return lastItemId != -1 ? totalItems : (
-                query
-                        .select(item.id)
-                        .from(item)
-                        .join(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
-                        .join(itemInfo).on(item.id.eq(itemInfo.item.id))
-                        .join(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
-                        .where(
-                                subcategoryEq(subcategoryId)
-                        )
-                        .fetchResults().getTotal()
-        );
-    }
-    //정렬 방식에 따른 서브 쿼리.. 너무 빡셈
-    private BooleanExpression itemListStartFrom(String sortedBy, Long lastItemId) {
-        log.info("sortedBy = {}", sortedBy);
-        log.info("lastItemId = {}", lastItemId);
-
-        if (lastItemId == null || lastItemId == -1) {
-            return null;
-        }
-
-        ItemSortedByType itemSortedByType = ItemSortedByType.fromString(sortedBy);
-        QItem itemSub = new QItem("itemSub");
-        if (CREATED.equals(itemSortedByType)) {
-            return item.createdAt.lt(
-                    JPAExpressions
-                            .select(item.createdAt)
-                            .from(itemSub)
-                            .where(item.id.eq(lastItemId))
-            );
-        }
-        if (MAX_PRICE.equals(itemSortedByType)) {
-            return item.price.gt(
-                    JPAExpressions
-                            .select(item.price)
-                            .from(itemSub)
-                            .where(item.id.eq(lastItemId))
-            );
-        }
-        if (MIN_PRICE.equals(itemSortedByType)) {
-            return item.price.lt(
-                    JPAExpressions
-                            .select(item.price)
-                            .from(itemSub)
-                            .where(item.id.eq(lastItemId))
-            );
-        }
-        if (NAME.equals(itemSortedByType)) {
-            return item.name.gt(
-                    JPAExpressions
-                            .select(item.name)
-                            .from(itemSub)
-                            .where(item.id.eq(lastItemId))
-            );
-        }
-        if (RELEASED.equals(itemSortedByType)) {
-            return item.releasedAt.gt(
-                    JPAExpressions
-                            .select(item.releasedAt)
-                            .from(itemSub)
-                            .where(item.id.eq(lastItemId))
-            );
-        }
-        return null;
-    }
-
-
-    private OrderSpecifier<?> getSortedByInCustomerItems(String sortedByString) {
-        if (sortedByString == null) {
-            return null;
-        }
-        switch (ItemSortedByType.fromString(sortedByString)) {
-            case MAX_PRICE:
-                return item.price.desc();
-            case MIN_PRICE:
-                return item.price.asc();
-            case NAME:
-                return item.nameKor.asc();
-            case RELEASED:
-                return item.releasedAt.desc();
-            case CREATED:
-                return item.createdAt.desc();
-            default:
-                return item.id.asc();
-        }
-    }
-
-    private BooleanExpression subcategoryEq(Long subcategoryId) {
-        if (subcategoryId == null) {
-            return null;
-        }
-        log.info("subcategoryId = {}", subcategoryId);
-        return itemSubcategory.subcategory.id.eq(subcategoryId);
-    }
 
     @Override
     public List<ItemLatestResponse> getLatestProducts() {

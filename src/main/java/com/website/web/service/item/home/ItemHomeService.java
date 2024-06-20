@@ -1,6 +1,7 @@
 package com.website.web.service.item.home;
 
 import com.website.repository.item.ItemRepository;
+import com.website.repository.item.customer.ItemCustomerRepository;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.response.item.home.ItemLatestResponse;
 import com.website.web.dto.response.item.home.ItemPopularResponse;
@@ -21,18 +22,22 @@ import java.util.List;
 public class ItemHomeService {
 
     private final ItemRepository itemRepository;
+    private final ItemCustomerRepository itemCustomerRepository;
 
-    public ResponseEntity getItemsReponseLatest() {
+    public ResponseEntity getItemsResponseLatest() {
         List<ItemLatestResponse> itemList = itemRepository.getLatestProducts();
+        //List<ItemLatestResponse> itemList = itemCustomerRepository.getLatestProducts();
         return ResponseEntity.ok(itemList);
     }
 
-    public ResponseEntity getItemsReponseSpecialSale() {
+    public ResponseEntity getItemsResponseSpecialSale() {
+        //List<ItemSpecialResponse> itemList = itemRepository.getSpecialSaleProducts();
         List<ItemSpecialResponse> itemList = itemRepository.getSpecialSaleProducts();
         return ResponseEntity.ok(itemList);
     }
 
     public ResponseEntity getItemsResponsePopular() {
+        //List<ItemPopularResponse> itemList = itemRepository.getPopularProducts();
         List<ItemPopularResponse> itemList = itemRepository.getPopularProducts();
         return ResponseEntity.ok(itemList);
     }
@@ -50,7 +55,7 @@ public class ItemHomeService {
         //log.info("subcategoryId = {}", subcategoryId);
 
         //정상 흐름
-        Page<ItemsForCustomerResponse> itemsForCustomerResponsePage = itemRepository.getItemsForCustomerResponseByCondByLastItemId(subcategoryId, sortedBy, totalItems, lastItemId, pageable);
+        Page<ItemsForCustomerResponse> itemsForCustomerResponsePage = itemCustomerRepository.getItemsForCustomerResponseByCondByLastItemId(subcategoryId, sortedBy, totalItems, lastItemId, pageable);
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(itemsForCustomerResponsePage)

@@ -150,14 +150,14 @@ class ItemServiceTest {
     @Commit
     void insertItem200() {
         Subcategory subcategory = subcategoryRepository.findAll().get(0);
-        for (int i = 0; i < 200; i++) {
-            int randomNumber = new Random().nextInt(10000);
+        for (int i = 0; i < 400; i++) {
+            int randomNumber = new Random().nextInt(10);
             Item itemSaved = itemRepository.save(
                     new Item(
                             "test" + randomNumber,
                             "테스트" + randomNumber,
-                            new Random().nextInt(10000),
-                            new Random().nextInt(10000),
+                            new Random().nextInt(20),
+                            new Random().nextInt(20),
                             "good",
                             "good",
                             LocalDateTime.now()
