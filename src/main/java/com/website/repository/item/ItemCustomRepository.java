@@ -34,10 +34,4 @@ public interface ItemCustomRepository {
 
     Page<ItemResponse> getItemResponseByCondWhenLastPage(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage);
 
-    List<ItemLatestResponse> getLatestProducts();
-
-    List<ItemSpecialResponse> getSpecialSaleProducts();
-
-    List<ItemPopularResponse> getPopularProducts();
-
 }

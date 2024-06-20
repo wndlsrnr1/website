@@ -25,20 +25,18 @@ public class ItemHomeService {
     private final ItemCustomerRepository itemCustomerRepository;
 
     public ResponseEntity getItemsResponseLatest() {
-        List<ItemLatestResponse> itemList = itemRepository.getLatestProducts();
-        //List<ItemLatestResponse> itemList = itemCustomerRepository.getLatestProducts();
+        //List<ItemLatestResponse> itemList = itemRepository.getLatestProducts();
+        List<ItemLatestResponse> itemList = itemCustomerRepository.getLatestProducts();
         return ResponseEntity.ok(itemList);
     }
 
     public ResponseEntity getItemsResponseSpecialSale() {
-        //List<ItemSpecialResponse> itemList = itemRepository.getSpecialSaleProducts();
-        List<ItemSpecialResponse> itemList = itemRepository.getSpecialSaleProducts();
+        List<ItemSpecialResponse> itemList = itemCustomerRepository.getSpecialSaleProducts();
         return ResponseEntity.ok(itemList);
     }
 
     public ResponseEntity getItemsResponsePopular() {
-        //List<ItemPopularResponse> itemList = itemRepository.getPopularProducts();
-        List<ItemPopularResponse> itemList = itemRepository.getPopularProducts();
+        List<ItemPopularResponse> itemList = itemCustomerRepository.getPopularProducts();
         return ResponseEntity.ok(itemList);
     }
 

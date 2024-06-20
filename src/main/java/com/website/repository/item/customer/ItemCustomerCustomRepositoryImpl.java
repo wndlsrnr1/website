@@ -6,8 +6,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.QItem;
 import com.website.web.dto.request.item.home.ItemSortedByType;
-import com.website.web.dto.response.item.home.ItemsForCustomerResponse;
-import com.website.web.dto.response.item.home.QItemsForCustomerResponse;
+import com.website.web.dto.response.item.home.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +28,8 @@ import static com.website.web.dto.request.item.home.ItemSortedByType.*;
 @Slf4j
 public class ItemCustomerCustomRepositoryImpl implements ItemCustomerCustomRepository{
 
+
+
     private final EntityManager entityManager;
     private final JPAQueryFactory query;
 
@@ -37,6 +38,14 @@ public class ItemCustomerCustomRepositoryImpl implements ItemCustomerCustomRepos
         this.query = new JPAQueryFactory(entityManager);
     }
 
+    //React에서 선언한 값들.
+    //const [subcategoryId, setSubcategoryId] = useState(null);
+    //const [pageNumber, setPageNumber] = useState(0);
+    //const [sortedBy, setSortedBy] = useState("name");
+    //sorted 검색 값이 달라 질 경우 초기화
+    //const [totalItems, setTotalItems] = useState(-1);
+    //sortedBy에서 검색 값이 달라 질 경우 -1로 초기화 시켜주어야 함.
+    //const [lastItemId, setLastItemId] = useState(-1);
     @Override
     public Page<ItemsForCustomerResponse> getItemsForCustomerResponseByCondByLastItemId(Long subcategoryId, String sortedBy, Long totalItems, Long lastItemId, Pageable pageable) {
         long total = getTotalForItemCustomer(subcategoryId, totalItems, lastItemId);
@@ -69,6 +78,48 @@ public class ItemCustomerCustomRepositoryImpl implements ItemCustomerCustomRepos
         //int pageNumber = getPageNumber(total, pageable.getPageSize());
         PageRequest newPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         return new PageImpl<>(content, newPageable, total);
+    }
+
+    @Override
+    public List<ItemLatestResponse> getLatestProducts() {
+        return query
+                .select(new QItemLatestResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
+                .from(item)
+                .innerJoin(itemThumbnail)
+                .on(itemThumbnail.item.id.eq(item.id))
+                .innerJoin(itemInfo)
+                .on(itemInfo.item.id.eq(item.id))
+                .orderBy(item.releasedAt.desc())
+                .limit(10)
+                .fetch();
+    }
+
+    @Override
+    public List<ItemSpecialResponse> getSpecialSaleProducts() {
+        return query
+                .select(new QItemSpecialResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
+                .from(item)
+                .innerJoin(itemThumbnail)
+                .on(itemThumbnail.item.id.eq(item.id))
+                .innerJoin(itemInfo)
+                .on(itemInfo.item.id.eq(item.id))
+                .orderBy(itemInfo.salesRate.desc())
+                .limit(10)
+                .fetch();
+    }
+
+    @Override
+    public List<ItemPopularResponse> getPopularProducts() {
+        return query
+                .select(new QItemPopularResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
+                .from(item)
+                .innerJoin(itemThumbnail)
+                .on(itemThumbnail.item.id.eq(item.id))
+                .innerJoin(itemInfo)
+                .on(itemInfo.item.id.eq(item.id))
+                .orderBy(itemInfo.views.desc())
+                .limit(10)
+                .fetch();
     }
 
     private long getTotalForItemCustomer(Long subcategoryId, Long totalItems, Long lastItemId) {

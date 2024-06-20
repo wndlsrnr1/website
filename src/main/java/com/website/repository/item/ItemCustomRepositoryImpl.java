@@ -158,59 +158,6 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return new PageImpl<>(content, obj, total);
     }
 
-    /*
-  const [subcategoryId, setSubcategoryId] = useState(null);
-  const [pageNumber, setPageNumber] = useState(0);
-  const [sortedBy, setSortedBy] = useState("name");
-  //sorted 검색 값이 달라 질 경우 초기화
-  const [totalItems, setTotalItems] = useState(-1);
-  //sortedBy에서 검색 값이 달라 질 경우 -1로 초기화 시켜주어야 함.
-  const [lastItemId, setLastItemId] = useState(-1);
-     */
-
-    @Override
-    public List<ItemLatestResponse> getLatestProducts() {
-        return query
-                .select(new QItemLatestResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
-                .from(item)
-                .innerJoin(itemThumbnail)
-                .on(itemThumbnail.item.id.eq(item.id))
-                .innerJoin(itemInfo)
-                .on(itemInfo.item.id.eq(item.id))
-                .orderBy(item.releasedAt.desc())
-                .limit(10)
-                .fetch();
-    }
-
-    @Override
-    public List<ItemSpecialResponse> getSpecialSaleProducts() {
-        return query
-                .select(new QItemSpecialResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
-                .from(item)
-                .innerJoin(itemThumbnail)
-                .on(itemThumbnail.item.id.eq(item.id))
-                .innerJoin(itemInfo)
-                .on(itemInfo.item.id.eq(item.id))
-                .orderBy(itemInfo.salesRate.desc())
-                .limit(10)
-                .fetch();
-    }
-
-    @Override
-    public List<ItemPopularResponse> getPopularProducts() {
-        return query
-                .select(new QItemPopularResponse(item.id, item.nameKor, item.releasedAt, item.price, itemInfo.salesRate, itemThumbnail.id, itemThumbnail.attachment.id))
-                .from(item)
-                .innerJoin(itemThumbnail)
-                .on(itemThumbnail.item.id.eq(item.id))
-                .innerJoin(itemInfo)
-                .on(itemInfo.item.id.eq(item.id))
-                .orderBy(itemInfo.views.desc())
-                .limit(10)
-                .fetch();
-    }
-
-
     private long getLimit(int pageSize, long total) {
         long limit = (total % pageSize);
         if (total != 0 && limit == 0) {
