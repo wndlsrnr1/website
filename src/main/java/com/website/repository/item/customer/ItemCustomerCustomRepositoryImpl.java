@@ -233,7 +233,7 @@ public class ItemCustomerCustomRepositoryImpl implements ItemCustomerCustomRepos
             );
         }
         if (MAX_PRICE.equals(itemSortedByType)) {
-            return item.price.gt(
+            return item.price.lt(
                     JPAExpressions
                             .select(itemSub.price)
                             .from(itemSub)
@@ -242,7 +242,7 @@ public class ItemCustomerCustomRepositoryImpl implements ItemCustomerCustomRepos
         }
 
         if (MIN_PRICE.equals(itemSortedByType)) {
-            return item.price.lt(
+            return item.price.gt(
                     JPAExpressions
                             .select(itemSub.price)
                             .from(itemSub)
