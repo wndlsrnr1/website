@@ -21,11 +21,30 @@ public class ItemInfo {
     private Item item;
 
     private Long views;
+
     private Integer salesRate;
+
+    private String brand;
+
+    private String manufacturer;
+
+    @Column(name = "made_in")
+    private String madeIn;
+
 
     public ItemInfo(Item item, Long views, Integer salesRate) {
         this.item = item;
         this.views = views;
         this.salesRate = salesRate;
+    }
+
+    public ItemInfo(Long id, Item item, Long views, Integer salesRate, String brand, String manufacturer, String madeIn) {
+        Id = id;
+        this.item = item;
+        this.views = views;
+        this.salesRate = salesRate;
+        this.brand = brand;
+        this.manufacturer = manufacturer;
+        this.madeIn = madeIn;
     }
 }

@@ -34,8 +34,26 @@ public class InnitDataTest {
     EntityManager entityManager;
 
     @Test
-    @Commit
+    //@Commit
     void item_innit() {
+        String[] arr = {"XBOX", "PLAYSTATION"};
+        String[] arr2 = {"엑스박스", "플레이스테이션"};
+        for (int i = 0; i < 10; i++) {
+            Category category = new Category(arr[i % 2], arr2[i % 2]);
+            categoryRepository.save(category);
+            for (int j = 0; j < 10; j++) {
+                Subcategory subcategory = new Subcategory(category, "genre" + (i * 10) + j, "장르" + (i * 10) + j);
+                Item item = new Item("game" + i, "게임" + i, i * 1000, i * 10000, "good", "description", LocalDateTime.now());
+                itemRepository.save(item);
+                subcategoryRepository.save(subcategory);
+                itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
+            }
+        }
+    }
+
+    @Test
+    //@Commit
+    void testConnection() {
         String[] arr = {"XBOX", "PLAYSTATION"};
         String[] arr2 = {"엑스박스", "플레이스테이션"};
         for (int i = 0; i < 10; i++) {
