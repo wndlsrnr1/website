@@ -14,7 +14,7 @@ public class ItemInfo {
     @Id
     @GeneratedValue
     @Column(name = "item_info_id", nullable = false)
-    private Long Id;
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
@@ -38,8 +38,7 @@ public class ItemInfo {
         this.salesRate = salesRate;
     }
 
-    public ItemInfo(Long id, Item item, Long views, Integer salesRate, String brand, String manufacturer, String madeIn) {
-        Id = id;
+    public ItemInfo(Item item, Long views, Integer salesRate, String brand, String manufacturer, String madeIn) {
         this.item = item;
         this.views = views;
         this.salesRate = salesRate;
