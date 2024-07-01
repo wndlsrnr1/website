@@ -33,4 +33,10 @@ public class EditItemRequest {
     private List<Long> imagesForDelete;
     private Long imageIdForThumbnail;
     private Long thumbnailId;
+
+    private Integer saleRate;
+    private String brand;
+    private String manufacturer;
+    private String madeIn;
+
 }
