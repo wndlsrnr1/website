@@ -17,5 +17,15 @@ public class ItemAttachmentSeq {
     @Column(name = "item_attachment_seq_id", nullable = false)
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_attachment_id")
+    private ItemAttachment itemAttachment;
+
     private Integer seq;
+
+
+    public ItemAttachmentSeq(ItemAttachment itemAttachment, Integer seq) {
+        this.itemAttachment = itemAttachment;
+        this.seq = seq;
+    }
 }

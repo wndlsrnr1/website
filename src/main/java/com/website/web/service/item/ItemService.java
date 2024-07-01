@@ -2,13 +2,12 @@ package com.website.web.service.item;
 
 import com.website.domain.attachment.Attachment;
 import com.website.domain.category.Subcategory;
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemAttachment;
-import com.website.domain.item.ItemSubcategory;
-import com.website.domain.item.ItemThumbnail;
+import com.website.domain.item.*;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.item.info.ItemInfoRepository;
+import com.website.repository.item.seq.ItemAttachmentSeqRepository;
 import com.website.repository.item.thumbnail.ItemThumbnailRepository;
 import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
@@ -55,6 +54,8 @@ public class ItemService {
     private final BindingResultUtils bindingResultUtils;
     private final ItemHomeCarouselService itemHomeCarouselService;
     private final ItemThumbnailRepository itemThumbnailRepository;
+    private final ItemInfoRepository itemInfoRepository;
+    private final ItemAttachmentSeqRepository itemAttachmentSeqRepository;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -160,6 +161,13 @@ public class ItemService {
         MultipartFile thumbnailFile = saveItemRequest.getThumbnailFile();
         String thumbnailImage = saveItemRequest.getThumbnailImage();
 
+        //itemInfo
+        Integer saleRate = saveItemRequest.getSaleRate();
+        String brand = saveItemRequest.getBrand();
+        String manufacturer = saveItemRequest.getManufacturer();
+        String madeIn = saveItemRequest.getMadeIn();
+
+
         //아이템 저장
         Item item = new Item(name, nameKor, price, quantity, status, description, releasedAt);
         itemRepository.save(item);
@@ -171,24 +179,29 @@ public class ItemService {
         if (imageFiles != null) {
             for (int i = 0; i < imageFiles.size(); i++) {
                 MultipartFile file = imageFiles.get(i);
-                String requestedName = images.get(i);
+                String requestedName = file.getOriginalFilename();
 
                 //파일 정보 추출
                 Attachment attachment = fileService.saveFile(requestedName, file);
                 attachmentList.add(attachment);
             }
+
             //파일 정보 저장
             attachmentRepository.saveAll(attachmentList);
-            for (Attachment attachment : attachmentList) {
-                itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+            //log.info("attachmentList = {}", attachmentList);
+            for (int i = 0; i < attachmentList.size(); i++) {
+                Attachment attachment = attachmentList.get(i);
+                ItemAttachment itemAttachment = itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+                itemAttachmentSeqRepository.save(new ItemAttachmentSeq(itemAttachment, i + 1));
             }
         }
 
         if (thumbnailFile != null) {
             Attachment thumbnailAttachment = fileService.saveFile(thumbnailImage, thumbnailFile);
             attachmentRepository.save(thumbnailAttachment);
-            itemAttachmentRepository.save(new ItemAttachment(item, thumbnailAttachment));
+            ItemAttachment itemAttachment = itemAttachmentRepository.save(new ItemAttachment(item, thumbnailAttachment));
             itemThumbnailRepository.save(new ItemThumbnail(thumbnailAttachment, item));
+            itemAttachmentSeqRepository.save(new ItemAttachmentSeq(itemAttachment, 0));
         }
 
 
@@ -196,6 +209,11 @@ public class ItemService {
         Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
         log.info("subcategory = {}", subcategory);
         itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
+        itemInfoRepository.save(new ItemInfo(item, 0L, saleRate, brand, manufacturer, madeIn));
+        //log.info("imageFileList = {}", imageFiles);
+        for (MultipartFile imageFile : imageFiles) {
+            log.info("imageFile = {}", imageFile.getOriginalFilename());
+        }
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(null)

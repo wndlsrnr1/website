@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,5 +30,9 @@ public class SaveItemRequest {
     private String description;
     private MultipartFile thumbnailFile;
     private String thumbnailImage;
+    private Integer saleRate;
+    private String brand;
+    private String manufacturer;
+    private String madeIn;
 
 }
