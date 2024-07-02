@@ -89,4 +89,15 @@ class ItemInfoCustomRepositoryImplTest {
     void attachmentOrder() {
         ItemAttachment itemAttachment = itemAttachmentRepository.findById(1L).orElse(null);
     }
+
+    @Test
+    public void editItemInfoV2() throws Exception {
+        //given
+        itemInfoRepository.updateItemInfo(null, null, null, null, 1L);
+
+        //when
+
+        //then
+
+    }
 }

@@ -171,7 +171,7 @@ public class FileService {
         }
     }
 
-    public void uploadFile(List<String> images, List<MultipartFile> imageFiles, Item item) {
+    public List<Attachment> uploadFile(List<String> images, List<MultipartFile> imageFiles, Item item) {
         List<Attachment> attachmentList = new ArrayList<>();
         for (int i = 0; i < imageFiles.size(); i++) {
             MultipartFile file = imageFiles.get(i);
@@ -180,10 +180,12 @@ public class FileService {
             attachmentList.add(attachment);
         }
 
-        attachmentRepository.saveAll(attachmentList);
+        List<Attachment> attachmentList1 = attachmentRepository.saveAll(attachmentList);
         for (Attachment attachment : attachmentList) {
             itemAttachmentRepository.save(new ItemAttachment(item, attachment));
         }
+
+        return attachmentList1;
     }
 
 

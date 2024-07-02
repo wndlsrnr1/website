@@ -1,6 +1,7 @@
 package com.website.web.controller.api.admin.item;
 
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.EditItemRequestV2;
 import com.website.web.dto.request.item.SaveItemRequest;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.item.ItemService;
@@ -64,9 +65,14 @@ public class ItemAdminController {
         return itemService.deleteFileOnItem(fileIdList);
     }
 
-    @PostMapping("/edit/{itemId}")
+    //@PostMapping("/edit/{itemId}")
     public ResponseEntity editItemRequest(@PathVariable(name = "itemId", required = true) Long itemId, @Validated EditItemRequest editItemRequest, BindingResult bindingResult) {
         return itemService.editItemFormOnAdmin(itemId, editItemRequest, bindingResult);
+    }
+
+    @PostMapping("/edit/{itemId}")
+    public ResponseEntity editItemRequestV2(@PathVariable(name = "itemId", required = true) Long itemId, EditItemRequestV2 editItemRequest, BindingResult bindingResult) {
+        return itemService.editItemFormOnAdminV2(itemId, editItemRequest, bindingResult);
     }
 
     @GetMapping("/thumbnail/{itemId}")
@@ -83,6 +89,17 @@ public class ItemAdminController {
     @PostMapping("/thumbnail/add/{itemId}")
     public ResponseEntity addThumbnailResponse(@PathVariable("itemId") Long itemId, @RequestParam("imageId") Long imageId) {
         return itemService.addThumbnail(itemId, imageId);
+    }
+
+    //        /admin/items/info?itemId=" + itemId
+    @GetMapping("/info")
+    public ResponseEntity responseItemInfo(@RequestParam(value = "itemId", required = false) Long itemId) {
+        log.info("itemid = {}", itemId);
+        return itemService.getResponseItemInfo(itemId);
+    }
+    @GetMapping("/sequence/{itemId}")
+    public ResponseEntity responseAttachmentSequence(@PathVariable("itemId") Long itemId) {
+        return itemService.getItemAttachmentSequence(itemId);
     }
 
 }

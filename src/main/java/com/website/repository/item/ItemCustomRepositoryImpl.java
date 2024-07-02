@@ -7,6 +7,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.QItem;
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.EditItemRequestV2;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.response.item.home.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -303,6 +304,11 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .set(item.releasedAt, editItemRequest.getReleasedAt())
                 .where(item.id.eq(itemId))
                 .execute();
+    }
+
+    @Override
+    public void updateItemByDto(Long itemId, EditItemRequestV2 editItemRequest) {
+
     }
 
     @Override

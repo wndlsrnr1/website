@@ -3,7 +3,6 @@ package com.website.repository.item;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.ItemAttachment;
 import com.website.domain.item.QItemAttachment;
-import com.website.repository.item.ItemAttachmentCustomRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -42,5 +41,21 @@ public class ItemAttachmentCustomRepositoryImpl implements ItemAttachmentCustomR
                 .from(itemAttachment)
                 .where(itemAttachment.item.id.eq(itemId))
                 .fetch();
+    }
+
+    @Override
+    public List<ItemAttachment> findByAttachmentId(Long attachmentId, Long itemId) {
+        return query
+                .select(itemAttachment)
+                .from(itemAttachment)
+                .where(itemAttachment.attachment.id.eq(attachmentId).and(itemAttachment.item.id.eq(itemId)))
+                .fetch();
+    }
+
+    @Override
+    public void deleteByAttachmentId(Long attachmentIdListForDelete) {
+        query.delete(itemAttachment)
+                .where(itemAttachment.attachment.id.eq(attachmentIdListForDelete)).execute();
+        return;
     }
 }

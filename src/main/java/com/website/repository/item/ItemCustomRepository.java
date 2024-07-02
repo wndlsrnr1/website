@@ -1,6 +1,7 @@
 package com.website.repository.item;
 
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.EditItemRequestV2;
 import com.website.web.dto.request.item.home.ItemHomeSearchCond;
 import com.website.web.dto.response.item.CarouselItemResponse;
 import com.website.web.dto.response.item.ItemDetailResponse;
@@ -29,6 +30,8 @@ public interface ItemCustomRepository {
     void deleteFileOnItem(List<Long> fileIdList);
 
     void updateItemByDto(Long itemId, EditItemRequest editItemRequest);
+
+    void updateItemByDto(Long itemId, EditItemRequestV2 editItemRequest);
 
     ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome();
 
