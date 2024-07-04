@@ -2,24 +2,22 @@ package com.website.web.service.item;
 
 import com.website.domain.attachment.Attachment;
 import com.website.domain.category.Subcategory;
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemAttachment;
-import com.website.domain.item.ItemSubcategory;
-import com.website.domain.item.ItemThumbnail;
+import com.website.domain.item.*;
 import com.website.repository.attachment.AttachmentRepository;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
+import com.website.repository.item.info.ItemInfoRepository;
+import com.website.repository.item.seq.ItemAttachmentSeqRepository;
 import com.website.repository.item.thumbnail.ItemThumbnailRepository;
 import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.EditItemRequestV2;
 import com.website.web.dto.request.item.SaveItemRequest;
-import com.website.web.dto.response.item.CarouselItemResponse;
-import com.website.web.dto.response.item.ItemDetailResponse;
-import com.website.web.dto.response.item.ItemResponse;
-import com.website.web.dto.response.item.ItemThumbnailResponse;
+import com.website.web.dto.response.item.*;
+import com.website.web.dto.response.item.sequence.ItemAttachmentSequenceResponse;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
 import com.website.web.service.attachment.FileService;
 import com.website.web.service.common.BindingResultUtils;
@@ -37,7 +35,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +55,8 @@ public class ItemService {
     private final BindingResultUtils bindingResultUtils;
     private final ItemHomeCarouselService itemHomeCarouselService;
     private final ItemThumbnailRepository itemThumbnailRepository;
+    private final ItemInfoRepository itemInfoRepository;
+    private final ItemAttachmentSeqRepository itemAttachmentSeqRepository;
 
 
     public ResponseEntity sendItemResponseByCond(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable) {
@@ -160,6 +162,13 @@ public class ItemService {
         MultipartFile thumbnailFile = saveItemRequest.getThumbnailFile();
         String thumbnailImage = saveItemRequest.getThumbnailImage();
 
+        //itemInfo
+        Integer saleRate = saveItemRequest.getSaleRate();
+        String brand = saveItemRequest.getBrand();
+        String manufacturer = saveItemRequest.getManufacturer();
+        String madeIn = saveItemRequest.getMadeIn();
+
+
         //아이템 저장
         Item item = new Item(name, nameKor, price, quantity, status, description, releasedAt);
         itemRepository.save(item);
@@ -171,24 +180,29 @@ public class ItemService {
         if (imageFiles != null) {
             for (int i = 0; i < imageFiles.size(); i++) {
                 MultipartFile file = imageFiles.get(i);
-                String requestedName = images.get(i);
+                String requestedName = file.getOriginalFilename();
 
                 //파일 정보 추출
                 Attachment attachment = fileService.saveFile(requestedName, file);
                 attachmentList.add(attachment);
             }
+
             //파일 정보 저장
             attachmentRepository.saveAll(attachmentList);
-            for (Attachment attachment : attachmentList) {
-                itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+            //log.info("attachmentList = {}", attachmentList);
+            for (int i = 0; i < attachmentList.size(); i++) {
+                Attachment attachment = attachmentList.get(i);
+                ItemAttachment itemAttachment = itemAttachmentRepository.save(new ItemAttachment(item, attachment));
+                itemAttachmentSeqRepository.save(new ItemAttachmentSeq(itemAttachment, i + 1));
             }
         }
 
         if (thumbnailFile != null) {
             Attachment thumbnailAttachment = fileService.saveFile(thumbnailImage, thumbnailFile);
             attachmentRepository.save(thumbnailAttachment);
-            itemAttachmentRepository.save(new ItemAttachment(item, thumbnailAttachment));
+            ItemAttachment itemAttachment = itemAttachmentRepository.save(new ItemAttachment(item, thumbnailAttachment));
             itemThumbnailRepository.save(new ItemThumbnail(thumbnailAttachment, item));
+            itemAttachmentSeqRepository.save(new ItemAttachmentSeq(itemAttachment, 0));
         }
 
 
@@ -196,6 +210,11 @@ public class ItemService {
         Subcategory subcategory = subcategoryRepository.findById(subcategoryId).orElse(null);
         log.info("subcategory = {}", subcategory);
         itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
+        itemInfoRepository.save(new ItemInfo(item, 0L, saleRate, brand, manufacturer, madeIn));
+        //log.info("imageFileList = {}", imageFiles);
+        for (MultipartFile imageFile : imageFiles) {
+            log.info("imageFile = {}", imageFile.getOriginalFilename());
+        }
 
         ApiResponseBody<Object> body = ApiResponseBody.builder()
                 .data(null)
@@ -336,12 +355,133 @@ public class ItemService {
         return ResponseEntity.ok(ApiResponseBody.builder().message("ok").build());
     }
 
+    @Transactional
+    public ResponseEntity editItemFormOnAdminV2(Long itemId, EditItemRequestV2 editItemRequest, BindingResult bindingResult) {
+        if (itemId == null) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .apiError(new ApiError("itemId", messageSource.getMessage("Nodata", null, null)))
+                    .message("badRequest").build();
+            return ResponseEntity.badRequest().body(body);
+        }
+        if (bindingResult.hasErrors()) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError(bindingResult)).build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+        Item item = itemRepository.findById(itemId).orElse(null);
+        if (item == null) {
+            ApiResponseBody<Object> body = ApiResponseBody.builder()
+                    .apiError(new ApiError("itemId", messageSource.getMessage("Nodata", null, null)))
+                    .message("badRequest").build();
+            return ResponseEntity.badRequest().body(body);
+        }
+
+
+        //아이템 업데이트
+        itemRepository.updateItemByDto(itemId, editItemRequest);
+
+        //서브카테고리 정리
+        Long subcategoryId = editItemRequest.getSubcategoryId();
+        itemSubcategoryRepository.updateSubcategory(itemId, subcategoryId);
+
+        //파일 info DB에 저장하기
+        itemInfoRepository.updateItemInfo(editItemRequest.getMadeIn(), editItemRequest.getBrand(), editItemRequest.getSaleRate(), editItemRequest.getManufacturer(), item.getId());
+
+        //사진 업로드: 예외를 발생시키고 로그를 찍어야 할 것 같음.
+        //파일 저장 -> attachment DB에 저장 -> itemAttachment 저장 -> itemAttachmentSeq 저장
+        List<MultipartFile> imageFileListForUpload = editItemRequest.getImageFilesForUpload();
+        List<Integer> seqListForUpload = editItemRequest.getSeqListForUpload();
+        List<Attachment> uploadedAttachmentList = new ArrayList<>();
+        Map<Long, Long> attachmentAndItemAttachmentMap = new HashMap<>();
+        if (imageFileListForUpload != null && seqListForUpload != null && imageFileListForUpload.size() == seqListForUpload.size()) {
+            for (int i = 0; i < imageFileListForUpload.size(); i++) {
+                MultipartFile multipartFile = imageFileListForUpload.get(i);
+                Integer sequence = seqListForUpload.get(i);
+                Attachment attachment = fileService.saveFile(multipartFile.getOriginalFilename(), multipartFile);
+                Attachment savedAttachment = attachmentRepository.save(attachment);
+                uploadedAttachmentList.add(savedAttachment);
+                ItemAttachment savedItemAttachment = itemAttachmentRepository.save(new ItemAttachment(item, savedAttachment));
+                itemAttachmentSeqRepository.save(new ItemAttachmentSeq(savedItemAttachment, sequence));
+                attachmentAndItemAttachmentMap.put(savedItemAttachment.getAttachment().getId(), savedItemAttachment.getId());
+            }
+        }
+
+        //파일 지우기 -> attachment DB에서 지우기 -> itemAttachment 지우기 -> itemAttachmentSeq 지우기 (역순)
+
+        List<Long> attachmentIdListForDelete = editItemRequest.getImageIdsForDelete();
+        List<Attachment> attachmentForDelete = attachmentRepository.findAllById(attachmentIdListForDelete);
+        fileService.deleteFiles(attachmentForDelete);
+
+        for (int i = 0; i < attachmentIdListForDelete.size(); i++) {
+            Long attachmentIdForDelete = attachmentIdListForDelete.get(i);
+            List<ItemAttachment> itemAttachmentList = itemAttachmentRepository.findByAttachmentId(attachmentIdForDelete, itemId);
+            for (int j = 0; j < itemAttachmentList.size(); j++) {
+                ItemAttachment itemAttachment = itemAttachmentList.get(j);
+                itemAttachmentSeqRepository.deleteByItemAttachmentId(itemAttachment.getId());
+            }
+            itemAttachmentRepository.deleteByAttachmentId(attachmentIdForDelete);
+            attachmentRepository.deleteById(attachmentIdForDelete);
+        }
+
+
+        //사진 순서 update 하기
+        List<Long> imageIdListForUpdate = editItemRequest.getImageIdsForUpdate();
+        List<Integer> seqListForUpdate = editItemRequest.getSeqListForUpdate();
+
+        if (imageIdListForUpdate != null && seqListForUpdate != null) {
+            if (imageIdListForUpdate.size() != seqListForUpdate.size()) {
+                return ResponseEntity.badRequest().build();
+            }
+            log.info("badRequest3");
+            log.info("imageIdListForUpdate = {}", imageIdListForUpdate);
+            log.info("seqListForUpdate = {}", seqListForUpdate);
+            for (int i = 0; i < imageIdListForUpdate.size(); i++) {
+                Long imageId = imageIdListForUpdate.get(i);
+                Integer sequence = seqListForUpdate.get(i);
+                ItemAttachment findItemAttachment = itemAttachmentRepository.findByItemIdAndAttachmentId(itemId, imageId);
+                itemAttachmentSeqRepository.update(findItemAttachment.getId(), sequence);
+            }
+        }
+
+
+
+        //썸네일 지정하기.
+        Long imageIdForThumbnail = editItemRequest.getImageIdForThumbnail();
+        Integer imageIndexForThumbnail = editItemRequest.getImageIndexForThumbnail();
+
+        if (imageIdForThumbnail == null && imageIndexForThumbnail == null) {
+            log.info("badRequest1");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (imageIdForThumbnail != null && imageIndexForThumbnail != null) {
+            log.info("badRequest2");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if (imageIdForThumbnail != null && imageIndexForThumbnail == null) {
+            itemThumbnailRepository.updateThumbnail(itemId, imageIdForThumbnail);
+            ItemAttachment findItemAttachment = itemAttachmentRepository.findByItemIdAndAttachmentId(itemId, imageIdForThumbnail);
+            itemAttachmentSeqRepository.update(findItemAttachment.getId(), 0);
+        }
+
+        if (imageIdForThumbnail == null && imageIndexForThumbnail != null) {
+            Attachment attachment = uploadedAttachmentList.get(imageIndexForThumbnail);
+            itemThumbnailRepository.updateThumbnail(itemId, attachment.getId());
+            //Long savedItemAttachmentId = attachmentAndItemAttachmentMap.get(imageIdForThumbnail);
+            //itemAttachmentSeqRepository.update();
+
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
     public ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome() {
         itemHomeCarouselService.getCarouselsByCond(null, null, null);
         return itemRepository.getCarouselItemsInHome();
     }
 
-    public ResponseEntity sendThumbnailResponse(Long itemId) {
+    public ResponseEntity getThumbnailResponse(Long itemId) {
         if (itemId == null) {
             String message = messageSource.getMessage("Nodata", null, null);
             ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError("itemId", message)).build();
@@ -431,5 +571,42 @@ public class ItemService {
         if (fileId != null && imagesForDelete.contains(fileId)) {
             itemThumbnailRepository.deleteById(itemThumbnail.getItemThumbnailId());
         }
+    }
+
+    //생성자가 없어서 쿼리를 만들 수 없었음 -> query projection 사용함.
+    //
+    public ResponseEntity getResponseItemInfo(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        ItemInfoResponse itemInfo = itemInfoRepository.findByItemId(itemId);
+        if (itemInfo == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().body(ApiResponseBody.builder().data(itemInfo).build());
+    }
+
+    public ResponseEntity getItemAttachmentSequence(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<ItemAttachmentSequenceResponse> attachmentSequenceList = itemAttachmentSeqRepository.findByItemId(itemId);
+        Map<Long, Integer> attachmentSequenceMap = new HashMap<>();
+        for (ItemAttachmentSequenceResponse itemAttachmentSequenceResponse : attachmentSequenceList) {
+            Long fileId = itemAttachmentSequenceResponse.getFileId();
+            Integer sequence = itemAttachmentSequenceResponse.getSequence();
+            attachmentSequenceMap.put(fileId, sequence);
+        }
+
+        return ResponseEntity.ok(ApiResponseBody.builder().data(attachmentSequenceMap).build());
+    }
+
+    public ResponseEntity getItemBasicResponse(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        ItemBasicResponse itemDefaultResponse = itemRepository.findItemBasicResponseByItemId(itemId);
+        return ResponseEntity.ok(ApiResponseBody.builder().data(itemDefaultResponse).build());
     }
 }

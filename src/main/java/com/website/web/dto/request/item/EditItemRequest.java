@@ -19,18 +19,24 @@ public class EditItemRequest {
     private String nameKor;
     @NotEmpty
     private String name;
+    //이거 무슨 의미임?
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime releasedAt;
     @NotNull
     private Integer price;
-    @NotNull
     private Integer quantity;
     private List<MultipartFile> imageFiles;
     private List<String> images;
     private String status;
     private String description;
     private List<Long> imagesForDelete;
-    private Long imageIdForThumbnail;
     private Long thumbnailId;
+    private Integer saleRate;
+    private String brand;
+    private String manufacturer;
+    private String madeIn;
+
+    private Long imageIdForThumbnail;
+
 }

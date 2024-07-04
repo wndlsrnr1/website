@@ -7,6 +7,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.domain.item.QItem;
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.EditItemRequestV2;
 import com.website.web.dto.response.item.*;
 import com.website.web.dto.response.item.home.*;
 import com.website.web.dto.sqlcond.item.ItemSearchCond;
@@ -158,6 +159,40 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return new PageImpl<>(content, obj, total);
     }
 
+    @Override
+    public ItemBasicResponse findItemBasicResponseByItemId(Long itemId) {
+        List<ItemBasicResponse> fetchResult = query
+                .select(
+                        new QItemBasicResponse(
+                                item.id,
+                                item.name,
+                                item.nameKor,
+                                item.price,
+                                item.quantity,
+                                item.status,
+                                item.description,
+                                item.releasedAt,
+                                itemInfo.views,
+                                itemInfo.salesRate,
+                                itemInfo.brand,
+                                itemInfo.manufacturer,
+                                itemInfo.madeIn
+                        )
+                ).from(item)
+                .join(itemInfo).on(item.id.eq(itemInfo.item.id))
+                .where(item.id.eq(itemId)).fetch();
+
+        if (fetchResult == null) {
+            return null;
+        }
+
+        if (fetchResult.size() < 1) {
+            return null;
+        }
+
+        return fetchResult.get(0);
+    }
+
     private long getLimit(int pageSize, long total) {
         long limit = (total % pageSize);
         if (total != 0 && limit == 0) {
@@ -303,6 +338,11 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
                 .set(item.releasedAt, editItemRequest.getReleasedAt())
                 .where(item.id.eq(itemId))
                 .execute();
+    }
+
+    @Override
+    public void updateItemByDto(Long itemId, EditItemRequestV2 editItemRequest) {
+
     }
 
     @Override

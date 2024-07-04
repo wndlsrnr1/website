@@ -5,6 +5,7 @@ import com.website.repository.attachment.AttachmentRepository;
 import com.website.web.dto.common.ApiError;
 import com.website.web.dto.common.ApiResponseBody;
 import com.website.web.dto.request.file.AttachmentUploadRequest;
+import com.website.web.service.attachment.AttachmentService;
 import com.website.web.service.attachment.FileService;
 import com.website.web.service.common.BindingResultUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class AttachmentController {
     private final FileService fileService;
     private final AttachmentRepository attachmentRepository;
     private final BindingResultUtils bindingResultUtils;
+    private final AttachmentService attachmentService;
 
     @Value("${file.dir}")
     private String firDir;
@@ -96,6 +98,11 @@ public class AttachmentController {
         return ResponseEntity.ok()
                 .header("Content-Disposition", contentDisposition.toString())
                 .body(resource);
+    }
+
+    @GetMapping("/item/{itemId}")
+    public ResponseEntity responseImageInfoForCustomerResponse(@PathVariable("itemId") Long itemId) {
+        return attachmentService.getResponseImageInfoForCustomerResponse(itemId);
     }
 
 

@@ -10,4 +10,8 @@ public interface ItemAttachmentCustomRepository {
     ItemAttachment findByItemIdAndAttachmentId(Long itemId, Long attachmentId);
 
     List<Long> findAttachmentIdByItemId(Long itemId);
+
+    List<ItemAttachment> findByAttachmentId(Long attachmentIdForDelete, Long itemId);
+
+    void deleteByAttachmentId(Long attachmentIdListForDelete);
 }

@@ -28,6 +28,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.BindingResultUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -147,7 +148,7 @@ class ItemServiceTest {
     }
 
     @Test
-    @Commit
+        //@Commit
     void insertItem200() {
         Subcategory subcategory = subcategoryRepository.findAll().get(0);
         for (int i = 0; i < 400; i++) {
@@ -191,6 +192,33 @@ class ItemServiceTest {
     //        itemService.saveItemByItemFormRequest(saveItemRequest, BindingResultUtils.getBindingResult(Map.of("name", "name"), "name"));
     //    }
     //}
+
+    @Test
+    @Commit
+    void insertDataForRemoteDB() {
+        Subcategory subcategory = subcategoryRepository.findAll().get(1);
+        int randomNumber = new Random().nextInt(10);
+        Item itemSaved = itemRepository.save(
+                new Item(
+                        "Worked?",
+                        "작동함?",
+                        100,
+                        100,
+                        "good",
+                        "good",
+                        LocalDateTime.now()
+                )
+        );
+        //Attachment attachment = itemAttachmentRepository.findAll().get(0).getAttachment();
+        List<ItemAttachment> list = itemAttachmentRepository.findAll();
+        int size = list.size();
+        int hi = new Random().nextInt(size);
+        Attachment attachment = list.get(hi).getAttachment();
+        itemAttachmentRepository.save(new ItemAttachment(itemSaved, attachment));
+        itemThumbnailRepository.save(new ItemThumbnail(attachment, itemSaved));
+        itemSubcategoryRepository.save(new ItemSubcategory(itemSaved, subcategory));
+        itemInfoRepository.save(new ItemInfo(itemSaved, 1000L, 10));
+    }
 
     public static Long measureTime(Runnable task) {
         long before = System.currentTimeMillis();

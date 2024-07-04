@@ -1,8 +1,10 @@
 package com.website.repository.item;
 
 import com.website.web.dto.request.item.EditItemRequest;
+import com.website.web.dto.request.item.EditItemRequestV2;
 import com.website.web.dto.request.item.home.ItemHomeSearchCond;
 import com.website.web.dto.response.item.CarouselItemResponse;
+import com.website.web.dto.response.item.ItemBasicResponse;
 import com.website.web.dto.response.item.ItemDetailResponse;
 import com.website.web.dto.response.item.ItemResponse;
 import com.website.web.dto.response.item.home.ItemLatestResponse;
@@ -30,8 +32,11 @@ public interface ItemCustomRepository {
 
     void updateItemByDto(Long itemId, EditItemRequest editItemRequest);
 
+    void updateItemByDto(Long itemId, EditItemRequestV2 editItemRequest);
+
     ResponseEntity<List<CarouselItemResponse>> getCarouselItemsInHome();
 
     Page<ItemResponse> getItemResponseByCondWhenLastPage(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage);
 
+    ItemBasicResponse findItemBasicResponseByItemId(Long itemId);
 }
