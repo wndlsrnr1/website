@@ -159,6 +159,40 @@ public class ItemCustomRepositoryImpl implements ItemCustomRepository {
         return new PageImpl<>(content, obj, total);
     }
 
+    @Override
+    public ItemBasicResponse findItemBasicResponseByItemId(Long itemId) {
+        List<ItemBasicResponse> fetchResult = query
+                .select(
+                        new QItemBasicResponse(
+                                item.id,
+                                item.name,
+                                item.nameKor,
+                                item.price,
+                                item.quantity,
+                                item.status,
+                                item.description,
+                                item.releasedAt,
+                                itemInfo.views,
+                                itemInfo.salesRate,
+                                itemInfo.brand,
+                                itemInfo.manufacturer,
+                                itemInfo.madeIn
+                        )
+                ).from(item)
+                .join(itemInfo).on(item.id.eq(itemInfo.item.id))
+                .where(item.id.eq(itemId)).fetch();
+
+        if (fetchResult == null) {
+            return null;
+        }
+
+        if (fetchResult.size() < 1) {
+            return null;
+        }
+
+        return fetchResult.get(0);
+    }
+
     private long getLimit(int pageSize, long total) {
         long limit = (total % pageSize);
         if (total != 0 && limit == 0) {

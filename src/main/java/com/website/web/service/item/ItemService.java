@@ -481,7 +481,7 @@ public class ItemService {
         return itemRepository.getCarouselItemsInHome();
     }
 
-    public ResponseEntity sendThumbnailResponse(Long itemId) {
+    public ResponseEntity getThumbnailResponse(Long itemId) {
         if (itemId == null) {
             String message = messageSource.getMessage("Nodata", null, null);
             ApiResponseBody<Object> body = ApiResponseBody.builder().apiError(new ApiError("itemId", message)).build();
@@ -600,5 +600,13 @@ public class ItemService {
         }
 
         return ResponseEntity.ok(ApiResponseBody.builder().data(attachmentSequenceMap).build());
+    }
+
+    public ResponseEntity getItemBasicResponse(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        ItemBasicResponse itemDefaultResponse = itemRepository.findItemBasicResponseByItemId(itemId);
+        return ResponseEntity.ok(ApiResponseBody.builder().data(itemDefaultResponse).build());
     }
 }

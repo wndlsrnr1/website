@@ -77,7 +77,7 @@ public class ItemAdminController {
 
     @GetMapping("/thumbnail/{itemId}")
     public ResponseEntity sendThumbnailResponse(@PathVariable("itemId") Long itemId) {
-        return itemService.sendThumbnailResponse(itemId);
+        return itemService.getThumbnailResponse(itemId);
     }
 
     @PostMapping("/thumbnail/edit/{itemId}")

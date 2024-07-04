@@ -1,6 +1,7 @@
 package com.website.repository.attachment;
 
 import com.website.domain.attachment.Attachment;
+import com.website.web.dto.response.attachment.ItemImageInfoForCustomerResponse;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface AttachmentCustomRepository {
     List<Attachment> getAttachmentByItemId(Long itemId);
 
     List<Attachment> getListByIdList(List<Long> fileIdList);
+
+    List<ItemImageInfoForCustomerResponse> getResponseImageInfoForCustomerResponse(Long itemId);
 }
