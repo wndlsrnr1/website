@@ -3,7 +3,9 @@ package com.website.web.service.attachment;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,4 +25,8 @@ class FileServiceTest {
         System.out.println("s = " + s);
     }
 
+    //@Test
+    //void insertFileOne() {
+    //    System.out.println("UUID.to = " + UUID.randomUUID().toString());
+    //}
 }

@@ -609,4 +609,15 @@ public class ItemService {
         ItemBasicResponse itemDefaultResponse = itemRepository.findItemBasicResponseByItemId(itemId);
         return ResponseEntity.ok(ApiResponseBody.builder().data(itemDefaultResponse).build());
     }
+
+    public ResponseEntity getReviewResponse(Long itemId) {
+        if (itemId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return null;
+    }
+
+    
+
 }
