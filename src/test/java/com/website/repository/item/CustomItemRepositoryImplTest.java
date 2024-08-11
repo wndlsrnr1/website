@@ -14,7 +14,7 @@ import javax.persistence.EntityManager;
 @SpringBootTest
 @Slf4j
 @RequiredArgsConstructor
-class ItemCustomRepositoryImplTest {
+class CustomItemRepositoryImplTest {
     @Autowired
     EntityManager entityManager;
     @Autowired

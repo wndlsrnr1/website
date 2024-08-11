@@ -35,8 +35,18 @@ class ItemInfoCustomRepositoryImplTest {
 
     @Test
     void addItemInfo() {
+        Item item = itemRepository.save(
+                Item.builder()
+                        .name("이름")
+                        .nameKor("이름")
+                        .price(10)
+                        .quantity(10)
+                        .status("good")
+                        .description("good")
+                        .releasedAt(LocalDateTime.now())
+                        .build()
+        );
 
-        Item item = itemRepository.save(new Item("이름", "이름", 10, 10, "good", "good", LocalDateTime.now()));
         String brandRandom = UUID.randomUUID().toString();
 
         Item findItem = itemRepository.findById(item.getId()).orElse(null);
@@ -50,7 +60,18 @@ class ItemInfoCustomRepositoryImplTest {
     @Test
     void editItemInfo() {
         //given
-        Item item = itemRepository.save(new Item("이름", "이름", 10, 10, "good", "good", LocalDateTime.now()));
+        //Item item = itemRepository.save(new Item("이름", "이름", 10, 10, "good", "good", LocalDateTime.now()));
+        Item item = itemRepository.save(
+                Item.builder()
+                        .name("이름")
+                        .nameKor("이름")
+                        .price(10)
+                        .quantity(10)
+                        .status("good")
+                        .description("good")
+                        .releasedAt(LocalDateTime.now())
+                        .build()
+        );
         String brandRandom = UUID.randomUUID().toString();
 
         ItemInfo itemInfo = new ItemInfo(item, 0L, 10, brandRandom, brandRandom, "china");
@@ -71,7 +92,18 @@ class ItemInfoCustomRepositoryImplTest {
     @Test
     void deleteItemInfoByItemId() {
         //given
-        Item item = itemRepository.save(new Item("이름", "이름", 10, 10, "good", "good", LocalDateTime.now()));
+        //Item item = itemRepository.save(new Item("이름", "이름", 10, 10, "good", "good", LocalDateTime.now()));
+        Item item = itemRepository.save(
+                Item.builder()
+                        .name("이름")
+                        .nameKor("이름")
+                        .price(10)
+                        .quantity(10)
+                        .status("good")
+                        .description("good")
+                        .releasedAt(LocalDateTime.now())
+                        .build()
+        );
         String brandRandom = UUID.randomUUID().toString();
 
         ItemInfo itemInfo = new ItemInfo(item, 0L, 10, brandRandom, brandRandom, "china");

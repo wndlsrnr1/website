@@ -1,6 +1,6 @@
 package com.website.controller.api.home;
 
-import com.website.repository.user.UserRepository;
+import com.website.repository.user.CustomUserRepository;
 import com.website.service.item.ItemService;
 import com.website.service.item.home.ItemHomeService;
 import com.website.service.item.carousel.ItemHomeCarouselService;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/home")
 public class HomeController {
 
-    private final UserRepository userRepository;
+    private final CustomUserRepository customUserRepository;
     private final ItemService itemService;
     private final ItemHomeCarouselService itemHomeCarouselService;
     private final ItemHomeService itemHomeService;

@@ -11,16 +11,16 @@ import java.util.List;
 import static com.website.repository.model.user.QUser.user;
 
 @Repository
-public class UserRepositoryWithJpaAndQueryDsl implements UserRepository{
+public class CustomUserRepositoryWithJpaAndQueryDsl implements CustomUserRepository {
 
     private final EntityManager entityManager;
     private final JPAQueryFactory jpaQueryFactory;
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
 
-    public UserRepositoryWithJpaAndQueryDsl(EntityManager entityManager, UserJpaRepository userJpaRepository) {
+    public CustomUserRepositoryWithJpaAndQueryDsl(EntityManager entityManager, UserRepository userRepository) {
         this.entityManager = entityManager;
         this.jpaQueryFactory = new JPAQueryFactory(entityManager);
-        this.userJpaRepository = userJpaRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class UserRepositoryWithJpaAndQueryDsl implements UserRepository{
 
     @Override
     public void saveUser(User user) {
-        userJpaRepository.save(user);
+        userRepository.save(user);
     }
     @Override
     public User findUserByEmail(String email) {
@@ -48,6 +48,6 @@ public class UserRepositoryWithJpaAndQueryDsl implements UserRepository{
 
     @Override
     public User findByUserId(Long userId) {
-        return userJpaRepository.findById(userId).orElse(null);
+        return userRepository.findById(userId).orElse(null);
     }
 }

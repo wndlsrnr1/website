@@ -1,15 +1,18 @@
 package com.website.repository.model.item;
 
 import com.website.repository.model.common.AbstractBaseEntity;
+import com.website.repository.model.user.User;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Builder
 //@EntityListeners(ItemListener.class)
 public class Item extends AbstractBaseEntity {
 
@@ -17,6 +20,11 @@ public class Item extends AbstractBaseEntity {
     @Column(name = "item_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
     private String name;
     private String nameKor;
     private Integer price;
@@ -24,18 +32,6 @@ public class Item extends AbstractBaseEntity {
     private String status;
     private String description;
     private LocalDateTime releasedAt;
-
-    @Builder
-    public Item(String name, String nameKor, Integer price, Integer quantity, String status, String description, LocalDateTime releasedAt) {
-        this.name = name;
-        this.nameKor = nameKor;
-        this.price = price;
-        this.quantity = quantity;
-        this.status = status;
-        this.description = description;
-        this.releasedAt = releasedAt;
-    }
-
 
     public void setName(String name) {
         this.name = name;
@@ -66,3 +62,4 @@ public class Item extends AbstractBaseEntity {
     }
 
 }
+

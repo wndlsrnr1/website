@@ -14,7 +14,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
-public interface ItemCustomRepository {
+public interface CustomItemRepository {
     void updateNameById(String updateName, Long id);
 
     Page<ItemResponse> getItemResponseByCondByLastItemId(ItemSearchCond itemSearchCond, Pageable pageable, Long lastItemId, Integer lastPage, Integer pageChunk);

@@ -39,7 +39,7 @@
             </encoder>
         </appender>
 
-        <root level="DEBUG">
+        <root level="info">
             <appender-ref ref="console" />
         </root>
     </springProfile>

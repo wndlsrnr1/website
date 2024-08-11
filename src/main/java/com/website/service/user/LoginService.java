@@ -1,7 +1,7 @@
 package com.website.service.user;
 
 import com.website.repository.model.user.User;
-import com.website.repository.user.UserRepository;
+import com.website.repository.user.CustomUserRepository;
 //import com.website.repository.user.UserRepository2;
 import com.website.controller.api.model.request.user.JoinFormRequest;
 import com.website.controller.api.model.request.user.LoginFormRequest;
@@ -20,7 +20,7 @@ import org.springframework.validation.BindingResult;
 @Slf4j
 public class LoginService {
 
-    private final UserRepository userRepository;
+    private final CustomUserRepository customUserRepository;
     private final LoginFormValidatorEx loginFormValidatorEx;
 
     public User join(JoinFormRequest joinFormRequest) {
@@ -30,7 +30,7 @@ public class LoginService {
                 .address(joinFormRequest.getAddress())
                 .password(joinFormRequest.getPassword())
                 .build();
-        userRepository.saveUser(user);
+        customUserRepository.saveUser(user);
         return user;
     }
 
@@ -52,7 +52,7 @@ public class LoginService {
         String password = loginFormRequest.getPassword();
         String email = loginFormRequest.getEmail();
 
-        User findNormalUser = userRepository.findNormalUserByEmailPassword(email, password);
+        User findNormalUser = customUserRepository.findNormalUserByEmailPassword(email, password);
 
         if (findNormalUser == null) {
             return null;
@@ -77,7 +77,7 @@ public class LoginService {
 
 
     public User findUserByUserId(Long userId) {
-        return userRepository.findByUserId(userId);
+        return customUserRepository.findByUserId(userId);
     }
 
 
@@ -94,7 +94,7 @@ public class LoginService {
         }
 
         //User가 있으면 문제 있음
-        User findUser = userRepository.findUserByEmail(email);
+        User findUser = customUserRepository.findUserByEmail(email);
         if (findUser != null) {
             return ResponseEntity.badRequest().build();
         }

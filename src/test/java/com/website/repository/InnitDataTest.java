@@ -42,7 +42,18 @@ public class InnitDataTest {
             categoryRepository.save(category);
             for (int j = 0; j < 10; j++) {
                 Subcategory subcategory = new Subcategory(category, "genre" + (i * 10) + j, "장르" + (i * 10) + j);
-                Item item = new Item("game" + i, "게임" + i, i * 1000, i * 10000, "good", "description", LocalDateTime.now());
+                //Item item = new Item("game" + i, "게임" + i, i * 1000, i * 10000, "good", "description", LocalDateTime.now());
+                Item item = itemRepository.save(
+                        Item.builder()
+                                .name("game" + i)
+                                .nameKor("게임" + i)
+                                .price(i * 1000)
+                                .quantity(i * 10000)
+                                .status("good")
+                                .description("description")
+                                .releasedAt(LocalDateTime.now())
+                                .build()
+                );
                 itemRepository.save(item);
                 subcategoryRepository.save(subcategory);
                 itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));
@@ -60,7 +71,18 @@ public class InnitDataTest {
             categoryRepository.save(category);
             for (int j = 0; j < 10; j++) {
                 Subcategory subcategory = new Subcategory(category, "genre" + (i * 10) + j, "장르" + (i * 10) + j);
-                Item item = new Item("game" + i, "게임" + i, i * 1000, i * 10000, "good", "description", LocalDateTime.now());
+                //Item item = new Item("game" + i, "게임" + i, i * 1000, i * 10000, "good", "description", LocalDateTime.now());
+                Item item = itemRepository.save(
+                        Item.builder()
+                                .name("game" + i)
+                                .nameKor("게임" + i)
+                                .price(i * 1000)
+                                .quantity(i * 10000)
+                                .status("good")
+                                .description("description")
+                                .releasedAt(LocalDateTime.now())
+                                .build()
+                );
                 itemRepository.save(item);
                 subcategoryRepository.save(subcategory);
                 itemSubcategoryRepository.save(new ItemSubcategory(item, subcategory));

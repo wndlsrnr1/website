@@ -1,9 +1,9 @@
 package com.website.web.controller.login;
 
 import com.website.repository.model.user.User;
-import com.website.repository.user.UserRepository;
+import com.website.repository.user.CustomUserRepository;
 //import com.website.repository.user.UserRepository2;
-import com.website.repository.user.UserJpaRepository;
+import com.website.repository.user.UserRepository;
 import com.website.controller.api.model.request.user.JoinFormRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +20,10 @@ import java.util.List;
 class LoginControllerTest {
 
     @Autowired
-    UserJpaRepository userJpaRepository;
+    UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
+    CustomUserRepository customUserRepository;
 
     @BeforeEach
     void saveData() {
@@ -37,7 +37,7 @@ class LoginControllerTest {
         User user = User.builder().name(joinFormRequest.getName())
                 .email(joinFormRequest.getEmail())
                 .address(joinFormRequest.getAddress()).build();
-        userJpaRepository.save(user);
+        userRepository.save(user);
 
     }
 
@@ -56,24 +56,24 @@ class LoginControllerTest {
                 .address(joinFormRequest.getAddress())
                 .password(joinFormRequest.getPassword())
                 .build();
-        userJpaRepository.save(user);
+        userRepository.save(user);
 
-        userJpaRepository.flush();
+        userRepository.flush();
 
     }
 
     @Test
     void findAnyTest() {
-        List<User> all = userJpaRepository.findAll();
+        List<User> all = userRepository.findAll();
         log.info("all = {}", all);
     }
 
     @Test
     void loginTest() {
-        User user = userJpaRepository.findAll().get(0);
+        User user = userRepository.findAll().get(0);
         String email = user.getEmail();
         String password = user.getPassword();
-        User findNormalUser = userRepository.findNormalUserByEmailPassword(email, password);
+        User findNormalUser = customUserRepository.findNormalUserByEmailPassword(email, password);
 
         log.info("findNormalUser = {}", findNormalUser);
     }

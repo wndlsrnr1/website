@@ -33,12 +33,12 @@ import static com.website.repository.model.item.QItemSubcategory.itemSubcategory
 
 @Repository
 @Slf4j
-public class ItemCustomRepositoryImpl implements ItemCustomRepository {
+public class CustomItemRepositoryImpl implements CustomItemRepository {
 
     private final EntityManager entityManager;
     private final JPAQueryFactory query;
 
-    public ItemCustomRepositoryImpl(EntityManager entityManager) {
+    public CustomItemRepositoryImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.query = new JPAQueryFactory(entityManager);
         //this.entityUpdater = new EntityUpdater(entityManager);
