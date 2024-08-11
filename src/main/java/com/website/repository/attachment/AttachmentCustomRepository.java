@@ -1,7 +1,7 @@
 package com.website.repository.attachment;
 
-import com.website.domain.attachment.Attachment;
-import com.website.web.dto.response.attachment.ItemImageInfoForCustomerResponse;
+import com.website.repository.model.attachment.Attachment;
+import com.website.controller.api.model.response.attachment.ItemImageInfoForCustomerResponse;
 
 import java.util.List;
 

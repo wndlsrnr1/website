@@ -1,9 +1,9 @@
 package com.website.repository.item.customer;
 
-import com.website.web.dto.response.item.home.ItemLatestResponse;
-import com.website.web.dto.response.item.home.ItemPopularResponse;
-import com.website.web.dto.response.item.home.ItemSpecialResponse;
-import com.website.web.dto.response.item.home.ItemsForCustomerResponse;
+import com.website.controller.api.model.response.item.home.ItemLatestResponse;
+import com.website.controller.api.model.response.item.home.ItemPopularResponse;
+import com.website.controller.api.model.response.item.home.ItemSpecialResponse;
+import com.website.controller.api.model.response.item.home.ItemsForCustomerResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

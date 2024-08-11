@@ -1,13 +1,14 @@
 package com.website.repository.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.user.User;
+import com.website.repository.model.user.User;
 import org.springframework.stereotype.Repository;
 
-import static com.website.domain.user.QUser.*;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+
+import static com.website.repository.model.user.QUser.user;
 
 @Repository
 public class UserRepositoryWithJpaAndQueryDsl implements UserRepository{

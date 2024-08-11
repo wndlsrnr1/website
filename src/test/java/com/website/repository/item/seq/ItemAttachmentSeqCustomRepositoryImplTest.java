@@ -1,15 +1,12 @@
 package com.website.repository.item.seq;
 
-import com.website.domain.item.ItemAttachmentSeq;
-import com.website.web.dto.response.item.sequence.ItemAttachmentSequenceResponse;
+import com.website.controller.api.model.response.item.sequence.ItemAttachmentSequenceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest

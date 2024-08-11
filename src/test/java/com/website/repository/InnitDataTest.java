@@ -1,9 +1,9 @@
 package com.website.repository;
 
-import com.website.domain.category.Category;
-import com.website.domain.category.Subcategory;
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemSubcategory;
+import com.website.repository.model.category.Category;
+import com.website.repository.model.category.Subcategory;
+import com.website.repository.model.item.Item;
+import com.website.repository.model.item.ItemSubcategory;
 import com.website.repository.category.CategoryRepository;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;

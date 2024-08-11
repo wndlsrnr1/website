@@ -1,12 +1,12 @@
 package com.website.repository.item;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.QItemSubcategory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
-import static com.website.domain.item.QItemSubcategory.*;
+import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
+
 
 @Repository
 public class ItemSubcategoryCustomRepositoryImpl implements ItemSubcategoryCustomRepository {

@@ -1,26 +1,18 @@
 package com.website.repository.attachment;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.attachment.Attachment;
-import com.website.domain.attachment.QAttachment;
-import com.website.domain.item.ItemThumbnail;
-import com.website.domain.item.QItem;
-import com.website.domain.item.QItemAttachmentSeq;
-import com.website.domain.item.QItemThumbnail;
-import com.website.web.dto.response.attachment.ItemImageInfoForCustomerResponse;
-import com.website.web.dto.response.attachment.QItemImageInfoForCustomerResponse;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.website.controller.api.model.response.attachment.QItemImageInfoForCustomerResponse;
+import com.website.repository.model.attachment.Attachment;
+import com.website.controller.api.model.response.attachment.ItemImageInfoForCustomerResponse;
 import org.springframework.stereotype.Repository;
+import static com.website.repository.model.attachment.QAttachment.*;
+import static com.website.repository.model.item.QItemAttachment.*;
+import static com.website.repository.model.item.QItemAttachmentSeq.itemAttachmentSeq;
+import static com.website.repository.model.item.QItemThumbnail.itemThumbnail;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.website.domain.attachment.QAttachment.attachment;
-import static com.website.domain.item.QItem.item;
-import static com.website.domain.item.QItemAttachment.*;
-import static com.website.domain.item.QItemAttachmentSeq.itemAttachmentSeq;
-import static com.website.domain.item.QItemThumbnail.itemThumbnail;
 
 @Repository
 public class AttachmentCustomRepositoryImpl implements AttachmentCustomRepository {

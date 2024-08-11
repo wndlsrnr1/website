@@ -3,14 +3,11 @@ package com.website.repository.item;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.QItem;
-import com.website.web.dto.request.item.EditItemRequest;
-import com.website.web.dto.request.item.EditItemRequestV2;
-import com.website.web.dto.response.item.*;
-import com.website.web.dto.response.item.home.*;
-import com.website.web.dto.sqlcond.item.ItemSearchCond;
+import com.website.controller.api.model.request.item.EditItemRequest;
+import com.website.controller.api.model.request.item.EditItemRequestV2;
+import com.website.controller.api.model.response.item.*;
+import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,14 +24,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.website.domain.attachment.QAttachment.attachment;
-import static com.website.domain.category.QSubcategory.subcategory;
-import static com.website.domain.item.QItem.*;
-import static com.website.domain.item.QItemAttachment.*;
-import static com.website.domain.item.QItemInfo.itemInfo;
-import static com.website.domain.item.QItemSubcategory.*;
-import static com.website.domain.item.QItemThumbnail.itemThumbnail;
-import static com.website.web.dto.request.item.home.ItemSortedByType.*;
+import static com.website.repository.model.attachment.QAttachment.attachment;
+import static com.website.repository.model.category.QSubcategory.subcategory;
+import static com.website.repository.model.item.QItem.item;
+import static com.website.repository.model.item.QItemAttachment.itemAttachment;
+import static com.website.repository.model.item.QItemInfo.itemInfo;
+import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
 
 @Repository
 @Slf4j

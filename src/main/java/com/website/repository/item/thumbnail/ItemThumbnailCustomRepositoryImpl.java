@@ -1,19 +1,18 @@
 package com.website.repository.item.thumbnail;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.attachment.Attachment;
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemThumbnail;
-import com.website.domain.item.QItemThumbnail;
-import com.website.web.dto.response.item.ItemThumbnailResponse;
-import com.website.web.dto.response.item.QItemThumbnailResponse;
+import com.website.controller.api.model.response.item.QItemThumbnailResponse;
+import com.website.repository.model.attachment.Attachment;
+import com.website.repository.model.item.Item;
+import com.website.controller.api.model.response.item.ItemThumbnailResponse;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
 
-import static com.website.domain.item.QItemThumbnail.itemThumbnail;
+import static com.website.repository.model.item.QItemThumbnail.itemThumbnail;
+
 
 @Repository
 public class ItemThumbnailCustomRepositoryImpl implements ItemThumbnailCustomRepository {

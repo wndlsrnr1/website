@@ -4,9 +4,9 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.QItem;
-import com.website.web.dto.request.item.home.ItemSortedByType;
-import com.website.web.dto.response.item.home.*;
+import com.website.controller.api.model.request.item.home.ItemSortedByType;
+import com.website.controller.api.model.response.item.home.*;
+import com.website.repository.model.item.QItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,12 +17,12 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.website.domain.category.QSubcategory.subcategory;
-import static com.website.domain.item.QItem.item;
-import static com.website.domain.item.QItemInfo.itemInfo;
-import static com.website.domain.item.QItemSubcategory.itemSubcategory;
-import static com.website.domain.item.QItemThumbnail.itemThumbnail;
-import static com.website.web.dto.request.item.home.ItemSortedByType.*;
+import static com.website.controller.api.model.request.item.home.ItemSortedByType.*;
+import static com.website.repository.model.category.QSubcategory.subcategory;
+import static com.website.repository.model.item.QItem.item;
+import static com.website.repository.model.item.QItemInfo.itemInfo;
+import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
+import static com.website.repository.model.item.QItemThumbnail.itemThumbnail;
 
 @Repository
 @Slf4j

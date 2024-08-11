@@ -1,8 +1,8 @@
 package com.website.repository.item.carousel;
 
-import com.website.web.dto.request.item.carousel.CarouselSearchCond;
-import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
-import com.website.web.dto.response.item.CarouselItemResponse;
+import com.website.controller.api.model.request.item.carousel.CarouselSearchCond;
+import com.website.controller.api.model.request.item.carousel.CarouselUpdateRequest;
+import com.website.controller.api.model.response.item.CarouselItemResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

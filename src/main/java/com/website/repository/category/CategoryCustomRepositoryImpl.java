@@ -1,28 +1,25 @@
 package com.website.repository.category;
 
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.category.Category;
-import com.website.domain.category.QSubcategory;
-import com.website.web.dto.response.category.CategoryByCondResponse;
-import com.website.web.dto.response.category.QCategoryByCondResponse;
-import com.website.web.dto.sqlcond.category.CategorySearchCond;
+import com.website.controller.api.model.response.category.QCategoryByCondResponse;
+import com.website.repository.model.category.Category;
+import com.website.controller.api.model.response.category.CategoryByCondResponse;
+import com.website.controller.api.model.sqlcond.category.CategorySearchCond;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.website.domain.category.QCategory.category;
-import static com.website.domain.category.QSubcategory.subcategory;
+import static com.website.repository.model.category.QCategory.category;
+import static com.website.repository.model.category.QSubcategory.subcategory;
+
 
 @Slf4j
 @Repository
