@@ -3,7 +3,7 @@ package com.website.repository.category;
 import com.website.repository.model.category.Category;
 import com.website.repository.model.category.Subcategory;
 import com.website.repository.subcategory.SubcategoryRepository;
-import com.website.repository.user.UserRepository;
+import com.website.repository.user.CustomUserRepository;
 //import com.website.repository.user.UserRepository2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import java.util.List;
 public class InsertDummyData {
 
     @Autowired
-    UserRepository userRepository;
+    CustomUserRepository customUserRepository;
     @Autowired
     CategoryRepository categoryRepository;
 

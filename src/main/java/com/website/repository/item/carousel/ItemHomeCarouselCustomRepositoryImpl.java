@@ -23,12 +23,16 @@ import static com.website.repository.model.item.QItem.item;
 import static com.website.repository.model.item.QItemHomeCarousel.itemHomeCarousel;
 
 @Repository
-@RequiredArgsConstructor
 @Slf4j
 public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCustomRepository {
 
     private final JPAQueryFactory query;
     private final EntityManager em;
+
+    public ItemHomeCarouselCustomRepositoryImpl(EntityManager em) {
+        this.query = new JPAQueryFactory(em);
+        this.em = em;
+    }
 
     @Override
     public void updateCarousel(CarouselUpdateRequest carouselUpdateRequests) {

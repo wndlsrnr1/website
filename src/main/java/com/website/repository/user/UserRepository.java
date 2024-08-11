@@ -1,13 +1,9 @@
 package com.website.repository.user;
 
 import com.website.repository.model.user.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository {
-    User findNormalUserByEmailPassword(String emailParam, String passwordParam);
-
-    void saveUser(User user);
-
-    User findUserByEmail(String email);
-
-    User findByUserId(Long userId);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
 }

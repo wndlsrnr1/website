@@ -153,15 +153,24 @@ class ItemServiceTest {
         for (int i = 0; i < 400; i++) {
             int randomNumber = new Random().nextInt(10);
             Item itemSaved = itemRepository.save(
-                    new Item(
-                            "test" + randomNumber,
-                            "테스트" + randomNumber,
-                            new Random().nextInt(20),
-                            new Random().nextInt(20),
-                            "good",
-                            "good",
-                            LocalDateTime.now()
-                    )
+                    //new Item(
+                    //        "test" + randomNumber,
+                    //        "테스트" + randomNumber,
+                    //        new Random().nextInt(20),
+                    //        new Random().nextInt(20),
+                    //        "good",
+                    //        "good",
+                    //        LocalDateTime.now()
+                    //)
+                    Item.builder()
+                            .name("test" + randomNumber)
+                            .nameKor("테스트" + randomNumber)
+                            .price(new Random().nextInt(20))
+                            .quantity(new Random().nextInt(20))
+                            .status("good")
+                            .description("good")
+                            .releasedAt(LocalDateTime.now())
+                            .build()
             );
             Attachment attachment = itemAttachmentRepository.findAll().get(0).getAttachment();
             itemAttachmentRepository.save(new ItemAttachment(itemSaved, attachment));
@@ -198,15 +207,24 @@ class ItemServiceTest {
         Subcategory subcategory = subcategoryRepository.findAll().get(1);
         int randomNumber = new Random().nextInt(10);
         Item itemSaved = itemRepository.save(
-                new Item(
-                        "Worked?",
-                        "작동함?",
-                        100,
-                        100,
-                        "good",
-                        "good",
-                        LocalDateTime.now()
-                )
+                //new Item(
+                //        "Worked?",
+                //        "작동함?",
+                //        100,
+                //        100,
+                //        "good",
+                //        "good",
+                //        LocalDateTime.now()
+                //)
+                Item.builder()
+                        .name("Worked?")
+                        .nameKor("작동함?")
+                        .price(100)
+                        .quantity(100)
+                        .status("good")
+                        .description("good")
+                        .releasedAt(LocalDateTime.now())
+                        .build()
         );
         //Attachment attachment = itemAttachmentRepository.findAll().get(0).getAttachment();
         List<ItemAttachment> list = itemAttachmentRepository.findAll();

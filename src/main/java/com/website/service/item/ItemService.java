@@ -170,7 +170,16 @@ public class ItemService {
 
 
         //아이템 저장
-        Item item = new Item(name, nameKor, price, quantity, status, description, releasedAt);
+        //Item item = new Item(name, nameKor, price, quantity, status, description, releasedAt);
+        Item item = Item.builder()
+                .name(name)
+                .nameKor(nameKor)
+                .price(price)
+                .quantity(quantity)
+                .status(status)
+                .description(description)
+                .releasedAt(releasedAt)
+                .build();
         itemRepository.save(item);
 
         List<String> images = saveItemRequest.getImages();

@@ -1,21 +1,21 @@
 package com.website.repository.model.user;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 
 
-@Getter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
+@Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long id;
 
@@ -26,13 +26,4 @@ public class User {
     private String email;
 
     private String password;
-
-    @Builder
-    public User(String name, String address, String email, String password) {
-        this.name = name;
-        this.address = address;
-        this.email = email;
-        this.password = password;
-    }
-
 }
