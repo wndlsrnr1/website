@@ -610,14 +610,12 @@ public class ItemService {
         return ResponseEntity.ok(ApiResponseBody.builder().data(itemDefaultResponse).build());
     }
 
-    public ResponseEntity getReviewResponse(Long itemId) {
+  public ResponseEntity getReviewResponse(Long itemId) {
         if (itemId == null) {
             return ResponseEntity.badRequest().build();
         }
 
         return null;
     }
-
-    
 
 }
