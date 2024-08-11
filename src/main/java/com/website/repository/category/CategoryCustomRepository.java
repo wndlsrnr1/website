@@ -1,8 +1,8 @@
 package com.website.repository.category;
 
-import com.website.domain.category.Category;
-import com.website.web.dto.response.category.CategoryByCondResponse;
-import com.website.web.dto.sqlcond.category.CategorySearchCond;
+import com.website.repository.model.category.Category;
+import com.website.controller.api.model.response.category.CategoryByCondResponse;
+import com.website.controller.api.model.sqlcond.category.CategorySearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

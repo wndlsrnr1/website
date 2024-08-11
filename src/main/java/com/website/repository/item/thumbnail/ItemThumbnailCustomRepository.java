@@ -1,9 +1,8 @@
 package com.website.repository.item.thumbnail;
 
-import com.website.domain.attachment.Attachment;
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemThumbnail;
-import com.website.web.dto.response.item.ItemThumbnailResponse;
+import com.website.repository.model.attachment.Attachment;
+import com.website.repository.model.item.Item;
+import com.website.controller.api.model.response.item.ItemThumbnailResponse;
 
 public interface ItemThumbnailCustomRepository {
 

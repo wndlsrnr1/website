@@ -1,6 +1,6 @@
 package com.website.repository.user;
 
-import com.website.domain.user.User;
+import com.website.repository.model.user.User;
 
 public interface UserRepository {
     User findNormalUserByEmailPassword(String emailParam, String passwordParam);

@@ -2,12 +2,10 @@ package com.website.repository.subcategory;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.category.Subcategory;
-import com.website.web.dto.request.category.subcategory.CreateSubcategoryRequest;
-import com.website.web.dto.response.category.QSubcategoryByCondResponse;
-import com.website.web.dto.response.category.SubcategoryByCondResponse;
-import com.website.web.dto.response.category.CategoryByCondResponse;
-import com.website.web.dto.sqlcond.category.SubCategorySearchCond;
+import com.website.controller.api.model.response.category.QSubcategoryByCondResponse;
+import com.website.repository.model.category.Subcategory;
+import com.website.controller.api.model.response.category.SubcategoryByCondResponse;
+import com.website.controller.api.model.sqlcond.category.SubCategorySearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +14,8 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.website.domain.category.QSubcategory.*;
+import static com.website.repository.model.category.QSubcategory.subcategory;
+
 
 public class SubcategoryCustomRepositoryImpl implements SubcategoryCustomRepository {
     private final EntityManager entityManager;

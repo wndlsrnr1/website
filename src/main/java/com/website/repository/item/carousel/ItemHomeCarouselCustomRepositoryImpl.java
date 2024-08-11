@@ -3,11 +3,11 @@ package com.website.repository.item.carousel;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.ItemHomeCarousel;
-import com.website.web.dto.request.item.carousel.CarouselSearchCond;
-import com.website.web.dto.request.item.carousel.CarouselUpdateRequest;
-import com.website.web.dto.response.item.CarouselItemResponse;
-import com.website.web.dto.response.item.QCarouselItemResponse;
+import com.website.controller.api.model.response.item.QCarouselItemResponse;
+import com.website.repository.model.item.ItemHomeCarousel;
+import com.website.controller.api.model.request.item.carousel.CarouselSearchCond;
+import com.website.controller.api.model.request.item.carousel.CarouselUpdateRequest;
+import com.website.controller.api.model.response.item.CarouselItemResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.website.domain.item.QItemHomeCarousel.*;
-import static com.website.domain.item.QItem.*;
-import static com.website.domain.attachment.QAttachment.*;
+import static com.website.repository.model.attachment.QAttachment.attachment;
+import static com.website.repository.model.item.QItem.item;
+import static com.website.repository.model.item.QItemHomeCarousel.itemHomeCarousel;
 
 @Repository
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class ItemHomeCarouselCustomRepositoryImpl implements ItemHomeCarouselCus
     public void addCarousel(Long itemId, Long imageId) {
 
         List<Integer> maxList = query.select(itemHomeCarousel.priority.max()).from(itemHomeCarousel).fetch();
-        Integer max = 0;
+        Integer max = 20;
         if (maxList == null || maxList.size() == 0) {
             max = 1;
             log.info("maxList = {}", maxList);

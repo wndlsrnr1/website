@@ -1,6 +1,6 @@
 package com.website.repository.item.entitylisteners;
 
-import com.website.domain.item.Item;
+import com.website.repository.model.item.Item;
 import com.website.repository.item.ItemRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ItemListenerTest {

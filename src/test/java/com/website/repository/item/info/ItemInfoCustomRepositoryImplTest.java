@@ -1,11 +1,11 @@
 package com.website.repository.item.info;
 
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemAttachment;
-import com.website.domain.item.ItemInfo;
+import com.website.repository.model.item.Item;
+import com.website.repository.model.item.ItemAttachment;
+import com.website.repository.model.item.ItemInfo;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
-import com.website.web.dto.request.item.info.ItemInfoEditRequest;
+import com.website.controller.api.model.request.item.info.ItemInfoEditRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,15 +1,16 @@
 package com.website.repository.item;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.ItemAttachment;
-import com.website.domain.item.QItemAttachment;
+import com.website.repository.model.item.ItemAttachment;
+import com.website.repository.model.item.QItemAttachment;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
 import java.util.List;
 
-import static com.website.domain.item.QItemAttachment.*;
+import static com.website.repository.model.item.QItemAttachment.itemAttachment;
+
 
 @Repository
 public class ItemAttachmentCustomRepositoryImpl implements ItemAttachmentCustomRepository {

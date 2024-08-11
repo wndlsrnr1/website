@@ -1,14 +1,9 @@
 package com.website.repository.item.info;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.item.Item;
-import com.website.domain.item.ItemInfo;
-import com.website.domain.item.QItemInfo;
-import com.website.repository.item.ItemRepository;
-import com.website.web.dto.request.item.info.ItemInfoAddRequest;
-import com.website.web.dto.request.item.info.ItemInfoEditRequest;
-import com.website.web.dto.response.item.ItemInfoResponse;
-import com.website.web.dto.response.item.QItemInfoResponse;
+import com.website.controller.api.model.request.item.info.ItemInfoEditRequest;
+import com.website.controller.api.model.response.item.ItemInfoResponse;
+import com.website.controller.api.model.response.item.QItemInfoResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +11,8 @@ import javax.persistence.EntityManager;
 
 import java.util.List;
 
-import static com.website.domain.item.QItemInfo.itemInfo;
+import static com.website.repository.model.item.QItemInfo.itemInfo;
+
 
 @Slf4j
 public class ItemInfoCustomRepositoryImpl implements ItemInfoCustomRepository {

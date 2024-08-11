@@ -1,17 +1,12 @@
 package com.website.repository.item;
 
-import com.website.web.dto.request.item.EditItemRequest;
-import com.website.web.dto.request.item.EditItemRequestV2;
-import com.website.web.dto.request.item.home.ItemHomeSearchCond;
-import com.website.web.dto.response.item.CarouselItemResponse;
-import com.website.web.dto.response.item.ItemBasicResponse;
-import com.website.web.dto.response.item.ItemDetailResponse;
-import com.website.web.dto.response.item.ItemResponse;
-import com.website.web.dto.response.item.home.ItemLatestResponse;
-import com.website.web.dto.response.item.home.ItemPopularResponse;
-import com.website.web.dto.response.item.home.ItemSpecialResponse;
-import com.website.web.dto.response.item.home.ItemsForCustomerResponse;
-import com.website.web.dto.sqlcond.item.ItemSearchCond;
+import com.website.controller.api.model.request.item.EditItemRequest;
+import com.website.controller.api.model.request.item.EditItemRequestV2;
+import com.website.controller.api.model.response.item.CarouselItemResponse;
+import com.website.controller.api.model.response.item.ItemBasicResponse;
+import com.website.controller.api.model.response.item.ItemDetailResponse;
+import com.website.controller.api.model.response.item.ItemResponse;
+import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

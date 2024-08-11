@@ -1,11 +1,10 @@
 package com.website.repository.category;
 
-import com.website.domain.category.Category;
-import com.website.domain.category.Subcategory;
+import com.website.repository.model.category.Category;
+import com.website.repository.model.category.Subcategory;
 import com.website.repository.subcategory.SubcategoryRepository;
-import com.website.web.service.category.CategoryCRUDService;
+import com.website.service.category.CategoryCRUDService;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 

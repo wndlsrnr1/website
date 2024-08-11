@@ -1,7 +1,7 @@
 package com.website.repository.category;
 
-import com.website.domain.category.Category;
-import com.website.domain.category.Subcategory;
+import com.website.repository.model.category.Category;
+import com.website.repository.model.category.Subcategory;
 import com.website.repository.subcategory.SubcategoryRepository;
 import com.website.repository.user.UserRepository;
 //import com.website.repository.user.UserRepository2;
@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;

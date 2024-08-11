@@ -1,23 +1,19 @@
 package com.website.repository.item;
 
-import com.website.domain.category.Category;
-import com.website.domain.category.Subcategory;
-import com.website.domain.item.Item;
+import com.website.repository.model.category.Category;
+import com.website.repository.model.category.Subcategory;
+import com.website.repository.model.item.Item;
 import com.website.repository.category.CategoryRepository;
 import com.website.repository.subcategory.SubcategoryRepository;
-import com.website.web.service.category.CategoryCRUDService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -1,9 +1,8 @@
 package com.website.repository.subcategory;
 
-import com.website.domain.category.Subcategory;
-import com.website.web.dto.request.category.subcategory.CreateSubcategoryRequest;
-import com.website.web.dto.response.category.SubcategoryByCondResponse;
-import com.website.web.dto.sqlcond.category.SubCategorySearchCond;
+import com.website.repository.model.category.Subcategory;
+import com.website.controller.api.model.response.category.SubcategoryByCondResponse;
+import com.website.controller.api.model.sqlcond.category.SubCategorySearchCond;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

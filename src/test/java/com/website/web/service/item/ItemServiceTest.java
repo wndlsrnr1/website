@@ -3,18 +3,19 @@ package com.website.web.service.item;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.domain.attachment.Attachment;
-import com.website.domain.category.Subcategory;
-import com.website.domain.item.*;
+import com.website.controller.api.model.response.item.QItemResponse;
+import com.website.repository.model.attachment.Attachment;
+import com.website.repository.model.category.Subcategory;
+import com.website.repository.model.item.*;
 import com.website.repository.item.ItemAttachmentRepository;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.item.info.ItemInfoRepository;
 import com.website.repository.item.thumbnail.ItemThumbnailRepository;
 import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
+import com.website.repository.model.item.*;
 import com.website.repository.subcategory.SubcategoryRepository;
-import com.website.web.dto.request.item.SaveItemRequest;
-import com.website.web.dto.response.item.QItemResponse;
-import com.website.web.dto.sqlcond.item.ItemSearchCond;
+import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
+import com.website.service.item.ItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,17 +25,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Commit;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.BindingResultUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import static com.website.domain.category.QSubcategory.subcategory;
-import static com.website.domain.item.QItem.item;
-import static com.website.domain.item.QItemSubcategory.itemSubcategory;
+import static com.website.repository.model.category.QSubcategory.subcategory;
+import static com.website.repository.model.item.QItem.item;
+import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
+
 
 @Slf4j
 @SpringBootTest

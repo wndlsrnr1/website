@@ -1,7 +1,6 @@
 package com.website.repository.item.seq;
 
-import com.website.domain.item.ItemAttachmentSeq;
-import com.website.web.dto.response.item.sequence.ItemAttachmentSequenceResponse;
+import com.website.controller.api.model.response.item.sequence.ItemAttachmentSequenceResponse;
 
 import java.util.List;
 

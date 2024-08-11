@@ -1,7 +1,7 @@
 package com.website;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.web.filter.ExceptionLogFilter;
+import com.website.config.filter.ExceptionLogFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
