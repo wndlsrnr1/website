@@ -3,7 +3,7 @@ package com.website.repository.review;
 import com.website.config.jpa.JpaConfig;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.item.review.Review;
+import com.website.repository.review.model.Review;
 import com.website.repository.model.user.User;
 import com.website.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * local profile에서 실행
  * c -> r -> u -> d 순서로 테스트 진행
  */
+
 @DataJpaTest
 @Import({CustomReviewRepositoryImpl.class, JpaConfig.class})
 @ActiveProfiles("local")
