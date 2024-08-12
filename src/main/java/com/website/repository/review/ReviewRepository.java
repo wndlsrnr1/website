@@ -1,15 +1,11 @@
 package com.website.repository.review;
 
 import com.website.repository.model.item.Item;
-import com.website.repository.model.item.review.Review;
+import com.website.repository.review.model.Review;
 import com.website.repository.model.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Entity;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,10 +1,12 @@
-package com.website.repository.model.item.review;
+package com.website.repository.review.model;
 
-import com.website.repository.model.common.AbstractBaseEntity;
+
 import com.website.repository.model.item.Item;
 import com.website.repository.model.user.User;
-import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,3 +48,4 @@ public class Review {
     private LocalDateTime updatedAt;
 
 }
+
