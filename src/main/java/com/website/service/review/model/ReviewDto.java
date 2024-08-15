@@ -27,8 +27,10 @@ public class ReviewDto {
                 .itemId(savedReview.getItem().getId())
                 .userId(savedReview.getUser().getId())
                 .star(savedReview.getStar())
+                .content(savedReview.getContent())
                 .createdAt(savedReview.getCreatedAt())
                 .updatedAt(savedReview.getUpdatedAt())
                 .build();
     }
+
 }
