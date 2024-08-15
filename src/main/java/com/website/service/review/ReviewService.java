@@ -2,17 +2,17 @@ package com.website.service.review;
 
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
+import com.website.repository.common.PageResult;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
 import com.website.repository.model.user.User;
 import com.website.repository.review.ReviewRepository;
 import com.website.repository.review.model.Review;
+import com.website.repository.review.model.ReviewSearchCriteria;
 import com.website.repository.user.UserRepository;
+import com.website.service.common.model.PageResultDto;
 import com.website.service.item.ItemValidator;
-import com.website.service.review.model.ReviewCreateDto;
-import com.website.service.review.model.ReviewDto;
-import com.website.service.review.model.ReviewRequestDto;
-import com.website.service.review.model.ReviewUpdateDto;
+import com.website.service.review.model.*;
 import com.website.service.user.UserValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -98,5 +99,18 @@ public class ReviewService {
                 new ClientException(ErrorCode.BAD_REQUEST, "review not found. userId = " + userId + ", itemId = " + itemId));
 
         reviewRepository.delete(foundReview);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResultDto<ReviewDto> searchReview(ReviewSearchRequestDto reviewSearchRequestDto) {
+
+        ReviewSearchCriteria criteria = reviewSearchRequestDto.toCriteria();
+        PageResult<Review> findResult = reviewRepository.search(criteria);
+
+        return PageResultDto.<ReviewDto>builder()
+                .items(findResult.getItems().stream().map(ReviewDto::of).collect(Collectors.toList()))
+                .totalCount(findResult.getTotalCount())
+                .nextSearchAfter(findResult.getGetNextSearchAfter())
+                .build();
     }
 }
