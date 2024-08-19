@@ -2,15 +2,21 @@ package com.website.controller.api.common.model;
 
 
 import com.website.exception.ErrorCode;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+@Data
+@RequiredArgsConstructor
 public class ApiResponse <T>{
 
-    private ErrorCode errorCode;
-    private T body;
+    private final ErrorCode errorCode;
+    private final T body;
 
-    private ApiResponse(ErrorCode errorCode, T body) {
-        this.errorCode = errorCode;
-        this.body = body;
+    private ApiResponse() {
+        this.errorCode = null;
+        this.body = null;
     }
 
     public static <T> ApiResponse<T> fail(ErrorCode errorCode) {

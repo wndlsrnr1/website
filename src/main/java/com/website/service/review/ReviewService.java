@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +29,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserValidator userValidator;
     private final ItemValidator itemValidator;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     // create
     @Transactional
@@ -75,12 +76,11 @@ public class ReviewService {
     // update
     @Transactional
     public ReviewDto updateReview(ReviewUpdateDto dto) {
-        if (dto.getId() == null) {
-            throw new ClientException(ErrorCode.BAD_REQUEST, "reviewId is null. review = " + dto);
-        }
+        User user = userValidator.validateAndGet(dto.getUserId());
+        Item item = itemValidator.validateAndGet(dto.getItemId());
 
-        Review review = reviewRepository.findById(dto.getId()).orElseThrow(
-                () -> new ClientException(ErrorCode.BAD_REQUEST, "review not found reviewId = " + dto.getId())
+        Review review = reviewRepository.findByUserAndItem(user, item).orElseThrow(
+                () -> new ClientException(ErrorCode.BAD_REQUEST, "review not found userId = " + user.getId() + ", itemId = " + item.getId())
         );
 
         review.setContent(dto.getContent());
@@ -113,4 +113,6 @@ public class ReviewService {
                 .nextSearchAfter(findResult.getGetNextSearchAfter())
                 .build();
     }
+
+
 }

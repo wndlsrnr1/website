@@ -4,8 +4,6 @@ package com.website.repository.review;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.website.repository.common.PageResult;
-import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
 import com.website.repository.review.model.QReview;
 import com.website.repository.review.model.Review;
 import com.website.repository.review.model.ReviewSearchCriteria;
@@ -28,7 +26,7 @@ public class CustomReviewRepositoryImpl extends QuerydslRepositorySupport implem
     @Override
     public PageResult<Review> search(ReviewSearchCriteria criteria) {
         List<Review> result = from(review)
-                .where(userEq(criteria.getUser()), itemEq(criteria.getItem()), nextSearchProduct(criteria))
+                .where(userIdEq(criteria.getUserId()), itemIdEq(criteria.getItemId()), nextSearchProduct(criteria))
                 .limit(criteria.getSize())
                 .orderBy(orderBySort(criteria))
                 .fetch();
@@ -75,7 +73,7 @@ public class CustomReviewRepositoryImpl extends QuerydslRepositorySupport implem
 
 
     private BooleanExpression[] whereBySort(ReviewSearchCriteria criteria) {
-        return new BooleanExpression[]{userEq(criteria.getUser()), itemEq(criteria.getItem())};
+        return new BooleanExpression[]{userIdEq(criteria.getUserId()), itemIdEq(criteria.getItemId())};
     }
 
     private BooleanExpression nextSearchProduct(ReviewSearchCriteria criteria) {
@@ -124,11 +122,11 @@ public class CustomReviewRepositoryImpl extends QuerydslRepositorySupport implem
         }
     }
 
-    private BooleanExpression itemEq(Item item) {
-        return item == null ? null : review.item.eq(item);
+    private BooleanExpression itemIdEq(Long itemId) {
+        return itemId == null ? null : review.item.id.eq(itemId);
     }
 
-    private BooleanExpression userEq(User user) {
-        return user == null ? null : review.user.eq(user);
+    private BooleanExpression userIdEq(Long userId) {
+        return userId == null ? null : review.user.id.eq(userId);
     }
 }
