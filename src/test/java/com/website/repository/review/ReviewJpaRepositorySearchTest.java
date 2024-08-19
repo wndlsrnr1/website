@@ -80,7 +80,7 @@ public class ReviewJpaRepositorySearchTest {
                 .size(2)
                 .sortType(ReviewSortType.RECENT)
                 .withTotalCount(true)
-                .item(item1)
+                .itemId(item1.getId())
                 .build();
 
         // when
@@ -121,7 +121,7 @@ public class ReviewJpaRepositorySearchTest {
                 .size(2)
                 .sortType(ReviewSortType.STAR)
                 .withTotalCount(true)
-                .item(item2)
+                .itemId(item2.getId())
                 .build();
 
         //when
@@ -165,7 +165,7 @@ public class ReviewJpaRepositorySearchTest {
                 .size(1)
                 .sortType(ReviewSortType.RECENT)
                 .withTotalCount(true)
-                .user(user1)
+                .userId(user1.getId())
                 .build();
 
         //when

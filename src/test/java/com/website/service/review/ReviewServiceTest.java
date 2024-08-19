@@ -48,6 +48,7 @@ class ReviewServiceTest {
 
     private Long userId;
     private Long itemId;
+    private Long reviewId;
     private User user;
     private Item item;
     private Review review;
@@ -57,6 +58,7 @@ class ReviewServiceTest {
     void setUp() {
         userId = 1L;
         itemId = 1L;
+        reviewId = 1L;
         user = User.builder().id(userId).build();
         item = Item.builder().id(itemId).build();
         review = Review.builder()
@@ -247,43 +249,56 @@ class ReviewServiceTest {
     @Test
     @DisplayName("[Review update] - success")
     public void updateReviewTestV1() throws Exception {
+        user.setId(userId);
+        item.setId(itemId);
+
         ReviewUpdateDto updateDto = ReviewUpdateDto.builder()
-                .id(1L)
+                .userId(userId)
+                .itemId(itemId)
                 .content("updatedContent")
                 .star(4)
                 .build();
 
         Review beforeUpdate = Review.builder()
-                .id(updateDto.getId())
+                .id(reviewId)
                 .item(item)
                 .user(user)
                 .build();
 
         Review afterUpdate = Review.builder()
-                .id(updateDto.getId())
+                .id(reviewId)
                 .item(item)
                 .user(user)
                 .content(updateDto.getContent())
                 .star(updateDto.getStar())
                 .build();
 
-        when(reviewRepository.findById(updateDto.getId())).thenReturn(Optional.of(beforeUpdate));
+        when(userValidator.validateAndGet(userId)).thenReturn(user);
+        when(itemValidator.validateAndGet(itemId)).thenReturn(item);
+        when(reviewRepository.findByUserAndItem(user, item)).thenReturn(Optional.of(beforeUpdate));
         when(reviewRepository.save(beforeUpdate)).thenReturn(afterUpdate);
+
         ReviewDto reviewDto = reviewService.updateReview(updateDto);
 
-        assertThat(reviewDto.getId()).isEqualTo(updateDto.getId());
+        assertThat(reviewDto.getId()).isEqualTo(reviewId);
         assertThat(reviewDto.getContent()).isEqualTo(updateDto.getContent());
         assertThat(reviewDto.getStar()).isEqualTo(updateDto.getStar());
 
-        verify(reviewRepository, times(1)).findById(updateDto.getId());
+        verify(userValidator, times(1)).validateAndGet(userId);
+        verify(itemValidator, times(1)).validateAndGet(itemId);
+        verify(reviewRepository, times(1)).findByUserAndItem(user, item);
         verify(reviewRepository, times(1)).save(beforeUpdate);
     }
 
     @Test
-    @DisplayName("[Review update] - review Id is null")
+    @DisplayName("[Review update] - review not found")
     public void updateReviewTestV2() throws Exception {
+        when(userValidator.validateAndGet(userId)).thenReturn(user);
+        when(itemValidator.validateAndGet(itemId)).thenReturn(item);
+
         ReviewUpdateDto updateDto = ReviewUpdateDto.builder()
-                .id(null)
+                .userId(userId)
+                .itemId(itemId)
                 .content("updatedContent")
                 .star(4)
                 .build();
@@ -292,30 +307,12 @@ class ReviewServiceTest {
                 () -> reviewService.updateReview(updateDto)
         );
 
-        assertThat(exception.getServerMessage()).contains("reviewId is null. review = ");
+        assertThat(exception.getServerMessage()).contains("review not found userId");
 
-        verify(reviewRepository, times(0)).findById(any(Long.class));
+        verify(reviewRepository, times(1)).findByUserAndItem(user, item);
         verify(reviewRepository, times(0)).save(any(Review.class));
     }
 
-    @Test
-    @DisplayName("[Review update] - review not found")
-    public void updateReviewTestV3() throws Exception {
-        //given
-        ReviewUpdateDto updateDto = ReviewUpdateDto.builder()
-                .id(1L)
-                .content("updatedContent")
-                .star(4)
-                .build();
-
-        //when
-        ClientException exception = assertThrows(ClientException.class,
-                () -> reviewService.updateReview(updateDto));
-
-        assertThat(exception.getMessage()).contains("review not found reviewId = ");
-        verify(reviewRepository, times(1)).findById(updateDto.getId());
-        verify(reviewRepository, times(0)).save(any(Review.class));
-    }
 
     //delete
     @Test

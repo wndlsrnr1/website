@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,21 +52,20 @@ public class LoginController {
     }
 
     @PostMapping(value = "/user/join")
-    public ResponseEntity joinUser(@Validated JoinFormRequest joinFormRequest, BindingResult bindingResult) {
+    public ResponseEntity joinUser(@Valid JoinFormRequest joinFormRequest, BindingResult bindingResult) {
         return loginService.joinUser(joinFormRequest, bindingResult);
     }
 
-    @PostMapping(value = "/login/user")
-    public ResponseEntity loginUser(@Validated LoginFormRequest loginFormRequest, BindingResult bindingResult, HttpServletRequest request) {
-
+    @PostMapping( "/login/user")
+    public ResponseEntity loginUser(@Valid LoginFormRequest loginFormRequest, BindingResult bindingResult, HttpServletRequest request) {
         //Bean validation
+        log.info("loginFormRequest = {}", loginFormRequest);
+        log.info("bindingResult = {}", bindingResult);
         if (bindingResult.hasErrors()) {
-
             ApiResponseBody apiBody = ApiResponseBody.builder()
                     .data(null)
                     .apiError(new ApiError(bindingResult))
                     .message(HttpStatus.BAD_REQUEST.getReasonPhrase()).build();
-
             return ResponseEntity.badRequest().body(apiBody);
         }
 

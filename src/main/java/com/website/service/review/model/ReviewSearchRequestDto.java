@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ReviewSearchRequestDto {
-    private User user;
-    private Item item;
+    private Long userId;
+    private Long itemId;
     private int size;
     private ReviewSortType sortType;
     private boolean withTotalCount;
@@ -23,8 +23,8 @@ public class ReviewSearchRequestDto {
 
     public ReviewSearchCriteria toCriteria() {
         return ReviewSearchCriteria.builder()
-                .user(user)
-                .item(item)
+                .userId(userId)
+                .itemId(itemId)
                 .size(size)
                 .sortType(sortType)
                 .withTotalCount(withTotalCount)
