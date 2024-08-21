@@ -21,8 +21,8 @@ public class ItemController {
     public ResponseEntity responseItemBasic(@PathVariable(value = "itemId", required = false) Long itemId) {
         return itemService.getItemBasicResponse(itemId);
     }
-    @GetMapping("/reviews")
-    public ResponseEntity responseReviewResponse(@RequestParam(value = "itemId", required = false) Long itemId) {
-        return itemService.getReviewResponse(itemId);
+    @GetMapping("/comments")
+    public ResponseEntity responseCommentResponse(@RequestParam(value = "itemId", required = false) Long itemId) {
+        return itemService.getCommentResponse(itemId);
     }
 }

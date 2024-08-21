@@ -1,4 +1,4 @@
-package com.website.service.review.model;
+package com.website.service.comment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReviewRequestDto {
-    private Long reviewId;
+public class CommentCreateDto {
     private Long itemId;
     private Long userId;
+    private Integer star;
+    private String content;
+
 }

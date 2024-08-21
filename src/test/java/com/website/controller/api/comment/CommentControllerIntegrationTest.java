@@ -1,46 +1,36 @@
-package com.website.controller.api.review;
+package com.website.controller.api.comment;
 
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.common.model.PageResultResponse;
-import com.website.controller.api.model.request.user.LoginFormRequest;
-import com.website.controller.api.review.model.ReviewCreateRequest;
-import com.website.controller.api.review.model.ReviewResponse;
-import com.website.controller.api.review.model.ReviewUpdateRequest;
+import com.website.controller.api.comment.model.CommentCreateRequest;
+import com.website.controller.api.comment.model.CommentResponse;
+import com.website.controller.api.comment.model.CommentUpdateRequest;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
 import com.website.repository.model.user.User;
-import com.website.repository.review.ReviewRepository;
-import com.website.repository.review.model.Review;
+import com.website.repository.comment.CommentRepository;
+import com.website.repository.comment.model.Comment;
 import com.website.repository.user.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.MultiValueMapAdapter;
-import org.springframework.web.client.RestOperations;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("local")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ReviewControllerIntegrationTest {
+class CommentControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -49,7 +39,7 @@ class ReviewControllerIntegrationTest {
     UserRepository userRepository;
 
     @Autowired
-    ReviewRepository reviewRepository;
+    CommentRepository commentRepository;
 
     @Autowired
     ItemRepository itemRepository;
@@ -62,7 +52,7 @@ class ReviewControllerIntegrationTest {
     }
 
     /**
-     * Review에 관련된 코드 작성하기전 연관관계상 기본 데이터 저장
+     * Comment에 관련된 코드 작성하기전 연관관계상 기본 데이터 저장
      */
     @BeforeEach
     public void beforeEach() {
@@ -96,11 +86,11 @@ class ReviewControllerIntegrationTest {
             return itemRepository.save(item);
         });
 
-        reviewRepository.deleteAll();
+        commentRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("[ReviewController] - login success")
+    @DisplayName("[CommentController] - login success")
     public void loginUser() throws Exception {
         // Given
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -125,12 +115,12 @@ class ReviewControllerIntegrationTest {
 
     //create 성공
     @Test
-    @DisplayName("[ReviewController] - CREATE_1")
+    @DisplayName("[CommentController] - CREATE_1")
     public void testCreateV1() throws Exception {
         //given
 
         Item findItem = itemRepository.findById(1L).get();
-        ReviewCreateRequest request = ReviewCreateRequest.builder()
+        CommentCreateRequest request = CommentCreateRequest.builder()
                 .itemId(findItem.getId())
                 .content("content")
                 .star(4)
@@ -170,18 +160,18 @@ class ReviewControllerIntegrationTest {
         httpHeaders.set(HttpHeaders.COOKIE, jsessionid);
 
         //when
-        ResponseEntity<ApiResponse<ReviewResponse>> response = restTemplate.exchange(
-                "/reviews",
+        ResponseEntity<ApiResponse<CommentResponse>> response = restTemplate.exchange(
+                "/comments",
                 HttpMethod.POST,
                 new HttpEntity<>(request, httpHeaders),
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {
+                new ParameterizedTypeReference<ApiResponse<CommentResponse>>() {
                 }
         );
         //then
 
         assertThat(response).isNotNull();
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        ApiResponse<ReviewResponse> responseBody = response.getBody();
+        ApiResponse<CommentResponse> responseBody = response.getBody();
         Long userId = responseBody.getBody().getId();
         assertThat(userId).isEqualTo(userRepository.findByEmail("test@naver.com").get().getId());
         assertThat(responseBody.getErrorCode()).isNull();
@@ -199,33 +189,33 @@ class ReviewControllerIntegrationTest {
 
     //조회 성공
     @Test
-    @DisplayName("[ReviewController] - READ_1")
+    @DisplayName("[CommentController] - READ_1")
     public void testReadV1() throws Exception {
         //given
 
         User user = userRepository.findById(1L).get();
         Item item = itemRepository.findById(1L).get();
-        Review review = Review.builder()
+        Comment comment = Comment.builder()
                 .user(user)
                 .item(item)
                 .content("content")
                 .star(4)
                 .build();
 
-        Review savedReview = reviewRepository.save(review);
+        Comment savedComment = commentRepository.save(comment);
 
         //when
-        ResponseEntity<ApiResponse<ReviewResponse>> responseEntity = restTemplate.exchange(
-                "/reviews/{reviewId}",
+        ResponseEntity<ApiResponse<CommentResponse>> responseEntity = restTemplate.exchange(
+                "/comments/{commentId}",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {
+                new ParameterizedTypeReference<ApiResponse<CommentResponse>>() {
                 },
-                savedReview.getId()
+                savedComment.getId()
         );
 
         //then
-        ApiResponse<ReviewResponse> response = responseEntity.getBody();
+        ApiResponse<CommentResponse> response = responseEntity.getBody();
         assertThat(response).isNotNull();
         assertThat(response.getErrorCode()).isNull();
         assertThat(response.getBody().getContent()).isEqualTo("content");
@@ -233,7 +223,7 @@ class ReviewControllerIntegrationTest {
 
     //search 성공
     @Test
-    @DisplayName("[ReviewController] - READ_2 - " +
+    @DisplayName("[CommentController] - READ_2 - " +
             "전체 상품 4개, 조건에 맞는 상품 3개, 2개만 조회 ->" +
             "조회 결과 2개, 전체 아이템 수 3개, next 있음")
     public void testSearchProducts() throws Exception {
@@ -243,50 +233,50 @@ class ReviewControllerIntegrationTest {
         User user2 = userRepository.findById(2L).get();
         Item item = itemRepository.findById(1L).get();
 
-        Review review1 = Review.builder()
+        Comment comment1 = Comment.builder()
                 .user(user)
                 .item(item)
                 .content("testContent")
                 .star(4)
                 .build();
 
-        Review review2 = Review.builder()
+        Comment comment2 = Comment.builder()
                 .user(user)
                 .item(item)
                 .content("testContent")
                 .star(4)
                 .build();
 
-        Review review3 = Review.builder()
+        Comment comment3 = Comment.builder()
                 .user(user)
                 .item(item)
                 .content("testContent")
                 .star(4)
                 .build();
 
-        Review review4 = Review.builder()
+        Comment comment4 = Comment.builder()
                 .user(user2)
                 .item(item)
                 .content("testContent")
                 .star(4)
                 .build();
 
-        reviewRepository.saveAll(List.of(review1, review2, review3, review4));
+        commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
 
         // When
 
-        String searchUrl = "/reviews?size=2&userId=1&itemId=1&withTotalCount=true&sortType=RECENT";
+        String searchUrl = "/comments?size=2&userId=1&itemId=1&withTotalCount=true&sortType=RECENT";
 
         // Then
-        ResponseEntity<ApiResponse<PageResultResponse<ReviewResponse>>> response = restTemplate.getRestTemplate().exchange(
+        ResponseEntity<ApiResponse<PageResultResponse<CommentResponse>>> response = restTemplate.getRestTemplate().exchange(
                 getBaseUrl() + searchUrl,
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ApiResponse<PageResultResponse<ReviewResponse>>>() {
+                new ParameterizedTypeReference<ApiResponse<PageResultResponse<CommentResponse>>>() {
                 }
         );
 
-        PageResultResponse<ReviewResponse> body = response.getBody().getBody();
+        PageResultResponse<CommentResponse> body = response.getBody().getBody();
         assertThat(body).isNotNull();
         assertThat(body.getTotalCount()).isEqualTo(3);
         assertThat(body.getItems().size()).isEqualTo(2);
@@ -296,11 +286,11 @@ class ReviewControllerIntegrationTest {
 
     //update 성공
     @Test
-    @DisplayName("[ReviewController] - UPDATE_success")
+    @DisplayName("[CommentController] - UPDATE_success")
     public void testUpdateV1() throws Exception {
         // Given - (Login -> Creat)
         Item findItem = itemRepository.findById(1L).get();
-        ReviewCreateRequest request = ReviewCreateRequest.builder()
+        CommentCreateRequest request = CommentCreateRequest.builder()
                 .itemId(findItem.getId())
                 .content("content")
                 .star(4)
@@ -334,45 +324,46 @@ class ReviewControllerIntegrationTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.COOKIE, jsessionid);
 
-        ResponseEntity<ApiResponse<ReviewResponse>> response = restTemplate.exchange(
-                "/reviews",
+        ResponseEntity<ApiResponse<CommentResponse>> response = restTemplate.exchange(
+                "/comments",
                 HttpMethod.POST,
                 new HttpEntity<>(request, httpHeaders),
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {
+                new ParameterizedTypeReference<ApiResponse<CommentResponse>>() {
                 }
         );
 
         // When
-        Long reviewId = response.getBody().getBody().getId();
+        Long commentId = response.getBody().getBody().getId();
         Long itemId = response.getBody().getBody().getItemId();
-        ReviewUpdateRequest updateRequest = ReviewUpdateRequest.builder()
+        CommentUpdateRequest updateRequest = CommentUpdateRequest.builder()
+                .commentId(commentId)
                 .star(3)
                 .content("updatedContent")
                 .build();
 
-        ApiResponse<ReviewResponse> body = restTemplate.exchange(
-                "/items/{itemId}/update/reviews",
+        ApiResponse<CommentResponse> body = restTemplate.exchange(
+                "/items/update/comments",
                 HttpMethod.POST,
                 new HttpEntity<>(updateRequest, httpHeaders),
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {
+                new ParameterizedTypeReference<ApiResponse<CommentResponse>>() {
                 },
                 itemId
         ).getBody();
 
         // Then
         assertThat(body).isNotNull();
-        assertThat(body.getBody().getId()).isEqualTo(reviewId);
+        assertThat(body.getBody().getId()).isEqualTo(commentId);
         assertThat(body.getBody().getContent()).isEqualTo("updatedContent");
         assertThat(body.getBody().getStar()).isEqualTo(3);
     }
 
     //delete 성공
     @Test
-    @DisplayName("[ReviewController] - DELETE - SUCCESS")
+    @DisplayName("[CommentController] - DELETE - SUCCESS")
     public void testDeleteV1() throws Exception {
         // Given - (Login -> Creat)
         Item findItem = itemRepository.findById(1L).get();
-        ReviewCreateRequest request = ReviewCreateRequest.builder()
+        CommentCreateRequest request = CommentCreateRequest.builder()
                 .itemId(findItem.getId())
                 .content("content")
                 .star(4)
@@ -406,35 +397,34 @@ class ReviewControllerIntegrationTest {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set(HttpHeaders.COOKIE, jsessionid);
 
-        ReviewResponse response = restTemplate.exchange(
-                "/reviews",
+        CommentResponse response = restTemplate.exchange(
+                "/comments",
                 HttpMethod.POST,
                 new HttpEntity<>(request, httpHeaders),
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {
+                new ParameterizedTypeReference<ApiResponse<CommentResponse>>() {
                 }
         ).getBody().getBody();
 
-        Long beforeReviewId = response.getId();
-        Long beforeItemId = response.getItemId();
+        Long beforeCommentId = response.getId();
 
         // When
         ApiResponse<Void> body = restTemplate.exchange(
-                "/items/{itemId}/reviews",
+                "/items/comments/{commentId}",
                 HttpMethod.DELETE,
                 new HttpEntity<>(null, httpHeaders),
                 new ParameterizedTypeReference<ApiResponse<Void>>() {
                 },
-                beforeItemId
+                beforeCommentId
         ).getBody();
 
         //then
-        ResponseEntity<ApiResponse<ReviewResponse>> getResponse = restTemplate.exchange(
-                "/reviews/{reviewId}",
+        ResponseEntity<ApiResponse<CommentResponse>> getResponse = restTemplate.exchange(
+                "/comments/{commentId}",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {
+                new ParameterizedTypeReference<ApiResponse<CommentResponse>>() {
                 },
-                beforeReviewId
+                beforeCommentId
         );
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(getResponse.getBody().getErrorCode().getClientMessage()).contains("잘못된 사용자 요청");

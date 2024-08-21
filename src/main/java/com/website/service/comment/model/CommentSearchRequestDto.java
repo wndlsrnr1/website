@@ -1,9 +1,7 @@
-package com.website.service.review.model;
+package com.website.service.comment.model;
 
-import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
-import com.website.repository.review.model.ReviewSearchCriteria;
-import com.website.repository.review.model.ReviewSortType;
+import com.website.repository.comment.model.CommentSearchCriteria;
+import com.website.repository.comment.model.CommentSortType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,16 +11,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReviewSearchRequestDto {
+public class CommentSearchRequestDto {
     private Long userId;
     private Long itemId;
     private int size;
-    private ReviewSortType sortType;
+    private CommentSortType sortType;
     private boolean withTotalCount;
     private String nextSearchAfter;
 
-    public ReviewSearchCriteria toCriteria() {
-        return ReviewSearchCriteria.builder()
+    public CommentSearchCriteria toCriteria() {
+        return CommentSearchCriteria.builder()
                 .userId(userId)
                 .itemId(itemId)
                 .size(size)

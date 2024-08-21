@@ -1,6 +1,6 @@
-package com.website.controller.api.review.model;
+package com.website.controller.api.comment.model;
 
-import com.website.service.review.model.ReviewUpdateDto;
+import com.website.service.comment.model.CommentUpdateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewUpdateRequest {
+public class CommentUpdateRequest {
     @Min(0)
     @Max(5)
     @NotNull
@@ -24,12 +24,15 @@ public class ReviewUpdateRequest {
     @NotBlank
     private String content;
 
-    public ReviewUpdateDto toDto(Long userId, Long itemId) {
-        return ReviewUpdateDto.builder()
+    @NotNull
+    private Long commentId;
+
+    public CommentUpdateDto toDto(Long userId) {
+        return CommentUpdateDto.builder()
                 .userId(userId)
                 .star(star)
+                .commentId(commentId)
                 .content(content)
-                .itemId(itemId)
                 .build();
     }
 }

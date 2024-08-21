@@ -1,4 +1,4 @@
-package com.website.repository.review.model;
+package com.website.repository.comment.model;
 
 
 import com.website.repository.model.item.Item;
@@ -20,19 +20,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(value = AuditingEntityListener.class)
-public class Review {
+@Table(name = "comment")
+public class Comment {
 
     @Id
     @GeneratedValue
-    @Column(name = "review_id", nullable = false)
+    @Column(name = "comment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id")
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Integer star;

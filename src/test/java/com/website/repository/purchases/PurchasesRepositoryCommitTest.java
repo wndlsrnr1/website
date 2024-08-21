@@ -1,19 +1,14 @@
 package com.website.repository.purchases;
 
-import com.website.config.jpa.JpaConfig;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
 import com.website.repository.model.user.User;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
-import com.website.repository.review.ReviewRepository;
 import com.website.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
