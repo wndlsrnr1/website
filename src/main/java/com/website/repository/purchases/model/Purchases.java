@@ -32,6 +32,7 @@ public class Purchases {
     private String orderNumber;
 
     @Column(name = "order_date")
+    @CreatedDate
     private LocalDateTime orderDate;
 
     @JoinColumn(name = "user_id")
