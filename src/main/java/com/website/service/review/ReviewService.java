@@ -110,7 +110,7 @@ public class ReviewService {
         return PageResultDto.<ReviewDto>builder()
                 .items(findResult.getItems().stream().map(ReviewDto::of).collect(Collectors.toList()))
                 .totalCount(findResult.getTotalCount())
-                .nextSearchAfter(findResult.getGetNextSearchAfter())
+                .nextSearchAfter(findResult.getNextSearchAfter())
                 .build();
     }
 
