@@ -37,7 +37,7 @@ public class CustomReviewRepositoryImpl extends QuerydslRepositorySupport implem
 
         return PageResult.<Review>builder()
                 .items(result)
-                .getNextSearchAfter(nextSearchAfter)
+                .nextSearchAfter(nextSearchAfter)
                 .totalCount(totalCount)
                 .build();
     }

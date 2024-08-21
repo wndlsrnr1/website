@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class PageResult<T> {
     private List<T> items;
-    private String getNextSearchAfter;
+    private String nextSearchAfter;
     private Long totalCount;
 }
