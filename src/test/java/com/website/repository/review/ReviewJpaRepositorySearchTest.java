@@ -9,8 +9,6 @@ import com.website.repository.review.model.Review;
 import com.website.repository.review.model.ReviewSearchCriteria;
 import com.website.repository.review.model.ReviewSortType;
 import com.website.repository.user.UserRepository;
-import com.website.utils.common.SearchAfterEncoder;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
-import javax.naming.directory.SearchResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,26 +86,26 @@ public class ReviewJpaRepositorySearchTest {
         assertThat(result.getTotalCount()).isEqualTo(4);
         assertThat(result.getItems()).hasSize(2);
         assertThat(result.getItems().get(0).getUser()).isEqualTo(user4);
-        assertThat(result.getGetNextSearchAfter()).isNotNull();
+        assertThat(result.getNextSearchAfter()).isNotNull();
 
         // search next page
-        String nextSearchAfter = result.getGetNextSearchAfter();
+        String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
         result = reviewRepository.search(criteria);
 
         assertThat(result.getTotalCount()).isEqualTo(4);
         assertThat(result.getItems()).hasSize(2);
         assertThat(result.getItems().get(0).getUser()).isEqualTo(user2);
-        assertThat(result.getGetNextSearchAfter()).isNotNull();
+        assertThat(result.getNextSearchAfter()).isNotNull();
 
         // search next page
-        nextSearchAfter = result.getGetNextSearchAfter();
+        nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
         result = reviewRepository.search(criteria);
 
         assertThat(result.getTotalCount()).isEqualTo(4);
         assertThat(result.getItems()).isEmpty();
-        assertThat(result.getGetNextSearchAfter()).isNull();
+        assertThat(result.getNextSearchAfter()).isNull();
     }
 
     //별점순
@@ -131,12 +127,12 @@ public class ReviewJpaRepositorySearchTest {
         assertThat(result.getItems()).hasSize(2);
         assertThat(result.getTotalCount()).isEqualTo(4);
         assertThat(result.getItems().get(0).getUser()).isEqualTo(user3);
-        assertThat(result.getGetNextSearchAfter()).isNotNull();
+        assertThat(result.getNextSearchAfter()).isNotNull();
 
 
         // next search
 
-        String nextSearchAfter = result.getGetNextSearchAfter();
+        String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
         result = reviewRepository.search(criteria);
 
@@ -145,13 +141,13 @@ public class ReviewJpaRepositorySearchTest {
         assertThat(result.getItems().get(0).getUser()).isEqualTo(user1);
 
         //next search
-        nextSearchAfter = result.getGetNextSearchAfter();
+        nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
         result = reviewRepository.search(criteria);
 
         assertThat(result.getItems()).isEmpty();
         assertThat(result.getTotalCount()).isEqualTo(4);
-        assertThat(result.getGetNextSearchAfter()).isNull();
+        assertThat(result.getNextSearchAfter()).isNull();
     }
 
     //user에 따라서
@@ -175,28 +171,28 @@ public class ReviewJpaRepositorySearchTest {
         assertThat(result.getItems()).hasSize(1);
         assertThat(result.getItems().get(0).getItem()).isEqualTo(item2);
         assertThat(result.getTotalCount()).isEqualTo(2);
-        assertThat(result.getGetNextSearchAfter()).isNotNull();
+        assertThat(result.getNextSearchAfter()).isNotNull();
 
         // search next
 
-        String nextSearchAfter = result.getGetNextSearchAfter();
+        String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
         result = reviewRepository.search(criteria);
 
         assertThat(result.getItems()).hasSize(1);
         assertThat(result.getItems().get(0).getItem()).isEqualTo(item1);
         assertThat(result.getTotalCount()).isEqualTo(2);
-        assertThat(result.getGetNextSearchAfter()).isNotNull();
+        assertThat(result.getNextSearchAfter()).isNotNull();
 
         // search next
 
-        nextSearchAfter = result.getGetNextSearchAfter();
+        nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
         result = reviewRepository.search(criteria);
 
         assertThat(result.getItems()).isEmpty();
         assertThat(result.getTotalCount()).isEqualTo(2);
-        assertThat(result.getGetNextSearchAfter()).isNull();
+        assertThat(result.getNextSearchAfter()).isNull();
     }
 
     //아이템순
