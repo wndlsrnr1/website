@@ -1,4 +1,4 @@
-package com.website.repository.review.model;
+package com.website.repository.comment.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReviewSearchCriteria {
+public class CommentSearchCriteria {
     private Long userId;
     private Long itemId;
     private int size;
-    private ReviewSortType sortType;
+    private CommentSortType sortType;
     private boolean withTotalCount;
     private String nextSearchAfter;
 }

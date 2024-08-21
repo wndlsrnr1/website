@@ -1,13 +1,13 @@
-package com.website.repository.review;
+package com.website.repository.comment;
 
 import com.website.config.jpa.JpaConfig;
 import com.website.repository.common.PageResult;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
 import com.website.repository.model.user.User;
-import com.website.repository.review.model.Review;
-import com.website.repository.review.model.ReviewSearchCriteria;
-import com.website.repository.review.model.ReviewSortType;
+import com.website.repository.comment.model.Comment;
+import com.website.repository.comment.model.CommentSearchCriteria;
+import com.website.repository.comment.model.CommentSortType;
 import com.website.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +20,9 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import({JpaConfig.class, CustomReviewRepositoryImpl.class})
+@Import({JpaConfig.class, CustomCommentRepositoryImpl.class})
 @ActiveProfiles("local")
-public class ReviewJpaRepositorySearchTest {
+public class CommentJpaRepositorySearchTest {
 
     @Autowired
     ItemRepository itemRepository;
@@ -31,7 +31,7 @@ public class ReviewJpaRepositorySearchTest {
     UserRepository userRepository;
 
     @Autowired
-    ReviewRepository reviewRepository;
+    CommentRepository commentRepository;
 
     Item item1;
     Item item2;
@@ -53,34 +53,34 @@ public class ReviewJpaRepositorySearchTest {
         item1 = itemRepository.save(Item.builder().name("item1name").nameKor("item1nameKor").status("item1status").build());
         item2 = itemRepository.save(Item.builder().name("item2name").nameKor("item2nameKor").status("item2status").build());
 
-        //review 저장
-        reviewRepository.save(Review.builder().item(item1).user(user1).content("content1").star(1).build());
-        reviewRepository.save(Review.builder().item(item1).user(user2).content("content2").star(1).build());
-        reviewRepository.save(Review.builder().item(item1).user(user3).content("content3").star(2).build());
-        reviewRepository.save(Review.builder().item(item1).user(user4).content("content4").star(2).build());
+        //comment 저장
+        commentRepository.save(Comment.builder().item(item1).user(user1).content("content1").star(1).build());
+        commentRepository.save(Comment.builder().item(item1).user(user2).content("content2").star(1).build());
+        commentRepository.save(Comment.builder().item(item1).user(user3).content("content3").star(2).build());
+        commentRepository.save(Comment.builder().item(item1).user(user4).content("content4").star(2).build());
 
-        reviewRepository.save(Review.builder().item(item2).user(user4).content("content5").star(4).build());
-        reviewRepository.save(Review.builder().item(item2).user(user3).content("content6").star(4).build());
-        reviewRepository.save(Review.builder().item(item2).user(user2).content("content7").star(3).build());
-        reviewRepository.save(Review.builder().item(item2).user(user1).content("content8").star(3).build());
+        commentRepository.save(Comment.builder().item(item2).user(user4).content("content5").star(4).build());
+        commentRepository.save(Comment.builder().item(item2).user(user3).content("content6").star(4).build());
+        commentRepository.save(Comment.builder().item(item2).user(user2).content("content7").star(3).build());
+        commentRepository.save(Comment.builder().item(item2).user(user1).content("content8").star(3).build());
     }
 
     //item에 따라서
 
     //최신순
     @Test
-    @DisplayName("reviewSearch - by Item - recent")
-    public void reviewSearch_recent_byItem() throws Exception {
+    @DisplayName("commentSearch - by Item - recent")
+    public void commentSearch_recent_byItem() throws Exception {
         //given
-        ReviewSearchCriteria criteria = ReviewSearchCriteria.builder()
+        CommentSearchCriteria criteria = CommentSearchCriteria.builder()
                 .size(2)
-                .sortType(ReviewSortType.RECENT)
+                .sortType(CommentSortType.RECENT)
                 .withTotalCount(true)
                 .itemId(item1.getId())
                 .build();
 
         // when
-        PageResult<Review> result = reviewRepository.search(criteria);
+        PageResult<Comment> result = commentRepository.search(criteria);
 
         // then
         assertThat(result.getTotalCount()).isEqualTo(4);
@@ -91,7 +91,7 @@ public class ReviewJpaRepositorySearchTest {
         // search next page
         String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
-        result = reviewRepository.search(criteria);
+        result = commentRepository.search(criteria);
 
         assertThat(result.getTotalCount()).isEqualTo(4);
         assertThat(result.getItems()).hasSize(2);
@@ -101,7 +101,7 @@ public class ReviewJpaRepositorySearchTest {
         // search next page
         nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
-        result = reviewRepository.search(criteria);
+        result = commentRepository.search(criteria);
 
         assertThat(result.getTotalCount()).isEqualTo(4);
         assertThat(result.getItems()).isEmpty();
@@ -110,18 +110,18 @@ public class ReviewJpaRepositorySearchTest {
 
     //별점순
     @Test
-    @DisplayName("reviewSearch - by item - star")
-    public void reviewSearch_star_byItem() throws Exception {
+    @DisplayName("commentSearch - by item - star")
+    public void commentSearch_star_byItem() throws Exception {
         //given
-        ReviewSearchCriteria criteria = ReviewSearchCriteria.builder()
+        CommentSearchCriteria criteria = CommentSearchCriteria.builder()
                 .size(2)
-                .sortType(ReviewSortType.STAR)
+                .sortType(CommentSortType.STAR)
                 .withTotalCount(true)
                 .itemId(item2.getId())
                 .build();
 
         //when
-        PageResult<Review> result = reviewRepository.search(criteria);
+        PageResult<Comment> result = commentRepository.search(criteria);
 
         //then
         assertThat(result.getItems()).hasSize(2);
@@ -134,7 +134,7 @@ public class ReviewJpaRepositorySearchTest {
 
         String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
-        result = reviewRepository.search(criteria);
+        result = commentRepository.search(criteria);
 
         assertThat(result.getItems()).hasSize(2);
         assertThat(result.getTotalCount()).isEqualTo(4);
@@ -143,7 +143,7 @@ public class ReviewJpaRepositorySearchTest {
         //next search
         nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
-        result = reviewRepository.search(criteria);
+        result = commentRepository.search(criteria);
 
         assertThat(result.getItems()).isEmpty();
         assertThat(result.getTotalCount()).isEqualTo(4);
@@ -154,18 +154,18 @@ public class ReviewJpaRepositorySearchTest {
 
     //최신순
     @Test
-    @DisplayName("reviewSearch - by user - recent")
-    public void reviewSearch_recent_byUser() throws Exception {
+    @DisplayName("commentSearch - by user - recent")
+    public void commentSearch_recent_byUser() throws Exception {
         //given
-        ReviewSearchCriteria criteria = ReviewSearchCriteria.builder()
+        CommentSearchCriteria criteria = CommentSearchCriteria.builder()
                 .size(1)
-                .sortType(ReviewSortType.RECENT)
+                .sortType(CommentSortType.RECENT)
                 .withTotalCount(true)
                 .userId(user1.getId())
                 .build();
 
         //when
-        PageResult<Review> result = reviewRepository.search(criteria);
+        PageResult<Comment> result = commentRepository.search(criteria);
 
         //then
         assertThat(result.getItems()).hasSize(1);
@@ -177,7 +177,7 @@ public class ReviewJpaRepositorySearchTest {
 
         String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
-        result = reviewRepository.search(criteria);
+        result = commentRepository.search(criteria);
 
         assertThat(result.getItems()).hasSize(1);
         assertThat(result.getItems().get(0).getItem()).isEqualTo(item1);
@@ -188,7 +188,7 @@ public class ReviewJpaRepositorySearchTest {
 
         nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);
-        result = reviewRepository.search(criteria);
+        result = commentRepository.search(criteria);
 
         assertThat(result.getItems()).isEmpty();
         assertThat(result.getTotalCount()).isEqualTo(2);
@@ -197,8 +197,8 @@ public class ReviewJpaRepositorySearchTest {
 
     //아이템순
     @Test
-    @DisplayName("reviewSearch - by user - item")
-    public void reviewSearch_item_byUser() throws Exception {
+    @DisplayName("commentSearch - by user - item")
+    public void commentSearch_item_byUser() throws Exception {
         //given
 
         //when

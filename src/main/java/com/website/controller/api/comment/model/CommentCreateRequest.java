@@ -1,6 +1,6 @@
-package com.website.controller.api.review.model;
+package com.website.controller.api.comment.model;
 
-import com.website.service.review.model.ReviewCreateDto;
+import com.website.service.comment.model.CommentCreateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReviewCreateRequest {
+public class CommentCreateRequest {
     private Long itemId;
     private Integer star;
     private String content;
 
-    public ReviewCreateDto toDto(Long userId) {
-        return ReviewCreateDto.builder()
+    public CommentCreateDto toDto(Long userId) {
+        return CommentCreateDto.builder()
                 .itemId(itemId)
                 .userId(userId)
                 .star(star)

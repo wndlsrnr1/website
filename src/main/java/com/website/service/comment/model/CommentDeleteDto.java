@@ -1,6 +1,5 @@
-package com.website.service.review.model;
+package com.website.service.comment.model;
 
-import com.website.repository.review.model.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReviewDeleteDto {
+public class CommentDeleteDto {
     private Long userId;
-    private Long reviewId;
+    private Long commnetId;
 
 }
