@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApiResponse <T>{
 
-    //@JsonSerialize(using = Serializer)
     private final ErrorCode errorCode;
     private final String clientMessage;
     private final T body;
