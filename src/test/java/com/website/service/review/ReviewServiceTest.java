@@ -297,6 +297,7 @@ class ReviewServiceTest {
                 .id(review.getId())
                 .star(updateDto.getStar())
                 .content(updateDto.getContent())
+                .purchases(review.getPurchases())
                 .build();
 
 

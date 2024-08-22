@@ -65,6 +65,7 @@ public class ReviewService {
 
         // Save review
         Review savedReview = reviewRepository.save(review);
+        log.info("savedReview = {}", savedReview);
         return ReviewDto.of(savedReview);
     }
 

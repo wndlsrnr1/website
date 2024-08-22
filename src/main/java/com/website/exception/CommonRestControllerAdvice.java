@@ -24,7 +24,8 @@ public class CommonRestControllerAdvice {
 
     @ExceptionHandler(value = {
             UnauthorizedActionException.class,
-            DateExpiredException.class})
+            DateExpiredException.class,
+            ResourceNotFoundException.class})
     public ResponseEntity<ApiResponse<Void>> handleUnauthorizedActionException(
             CommonException exception
     ) {

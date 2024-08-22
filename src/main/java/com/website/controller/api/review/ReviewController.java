@@ -14,6 +14,7 @@ import com.website.service.review.model.ReviewDto;
 import com.website.service.review.model.ReviewSearchCriteria;
 import com.website.service.review.model.ReviewUpdateDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
-@Validated
+@Slf4j
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -40,7 +41,8 @@ public class ReviewController {
         ReviewCreateDto dto = request.toDto();
         ReviewDto reviewDto = reviewService.registerReview(dto, userId);
         ReviewResponse response = ReviewResponse.of(reviewDto);
-        return ApiResponse.success(response);
+        log.info("response = {}", response);
+        return ApiResponse.<ReviewResponse>success(response);
     }
 
     // Get a specific review by ID
@@ -88,7 +90,7 @@ public class ReviewController {
             HttpSession session,
             @RequestBody @Valid ReviewUpdateRequest request
     ) {
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // replace with injected authentication in the future
+        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // todo:replace with injected authentication in the future
         ReviewUpdateDto dto = request.toDto();
         ReviewDto reviewDto = reviewService.updateReview(dto, userId);
         ReviewResponse response = ReviewResponse.of(reviewDto);
@@ -101,7 +103,7 @@ public class ReviewController {
             HttpSession session,
             @PathVariable(value = "reviewId") Long reviewId
     ) {
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // replace with injected authentication in the future
+        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // todo:replace with injected authentication in the future
         reviewService.removeReview(userId, reviewId);
         return ApiResponse.<Void>success();
     }
