@@ -202,7 +202,7 @@ class ItemServiceTest {
     //}
 
     @Test
-    @Commit
+    //@Commit
     void insertDataForRemoteDB() {
         Subcategory subcategory = subcategoryRepository.findAll().get(1);
         int randomNumber = new Random().nextInt(10);

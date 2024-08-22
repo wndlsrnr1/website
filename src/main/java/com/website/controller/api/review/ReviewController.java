@@ -15,7 +15,6 @@ import com.website.service.review.model.ReviewSearchCriteria;
 import com.website.service.review.model.ReviewUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -59,7 +58,7 @@ public class ReviewController {
     @GetMapping
     public ApiResponse<PageResultResponse<ReviewResponse>> searchReviews(
             @RequestParam @Min(1) Integer size,
-            @RequestParam(required = false) String searchAfter,
+            @RequestParam(required = false) String nextSearchAfter,
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false, defaultValue = "false") boolean withTotalCount,
@@ -68,7 +67,7 @@ public class ReviewController {
         ReviewSearchCriteria dto = ReviewSearchCriteria.builder()
                 .itemId(itemId)
                 .userId(userId)
-                .nextSearchAfter(searchAfter)
+                .nextSearchAfter(nextSearchAfter)
                 .size(size)
                 .sortType(sortType)
                 .withTotalCount(withTotalCount)
@@ -107,6 +106,7 @@ public class ReviewController {
         reviewService.removeReview(userId, reviewId);
         return ApiResponse.<Void>success();
     }
+
 
 
 }
