@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewUpdateDto {
     private Long reviewId;
-    private Long userId;
     private String content;
     private Integer star;
 }

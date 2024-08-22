@@ -4,14 +4,20 @@ import com.website.service.review.model.ReviewCreateDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 //@NoArgsConstructor
 @Builder
 public class ReviewCreateRequest {
-    public ReviewCreateDto toDto(Long userId) {
-        return null;
+    private Integer star;
+    private String content;
+    private Long purchasesId;
+    public ReviewCreateDto toDto() {
+        return ReviewCreateDto.builder()
+                .star(star)
+                .content(content)
+                .purchasesId(purchasesId)
+                .build();
     }
 }
