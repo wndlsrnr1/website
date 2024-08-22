@@ -22,4 +22,17 @@ public class CommonRestControllerAdvice {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
     }
 
+    @ExceptionHandler(value = {
+            UnauthorizedActionException.class,
+            DateExpiredException.class})
+    public ResponseEntity<ApiResponse<Void>> handleUnauthorizedActionException(
+            CommonException exception
+    ) {
+        log.warn(exception.getServerMessage(), exception);
+        ErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
+    }
+
+
+
 }

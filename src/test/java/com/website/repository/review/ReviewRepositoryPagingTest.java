@@ -227,7 +227,7 @@ class ReviewRepositoryPagingTest {
         assertThat(result.getItems()).hasSize(2);
         assertThat(result.getTotalCount()).isEqualTo(4);
 
-        // Given - find next
+        // Given - find next11
 
         String nextSearchAfter = result.getNextSearchAfter();
         criteria.setNextSearchAfter(nextSearchAfter);

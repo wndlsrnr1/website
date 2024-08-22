@@ -8,6 +8,7 @@ import com.website.controller.api.review.model.ReviewUpdateRequest;
 import com.website.repository.model.user.constance.UserConst;
 import com.website.repository.review.model.ReviewSortType;
 import com.website.service.common.model.PageResultDto;
+import com.website.service.review.ReviewService;
 import com.website.service.review.model.ReviewCreateDto;
 import com.website.service.review.model.ReviewDto;
 import com.website.service.review.model.ReviewSearchCriteria;
@@ -36,8 +37,8 @@ public class ReviewController {
             @RequestBody @Valid ReviewCreateRequest request
     ) {
         Long userId = (Long) session.getAttribute(UserConst.USER_ID); // replace with injected authentication in the future
-        ReviewCreateDto dto = request.toDto(userId);
-        ReviewDto reviewDto = reviewService.registerReview(dto);
+        ReviewCreateDto dto = request.toDto();
+        ReviewDto reviewDto = reviewService.registerReview(dto, userId);
         ReviewResponse response = ReviewResponse.of(reviewDto);
         return ApiResponse.success(response);
     }
@@ -88,8 +89,8 @@ public class ReviewController {
             @RequestBody @Valid ReviewUpdateRequest request
     ) {
         Long userId = (Long) session.getAttribute(UserConst.USER_ID); // replace with injected authentication in the future
-        ReviewUpdateDto dto = request.toDto(userId);
-        ReviewDto reviewDto = reviewService.updateReview(dto);
+        ReviewUpdateDto dto = request.toDto();
+        ReviewDto reviewDto = reviewService.updateReview(dto, userId);
         ReviewResponse response = ReviewResponse.of(reviewDto);
         return ApiResponse.success(response);
     }
