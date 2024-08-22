@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ReviewResponse {
     private Long id;
 
-    private Long purchasesId;
+    private String username;
 
     private String content;
 
@@ -29,7 +29,7 @@ public class ReviewResponse {
     public static ReviewResponse of(ReviewDto dto) {
         return ReviewResponse.builder()
                 .id(dto.getId())
-                .purchasesId(dto.getPurchasesId())
+                .username(dto.getUsername())
                 .content(dto.getContent())
                 .star(dto.getStar())
                 .createdAt(dto.getCreatedAt())

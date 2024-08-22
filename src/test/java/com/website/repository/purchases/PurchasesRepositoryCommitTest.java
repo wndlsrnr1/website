@@ -51,8 +51,6 @@ class PurchasesRepositoryCommitTest {
                     .build();
             purchasesRepository.save(purchases);
         }
-
-
     }
 
 }
