@@ -1,9 +1,21 @@
 package com.website.controller.api.item;
 
+import com.website.controller.api.common.model.ApiResponse;
+import com.website.controller.api.common.model.PageResultResponse;
+import com.website.controller.api.item.model.SearchItemResponse;
+import com.website.repository.common.PageResult;
+import com.website.repository.item.model.ItemSearchSortType;
+import com.website.service.common.model.PageResultDto;
 import com.website.service.item.ItemService;
+import com.website.service.item.model.SearchItemDto;
+import com.website.service.item.model.SearchItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +36,41 @@ public class ItemController {
     @GetMapping("/comments")
     public ResponseEntity responseCommentResponse(@RequestParam(value = "itemId", required = false) Long itemId) {
         return itemService.getCommentResponse(itemId);
+    }
+
+    @GetMapping
+    public ApiResponse<PageResultResponse<SearchItemResponse>> search(
+            @RequestParam @Min(1) @Max(100) Integer size,
+            @RequestParam ItemSearchSortType sortType,
+            @RequestParam(required = false) String searchAfter,
+            @RequestParam(required = false, defaultValue = "false") boolean withTotalCount,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long subcategoryId,
+            @RequestParam(required = false) String searchName,
+            @RequestParam(required = false, defaultValue = "false") boolean onDiscount
+    ) {
+        // Make dto
+        SearchItemRequestDto dto = SearchItemRequestDto.builder()
+                .size(size)
+                .sortType(sortType)
+                .searchAfter(searchAfter)
+                .withTotalCount(withTotalCount)
+                .categoryId(categoryId)
+                .subcategoryId(subcategoryId)
+                .searchName(searchName)
+                .onDiscount(onDiscount)
+                .build();
+
+        // Search
+        PageResultDto<SearchItemDto> resultDto = itemService.search(dto);
+
+        // Make Response
+        PageResultResponse<SearchItemResponse> pageResult = PageResultResponse.<SearchItemResponse>builder()
+                .items(resultDto.getItems().stream().map(SearchItemResponse::of).collect(Collectors.toList()))
+                .nextSearchAfter(resultDto.getNextSearchAfter())
+                .totalCount(resultDto.getTotalCount())
+                .build();
+
+        return ApiResponse.success(pageResult);
     }
 }

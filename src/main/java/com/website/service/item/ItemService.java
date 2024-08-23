@@ -2,6 +2,9 @@ package com.website.service.item;
 
 import com.website.controller.api.model.response.item.*;
 import com.website.controller.api.model.response.item.sequence.ItemAttachmentSequenceResponse;
+import com.website.repository.common.PageResult;
+import com.website.repository.item.model.SearchItem;
+import com.website.repository.item.model.SearchItemCriteria;
 import com.website.repository.model.attachment.Attachment;
 import com.website.repository.model.category.Subcategory;
 import com.website.repository.attachment.AttachmentRepository;
@@ -21,7 +24,10 @@ import com.website.controller.api.model.request.item.SaveItemRequest;
 import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
 import com.website.service.attachment.FileService;
 import com.website.service.common.BindingResultUtils;
+import com.website.service.common.model.PageResultDto;
 import com.website.service.item.carousel.ItemHomeCarouselService;
+import com.website.service.item.model.SearchItemDto;
+import com.website.service.item.model.SearchItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -38,6 +44,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -627,4 +634,17 @@ public class ItemService {
         return null;
     }
 
+    @Transactional(readOnly = true)
+    public PageResultDto<SearchItemDto> search(SearchItemRequestDto dto) {
+
+        SearchItemCriteria criteria = dto.toCriteria();
+        PageResult<SearchItem> pageResult =  itemRepository.search(criteria);
+
+        return PageResultDto.<SearchItemDto>builder()
+                .items(pageResult.getItems().stream().map(SearchItemDto::of).collect(Collectors.toList()))
+                .totalCount(pageResult.getTotalCount())
+                .nextSearchAfter(pageResult.getNextSearchAfter())
+                .build()
+                ;
+    }
 }
