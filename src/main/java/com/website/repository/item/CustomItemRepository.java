@@ -7,13 +7,18 @@ import com.website.controller.api.model.response.item.ItemBasicResponse;
 import com.website.controller.api.model.response.item.ItemDetailResponse;
 import com.website.controller.api.model.response.item.ItemResponse;
 import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
+import com.website.repository.common.PageResult;
+import com.website.repository.item.model.SearchItem;
+import com.website.repository.item.model.SearchItemCriteria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
+@Repository
 public interface CustomItemRepository {
     void updateNameById(String updateName, Long id);
 
@@ -34,4 +39,6 @@ public interface CustomItemRepository {
     Page<ItemResponse> getItemResponseByCondWhenLastPage(ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable, Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage);
 
     ItemBasicResponse findItemBasicResponseByItemId(Long itemId);
+
+    PageResult<SearchItem> search(SearchItemCriteria criteria);
 }

@@ -2,12 +2,21 @@ package com.website.repository.item;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.controller.api.model.request.item.EditItemRequest;
 import com.website.controller.api.model.request.item.EditItemRequestV2;
 import com.website.controller.api.model.response.item.*;
 import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
+import com.website.exception.ClientException;
+import com.website.exception.ErrorCode;
+import com.website.repository.common.PageResult;
+import com.website.repository.item.model.ItemSearchSortType;
+import com.website.repository.item.model.QSearchItem;
+import com.website.repository.item.model.SearchItem;
+import com.website.repository.item.model.SearchItemCriteria;
+import com.website.utils.common.SearchAfterEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,16 +29,20 @@ import org.springframework.validation.BindingResult;
 
 import javax.persistence.EntityManager;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.website.repository.model.attachment.QAttachment.attachment;
+import static com.website.repository.model.category.QCategory.category;
 import static com.website.repository.model.category.QSubcategory.subcategory;
 import static com.website.repository.model.item.QItem.item;
 import static com.website.repository.model.item.QItemAttachment.itemAttachment;
 import static com.website.repository.model.item.QItemInfo.itemInfo;
 import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
+import static com.website.repository.model.item.QItemThumbnail.itemThumbnail;
 
 @Repository
 @Slf4j
@@ -186,6 +199,259 @@ public class CustomItemRepositoryImpl implements CustomItemRepository {
         }
 
         return fetchResult.get(0);
+    }
+
+    @Override
+    public PageResult<SearchItem> search(SearchItemCriteria criteria) {
+        log.info("criteria = {}", criteria);
+        List<SearchItem> result = query.select(new QSearchItem(
+                        item.id,
+                        item.name,
+                        item.nameKor,
+                        item.price,
+                        item.status,
+                        item.releasedAt,
+                        item.createdAt,
+                        category.id,
+                        category.nameKor,
+                        subcategory.id,
+                        subcategory.nameKor,
+                        itemInfo.views,
+                        itemInfo.salesRate,
+                        itemInfo.brand,
+                        itemInfo.manufacturer,
+                        itemInfo.madeIn,
+                        attachment.id
+                )).from(item)
+                .join(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .join(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .join(category).on(subcategory.category.id.eq(category.id))
+                .join(itemInfo).on(item.id.eq(itemInfo.item.id))
+                .join(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
+                .join(attachment).on(itemThumbnail.attachment.id.eq(attachment.id))
+                .where(
+                        categoryEq(criteria.getCategoryId()),
+                        subcategoryEq(criteria.getSubcategoryId()),
+                        itemNameLike(criteria.getSearchName())
+                                .or(itemNameKorLike(criteria.getSearchName()))
+                                .or(subcategoryNameLike(criteria.getSearchName()))
+                                .or(subcategoryNameKorLike(criteria.getSearchName()))
+                                .or(categoryNameLike(criteria.getSearchName()))
+                                .or(categoryNameKorLike(criteria.getSearchName())),
+                        isDiscount(criteria.isOnDiscount()),
+                        whereClauseForNextSearchAfter(criteria)
+                )
+                .orderBy(orderBySortType(criteria.getSortType()))
+                .limit(criteria.getSize())
+                .fetch();
+        log.info("result = {}", result);
+
+        //getNextSearchAfter
+        String nextSearchAfter = getEncodedNextSearchAfter(criteria, result);
+
+        //getTotalCount
+        Long totalCount = getTotalCount(criteria);
+
+
+        return PageResult.<SearchItem>builder()
+                .items(result)
+                .nextSearchAfter(nextSearchAfter)
+                .totalCount(totalCount)
+                .build();
+    }
+
+    private BooleanExpression isDiscount(boolean onDiscount) {
+        return !onDiscount ? null : itemInfo.salesRate.gt(0);
+    }
+
+    private Long getTotalCount(SearchItemCriteria criteria) {
+        if (!criteria.isWithTotalCount()) {
+            return null;
+        }
+        return query.selectFrom(item)
+                .where(
+                        categoryEq(criteria.getCategoryId()),
+                        subcategoryEq(criteria.getSubcategoryId()),
+                        itemNameLike(criteria.getSearchName())
+                                .or(itemNameKorLike(criteria.getSearchName()))
+                                .or(subcategoryNameLike(criteria.getSearchName()))
+                                .or(subcategoryNameKorLike(criteria.getSearchName()))
+                                .or(categoryNameLike(criteria.getSearchName()))
+                                .or(categoryNameKorLike(criteria.getSearchName())),
+                        isDiscount(criteria.isOnDiscount())
+                )
+                .join(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
+                .join(subcategory).on(itemSubcategory.subcategory.id.eq(subcategory.id))
+                .join(category).on(subcategory.category.id.eq(category.id))
+                .join(itemInfo).on(item.id.eq(itemInfo.item.id))
+                .join(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
+                .join(attachment).on(itemThumbnail.attachment.id.eq(attachment.id))
+                .fetchCount();
+    }
+
+    private String getEncodedNextSearchAfter(SearchItemCriteria criteria, List<SearchItem> result) {
+        String nextSearchAfter = null;
+
+        if (criteria.getSize() == result.size()) {
+            SearchItem lastItem = result.get(result.size() - 1);
+            switch (criteria.getSortType()) {
+                case NAME_ASC: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getItemId().toString(), lastItem.getItemName());
+                    break;
+                }
+                case NAME_DESC: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getItemId().toString(), lastItem.getItemName());
+                    break;
+                }
+                case PRICE_ASC: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getItemId().toString(), lastItem.getPrice().toString());
+                    break;
+                }
+                case PRICE_DESC: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getItemId().toString(), lastItem.getPrice().toString());
+                    break;
+                }
+                case RECENT_CREATED: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getItemId().toString());
+                    break;
+                }
+                case RECENT_RELEASED: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getItemId().toString(), lastItem.getReleasedAt().toString());
+                    break;
+                }
+                default: {
+                    throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + criteria.getSortType().name());
+                }
+            }
+        }
+        return nextSearchAfter;
+    }
+
+    private BooleanExpression categoryNameKorLike(String searchName) {
+        return searchName == null ? null : category.nameKor.like("%" + searchName + "%");
+    }
+
+    private BooleanExpression categoryNameLike(String searchName) {
+        return searchName == null ? null : category.name.like("%" + searchName + "%");
+    }
+
+    private BooleanExpression subcategoryNameKorLike(String searchName) {
+        return searchName == null ? null : subcategory.nameKor.like("%" + searchName + "%");
+    }
+
+    private BooleanExpression subcategoryNameLike(String searchName) {
+        return searchName == null ? null : subcategory.name.like("%" + searchName + "%");
+    }
+
+    private BooleanExpression itemNameKorLike(String searchName) {
+        return searchName == null ? null : item.nameKor.like("%" + searchName + "%");
+    }
+
+    private BooleanExpression itemNameLike(String searchName) {
+        return searchName == null ? null : item.name.like("%" + searchName + "%");
+    }
+
+    private BooleanExpression subcategoryEq(Long subcategoryId) {
+        return subcategoryId == null ? null : subcategory.id.eq(subcategoryId);
+    }
+
+    private OrderSpecifier<?>[] orderBySortType(ItemSearchSortType sortType) {
+        switch (sortType) {
+            case NAME_ASC: {
+                return new OrderSpecifier[]{
+                        item.name.asc(),
+                        item.id.desc()
+                };
+            }
+            case NAME_DESC: {
+                return new OrderSpecifier[]{
+                        item.name.desc(),
+                        item.id.desc()
+                };
+            }
+            case PRICE_ASC: {
+                return new OrderSpecifier[]{
+                        item.price.asc(),
+                        item.id.desc()
+                };
+            }
+            case PRICE_DESC: {
+                return new OrderSpecifier[]{
+                        item.price.desc(),
+                        item.id.desc()
+                };
+            }
+            case RECENT_CREATED: {
+                return new OrderSpecifier[]{
+                        item.id.desc()
+                };
+            }
+            case RECENT_RELEASED: {
+                return new OrderSpecifier[]{
+                        item.releasedAt.desc(),
+                        item.id.desc()
+                };
+            }
+            default: {
+                throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + sortType.name());
+            }
+        }
+    }
+
+    private BooleanExpression whereClauseForNextSearchAfter(SearchItemCriteria criteria) {
+        if (criteria.getSearchAfter() == null) {
+            return null;
+        }
+        switch (criteria.getSortType()) {
+            case NAME_ASC: {
+                String[] decoded = SearchAfterEncoder.decode(criteria.getSearchAfter());
+                Long itemId = Long.parseLong(decoded[0]);
+                String itemName = decoded[1];
+                return item.name.gt(itemName).or(
+                        item.name.eq(itemName).and(item.id.lt(itemId))
+                );
+            }
+            case NAME_DESC: {
+                String[] decoded = SearchAfterEncoder.decode(criteria.getSearchAfter());
+                Long itemId = Long.parseLong(decoded[0]);
+                String itemName = decoded[1];
+                return item.name.lt(itemName).or(
+                        item.name.eq(itemName).and(item.id.lt(itemId))
+                );
+            }
+            case PRICE_ASC: {
+                String[] decoded = SearchAfterEncoder.decode(criteria.getSearchAfter());
+                Long itemId = Long.parseLong(decoded[0]);
+                Integer itemPrice = Integer.parseInt(decoded[1]);
+                return item.price.gt(itemPrice).or(
+                        item.price.eq(itemPrice).and(item.id.lt(itemId))
+                );
+            }
+            case PRICE_DESC: {
+                String[] decoded = SearchAfterEncoder.decode(criteria.getSearchAfter());
+                Long itemId = Long.parseLong(decoded[0]);
+                Integer itemPrice = Integer.parseInt(decoded[1]);
+                return item.price.lt(itemPrice).or(
+                        item.price.eq(itemPrice).and(item.id.lt(itemId))
+                );
+            }
+            case RECENT_CREATED: {
+                String decoded = SearchAfterEncoder.decodeSingle(criteria.getSearchAfter());
+                Long itemId = Long.parseLong(decoded);
+                return item.id.lt(itemId);
+            }
+            case RECENT_RELEASED: {
+                String[] decoded = SearchAfterEncoder.decode(criteria.getSearchAfter());
+                Long itemId = Long.parseLong(decoded[0]);
+                LocalDateTime itemReleasedAt = LocalDateTime.parse(decoded[1]);
+                return item.releasedAt.before(itemReleasedAt).or(
+                        item.releasedAt.eq(itemReleasedAt).and(item.id.lt(itemId))
+                );
+            }
+            default: {
+                throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + criteria.getSortType().name());
+            }
+        }
     }
 
     private long getLimit(int pageSize, long total) {
