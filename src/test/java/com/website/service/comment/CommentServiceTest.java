@@ -235,7 +235,7 @@ class CommentServiceTest {
         List<CommentDto> commentDto = commentService.getCommentByUserIdAndItemId(userId, itemId);
 
         //then
-        assertThat(commentDto.get(0).getUserId()).isEqualTo(comment.getUser().getId());
+        assertThat(commentDto.get(0).getUsername()).isEqualTo(comment.getUser().getName());
         assertThat(commentDto.get(0).getItemId()).isEqualTo(comment.getItem().getId());
         verify(userValidator, times(1)).validateAndGet(userId);
         verify(itemValidator, times(1)).validateAndGet(itemId);
