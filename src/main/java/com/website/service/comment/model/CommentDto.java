@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class CommentDto {
     private Long id;
     private Long itemId;
-    private Long userId;
+    private String username;
     private Integer star;
     private String content;
     private LocalDateTime createdAt;
@@ -25,7 +25,7 @@ public class CommentDto {
         return CommentDto.builder()
                 .id(savedComment.getId())
                 .itemId(savedComment.getItem().getId())
-                .userId(savedComment.getUser().getId())
+                .username(savedComment.getUser().getName())
                 .star(savedComment.getStar())
                 .content(savedComment.getContent())
                 .createdAt(savedComment.getCreatedAt())
