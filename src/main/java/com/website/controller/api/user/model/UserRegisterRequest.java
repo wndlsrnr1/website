@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @Data
 public class UserRegisterRequest {
     @NotBlank
-    @Email(regexp = Regexes.EMAIL_PATTERN)
+    @Email
     private String email;
 
     @NotBlank
@@ -25,11 +25,15 @@ public class UserRegisterRequest {
     @NotNull
     private String name;
 
+    @NotBlank
+    private String address;
+
     public UserRegisterRequestDto toDto() {
         return UserRegisterRequestDto.builder()
                 .email(email)
                 .name(name)
                 .password(password)
+                .address(address)
                 .build();
     }
 }
