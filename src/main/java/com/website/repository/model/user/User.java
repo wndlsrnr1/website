@@ -1,10 +1,13 @@
 package com.website.repository.model.user;
 
+import com.website.repository.converter.EnumListConverter;
+import com.website.repository.user.model.UserRole;
 import lombok.*;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -26,4 +29,7 @@ public class User {
     private String email;
 
     private String password;
+
+    @Convert(converter = EnumListConverter.class)
+    private List<UserRole> roles;
 }

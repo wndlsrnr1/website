@@ -8,7 +8,7 @@ import com.website.controller.api.model.request.user.LoginFormRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import com.website.service.common.constance.Regexes;
+import com.website.utils.common.constance.Regexes;
 import com.website.controller.api.model.common.ApiError;
 import com.website.controller.api.model.common.ApiResponseBody;
 import org.springframework.http.HttpStatus;

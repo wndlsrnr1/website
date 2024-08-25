@@ -29,4 +29,9 @@ public class UserValidator {
         return user;
     }
 
+    public void validateUserExists(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ClientException(ErrorCode.BAD_REQUEST, "user not found. userId = " + userId);
+        }
+    }
 }
