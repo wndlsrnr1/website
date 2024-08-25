@@ -6,16 +6,14 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 @Data
 public class UserLoginRequest {
     @NotBlank
-    @Email(regexp = Regexes.EMAIL_PATTERN)
+    @Email
     private String email;
 
     @NotBlank
-    @Pattern(regexp = Regexes.PASSWORD_PATTERN)
     private String password;
 
     public LoginRequestDto toDto() {

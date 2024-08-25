@@ -18,11 +18,10 @@ import javax.validation.constraints.Pattern;
 public class UserDeleteRequest {
 
     @NotBlank
-    @Email(regexp = Regexes.EMAIL_PATTERN)
+    @Email
     private String email;
 
     @NotBlank
-    @Pattern(regexp = Regexes.PASSWORD_PATTERN)
     private String password;
 
     public UserDeleteDto toDto(UserDeleteRequest request) {

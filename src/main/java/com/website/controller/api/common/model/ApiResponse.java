@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @RequiredArgsConstructor
 public class ApiResponse <T>{
@@ -25,6 +27,10 @@ public class ApiResponse <T>{
 
     public static <T> ApiResponse<T> fail(ErrorCode errorCode) {
         return new ApiResponse<>(errorCode, errorCode.getClientMessage(), null);
+    }
+
+    public static <T> ApiResponse<T> fail(ErrorCode errorCode, T errorFields) {
+        return new ApiResponse<T>(errorCode, errorCode.getClientMessage(), errorFields);
     }
 
     public static <T> ApiResponse<T> success(T body) {
