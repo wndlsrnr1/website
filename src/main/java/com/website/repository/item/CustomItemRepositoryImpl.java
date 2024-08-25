@@ -2,7 +2,6 @@ package com.website.repository.item;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.controller.api.model.request.item.EditItemRequest;
@@ -30,7 +29,6 @@ import org.springframework.validation.BindingResult;
 import javax.persistence.EntityManager;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -232,12 +230,7 @@ public class CustomItemRepositoryImpl implements CustomItemRepository {
                 .where(
                         categoryEq(criteria.getCategoryId()),
                         subcategoryEq(criteria.getSubcategoryId()),
-                        itemNameLike(criteria.getSearchName())
-                                .or(itemNameKorLike(criteria.getSearchName()))
-                                .or(subcategoryNameLike(criteria.getSearchName()))
-                                .or(subcategoryNameKorLike(criteria.getSearchName()))
-                                .or(categoryNameLike(criteria.getSearchName()))
-                                .or(categoryNameKorLike(criteria.getSearchName())),
+                        whereClauseForSearch(criteria),
                         isDiscount(criteria.isOnDiscount()),
                         whereClauseForNextSearchAfter(criteria)
                 )
@@ -260,6 +253,18 @@ public class CustomItemRepositoryImpl implements CustomItemRepository {
                 .build();
     }
 
+    private BooleanExpression whereClauseForSearch(SearchItemCriteria criteria) {
+        if (criteria.getSearchName() == null) {
+            return null;
+        }
+        return itemNameLike(criteria.getSearchName())
+                .or(itemNameKorLike(criteria.getSearchName()))
+                .or(subcategoryNameLike(criteria.getSearchName()))
+                .or(subcategoryNameKorLike(criteria.getSearchName()))
+                .or(categoryNameLike(criteria.getSearchName()))
+                .or(categoryNameKorLike(criteria.getSearchName()));
+    }
+
     private BooleanExpression isDiscount(boolean onDiscount) {
         return !onDiscount ? null : itemInfo.salesRate.gt(0);
     }
@@ -272,12 +277,7 @@ public class CustomItemRepositoryImpl implements CustomItemRepository {
                 .where(
                         categoryEq(criteria.getCategoryId()),
                         subcategoryEq(criteria.getSubcategoryId()),
-                        itemNameLike(criteria.getSearchName())
-                                .or(itemNameKorLike(criteria.getSearchName()))
-                                .or(subcategoryNameLike(criteria.getSearchName()))
-                                .or(subcategoryNameKorLike(criteria.getSearchName()))
-                                .or(categoryNameLike(criteria.getSearchName()))
-                                .or(categoryNameKorLike(criteria.getSearchName())),
+                        whereClauseForSearch(criteria),
                         isDiscount(criteria.isOnDiscount())
                 )
                 .join(itemSubcategory).on(item.id.eq(itemSubcategory.item.id))
