@@ -1,6 +1,6 @@
 package com.website.controller.api.model.request.user;
 
-import com.website.service.common.constance.Regexes;
+import com.website.utils.common.constance.Regexes;
 import lombok.*;
 
 import javax.validation.constraints.Email;
