@@ -1,4 +1,4 @@
-package com.website.controller.api.admin.item;
+package com.website.controller.admin.item;
 
 import com.website.service.item.ItemService;
 import com.website.controller.api.model.request.item.EditItemRequest;

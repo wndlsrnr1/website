@@ -1,4 +1,4 @@
-package com.website.controller.api.admin.file;
+package com.website.controller.admin.file;
 
 import com.website.controller.api.model.request.item.SaveItemRequest;
 import com.website.service.attachment.FileService;

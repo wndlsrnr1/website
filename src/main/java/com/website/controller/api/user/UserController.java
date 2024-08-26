@@ -3,14 +3,13 @@ package com.website.controller.api.user;
 import com.website.config.auth.LoginUser;
 import com.website.config.auth.ServiceUser;
 import com.website.controller.api.common.model.ApiResponse;
-import com.website.controller.api.user.model.UserDeleteRequest;
-import com.website.controller.api.user.model.UserLoginRequest;
-import com.website.controller.api.user.model.UserRegisterRequest;
-import com.website.controller.api.user.model.UserResponse;
+import com.website.controller.api.user.model.*;
 import com.website.service.user.UserService;
+import com.website.service.user.model.EmailCheckResponseDto;
 import com.website.service.user.model.UserDeleteDto;
 import com.website.service.user.model.UserDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +19,7 @@ import javax.validation.Valid;
 @Validated
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -58,4 +58,12 @@ public class UserController {
         return ApiResponse.success();
     }
 
+    @PostMapping("/users/check/email")
+    public ApiResponse<EmailCheckResponse> loginCheck(
+            @Valid @RequestBody EmailCheckRequest request
+    ) {
+        EmailCheckResponseDto dto =  userService.validateEmail(request.toDto());
+        EmailCheckResponse body = EmailCheckResponse.of(dto);
+        return ApiResponse.success(body);
+    }
 }

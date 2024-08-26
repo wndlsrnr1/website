@@ -7,10 +7,7 @@ import com.website.exception.ErrorCode;
 import com.website.repository.model.user.User;
 import com.website.repository.user.UserRepository;
 import com.website.repository.user.model.UserRole;
-import com.website.service.user.model.LoginRequestDto;
-import com.website.service.user.model.UserDeleteDto;
-import com.website.service.user.model.UserDto;
-import com.website.service.user.model.UserRegisterRequestDto;
+import com.website.service.user.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +33,7 @@ public class UserService {
                 .orElseThrow(() -> new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request" + dto));
 
         if (!passwordEqual(dto.getPassword(), user.getPassword())) {
-            throw new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request="+ dto);
+            throw new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request=" + dto);
         }
 
         return jwtUtil.generateToken(dto.getEmail());
@@ -46,7 +43,7 @@ public class UserService {
     public UserDto getUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(
-                        () -> new ClientException(ErrorCode.BAD_REQUEST, "cannot found user. userId="+ userId)
+                        () -> new ClientException(ErrorCode.BAD_REQUEST, "cannot found user. userId=" + userId)
                 );
 
         return UserDto.of(user);
@@ -104,4 +101,15 @@ public class UserService {
     }
 
 
+    public EmailCheckResponseDto validateEmail(EmailCheckRequestDto email) {
+        //User가 있으면 문제 있음
+        //if (userRepository.findByEmail(email.getEmail()).isPresent()) {
+        //    throw new ClientException(ErrorCode.BAD_REQUEST,
+        //            "email already exists. requested email = " + email);
+        //}
+        if (userRepository.findByEmail(email.getEmail()).isPresent()) {
+            return EmailCheckResponseDto.builder().emailExists(false).build();
+        }
+        return EmailCheckResponseDto.builder().emailExists(true).build();
+    }
 }

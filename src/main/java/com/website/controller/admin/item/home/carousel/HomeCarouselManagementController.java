@@ -1,4 +1,4 @@
-package com.website.controller.api.admin.item.home.carousel;
+package com.website.controller.admin.item.home.carousel;
 
 import com.website.controller.api.model.request.item.carousel.CarouselAddRequest;
 import com.website.controller.api.model.request.item.carousel.CarouselSearchCond;
