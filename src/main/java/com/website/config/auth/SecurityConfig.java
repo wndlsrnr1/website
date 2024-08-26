@@ -35,7 +35,7 @@ public class SecurityConfig {
                         )
                         .permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**"))
-                        .hasAuthority("ADMIN")
+                        .hasAuthority(UserRole.ADMIN.name())
                         .anyRequest()
                         .authenticated()
                 )

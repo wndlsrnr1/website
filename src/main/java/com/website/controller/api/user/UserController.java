@@ -71,11 +71,10 @@ public class UserController {
         return ApiResponse.success(body);
     }
 
-    @GetMapping("/users/admin")
+    @GetMapping("/auth/users")
     public ApiResponse<Void> adminCheck(
             @AuthenticationPrincipal ServiceUser serviceUser
     ) {
-        log.info("serviceUser = {}", serviceUser);
         serviceUser.getAuthorities().stream().filter(authority -> authority.getAuthority().equals(UserRole.ADMIN.name())).findAny().orElseThrow(
                 () -> new AccessDeniedException("Access Denied. user = " + serviceUser)
         );
