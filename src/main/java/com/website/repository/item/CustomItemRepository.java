@@ -8,8 +8,11 @@ import com.website.controller.api.model.response.item.ItemDetailResponse;
 import com.website.controller.api.model.response.item.ItemResponse;
 import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
 import com.website.repository.common.PageResult;
+import com.website.repository.item.model.ItemWithReview;
+import com.website.repository.item.model.ItemWithReviewSearchCriteria;
 import com.website.repository.item.model.SearchItem;
 import com.website.repository.item.model.SearchItemCriteria;
+import com.website.service.item.model.ItemWithReviewSearchRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -41,4 +44,6 @@ public interface CustomItemRepository {
     ItemBasicResponse findItemBasicResponseByItemId(Long itemId);
 
     PageResult<SearchItem> search(SearchItemCriteria criteria);
+
+    PageResult<ItemWithReview> searchItemWithReview(ItemWithReviewSearchCriteria dto);
 }
