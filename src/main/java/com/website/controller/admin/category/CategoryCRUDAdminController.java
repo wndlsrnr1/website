@@ -1,4 +1,4 @@
-package com.website.controller.api.admin.category;
+package com.website.controller.admin.category;
 
 import com.website.controller.api.model.request.category.subcategory.CreateSubcategoryRequest;
 import com.website.controller.api.model.request.category.subcategory.UpdateSubcategoryRequest;

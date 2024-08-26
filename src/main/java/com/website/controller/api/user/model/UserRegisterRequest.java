@@ -25,6 +25,7 @@ public class UserRegisterRequest {
     @NotNull
     private String name;
 
+    @Length(min = 3, max = 20)
     @NotBlank
     private String address;
 

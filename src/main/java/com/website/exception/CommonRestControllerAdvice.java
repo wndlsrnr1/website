@@ -20,13 +20,14 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class CommonRestControllerAdvice {
 
-    // todo: implement method by ClientException, MethodArgumentNotValidException, ServerException, Exception when it is in need
+    // todo: implement method by ClientException, ServerException, Exception when it is in need
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex
     ) {
         Map<String, String> errors = extractFieldErrors(ex);
         log.warn("Validation failed.", ex);
+        log.info("errors = {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(ErrorCode.BAD_REQUEST, errors));
     }
 
