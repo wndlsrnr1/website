@@ -6,7 +6,9 @@ import javax.servlet.*;
 import java.io.IOException;
 
 @Slf4j
+
 @Deprecated(since = "Deleted")
+
 public class ExceptionLogFilter {
 
     //@Override
