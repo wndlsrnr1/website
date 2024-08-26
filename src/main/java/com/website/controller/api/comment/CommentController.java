@@ -1,11 +1,12 @@
 package com.website.controller.api.comment;
 
+import com.website.config.auth.LoginUser;
+import com.website.config.auth.ServiceUser;
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.common.model.PageResultResponse;
 import com.website.controller.api.comment.model.CommentCreateRequest;
 import com.website.controller.api.comment.model.CommentResponse;
 import com.website.controller.api.comment.model.CommentUpdateRequest;
-import com.website.repository.model.user.constance.UserConst;
 import com.website.repository.comment.model.CommentSortType;
 import com.website.service.common.model.PageResultDto;
 import com.website.service.comment.CommentService;
@@ -15,6 +16,7 @@ import com.website.service.comment.model.CommentSearchRequestDto;
 import com.website.service.comment.model.CommentUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -32,13 +34,11 @@ public class CommentController {
     //create
     @PostMapping("/comments")
     public ApiResponse<CommentResponse> createComment(
-            //todo: implement injected authentication.
-            HttpSession session,
+            @AuthenticationPrincipal ServiceUser user,
             @RequestBody @Valid CommentCreateRequest request
     ) {
         //todo: implement injected authentication.
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID);
-        CommentCreateDto dto = request.toDto(userId);
+        CommentCreateDto dto = request.toDto(user.getId());
         CommentDto commentDto = commentService.registerComment(dto);
         CommentResponse response = CommentResponse.of(commentDto);
         return ApiResponse.success(response);
@@ -85,29 +85,26 @@ public class CommentController {
     }
 
     //update
+    @LoginUser
     @PostMapping("/items/update/comments")
     public ApiResponse<CommentResponse> updateComment(
-            //todo: implement injected authentication.
-            HttpSession session,
+            @AuthenticationPrincipal ServiceUser serviceUser,
             @RequestBody @Valid CommentUpdateRequest request
     ) {
-        //todo: implement injected authentication.
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID);
-        CommentUpdateDto dto = request.toDto(userId);
+        CommentUpdateDto dto = request.toDto(serviceUser.getId());
         CommentDto commentDto = commentService.updateComment(dto);
         CommentResponse response = CommentResponse.of(commentDto);
         return ApiResponse.success(response);
     }
 
     //delete
+    @LoginUser
     @DeleteMapping("/items/comments/{commentId}")
     public ApiResponse<Void> deleteComment(
-            HttpSession session, //todo: replace to injected value from security
+            @AuthenticationPrincipal ServiceUser serviceUser,
             @PathVariable(value = "commentId") Long commentId
     ) {
-        //todo: replace to injected value from security
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID);
-        commentService.removeComment(userId, commentId);
+        commentService.removeComment(serviceUser.getId(), commentId);
         return ApiResponse.<Void>success();
     }
 

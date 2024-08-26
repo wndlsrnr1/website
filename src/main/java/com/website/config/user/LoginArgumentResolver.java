@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Slf4j
+@Deprecated(since = "Security functions have been moved to spring security")
 public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override

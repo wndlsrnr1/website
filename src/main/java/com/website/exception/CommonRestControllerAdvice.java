@@ -4,8 +4,10 @@ package com.website.exception;
 import com.website.controller.api.common.model.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +23,16 @@ import java.util.stream.Collectors;
 public class CommonRestControllerAdvice {
 
     // todo: implement method by ClientException, ServerException, Exception when it is in need
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException ex
+    ) {
+        log.warn("unauthorized user. ", ex);
+        ErrorCode errorCode = ErrorCode.FORBIDDEN;
+        return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex
@@ -66,7 +78,6 @@ public class CommonRestControllerAdvice {
                         (existingValue, newValue) -> existingValue // If there are multiple errors, keep the first one
                 ));
     }
-
 
 
 }
