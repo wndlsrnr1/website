@@ -68,6 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             //Token 정보 만듦.
             String username = jwtUtil.getUsernameFromToken(token);
             ServiceUser serviceUser = userDetailsService.loadUserByUsername(username);
+            System.out.println("serviceUser = " + serviceUser);
             UserAuthenticationToken authenticationToken = UserAuthenticationToken.builder()
                     .serviceUser(serviceUser)
                     .credentials(token)
@@ -86,7 +87,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.error("authentication failed", authenticationException);
             writeErrorResponse(response, ErrorCode.FORBIDDEN);
         } catch (org.springframework.security.access.AccessDeniedException accessDeniedException) {
-            logger.error("Access Denied. sadfdasdfasfasdf", accessDeniedException);
+            logger.error("Access Denied.", accessDeniedException);
             writeErrorResponse(response, ErrorCode.FORBIDDEN);
         } catch (Exception e) {
             logger.error("authentication failed because of unexpected error", e);

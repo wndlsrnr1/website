@@ -35,10 +35,11 @@ public class SecurityConfig {
                         )
                         .permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**"))
-                        .hasRole(UserRole.ADMIN.name())
+                        .hasAuthority("ADMIN")
                         .anyRequest()
                         .authenticated()
                 )
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(header -> header.frameOptions(option -> option.disable()))
                 .addFilterBefore(jwtAuthenticationFilter, AuthorizationFilter.class)
