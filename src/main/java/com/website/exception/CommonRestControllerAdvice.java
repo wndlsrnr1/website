@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,14 +25,19 @@ public class CommonRestControllerAdvice {
     public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex
     ) {
-        Map<String, String> errors = ex.getBindingResult().getFieldErrors()
-                .stream()
-                .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage,
-                        (existingValue, newValue) -> existingValue // If there are multiple errors, keep the first one
-                ));
+        Map<String, String> errors = extractFieldErrors(ex);
         log.warn("Validation failed.", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(ErrorCode.BAD_REQUEST, errors));
     }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(
+            BadCredentialsException ex
+    ) {
+        log.warn(ex.getMessage(), ex);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.fail(ErrorCode.FORBIDDEN));
+    }
+
 
     @ExceptionHandler(value = {ClientException.class})
     public ResponseEntity<ApiResponse<Void>> handleClientException(ClientException exception) {
@@ -50,6 +56,14 @@ public class CommonRestControllerAdvice {
         log.warn(exception.getServerMessage(), exception);
         ErrorCode errorCode = exception.getErrorCode();
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
+    }
+
+    private Map<String, String> extractFieldErrors(MethodArgumentNotValidException ex) {
+        return ex.getBindingResult().getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage,
+                        (existingValue, newValue) -> existingValue // If there are multiple errors, keep the first one
+                ));
     }
 
 
