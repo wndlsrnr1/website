@@ -4,17 +4,21 @@ import com.website.config.auth.LoginUser;
 import com.website.config.auth.ServiceUser;
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.user.model.*;
+import com.website.repository.user.model.UserRole;
 import com.website.service.user.UserService;
 import com.website.service.user.model.EmailCheckResponseDto;
 import com.website.service.user.model.UserDeleteDto;
 import com.website.service.user.model.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Validated
 @RestController
@@ -62,8 +66,19 @@ public class UserController {
     public ApiResponse<EmailCheckResponse> loginCheck(
             @Valid @RequestBody EmailCheckRequest request
     ) {
-        EmailCheckResponseDto dto =  userService.validateEmail(request.toDto());
+        EmailCheckResponseDto dto = userService.validateEmail(request.toDto());
         EmailCheckResponse body = EmailCheckResponse.of(dto);
         return ApiResponse.success(body);
+    }
+
+    @GetMapping("/users/admin")
+    public ApiResponse<Void> adminCheck(
+            @AuthenticationPrincipal ServiceUser serviceUser
+    ) {
+        log.info("serviceUser = {}", serviceUser);
+        serviceUser.getAuthorities().stream().filter(authority -> authority.getAuthority().equals(UserRole.ADMIN.name())).findAny().orElseThrow(
+                () -> new AccessDeniedException("Access Denied. user = " + serviceUser)
+        );
+        return ApiResponse.success();
     }
 }

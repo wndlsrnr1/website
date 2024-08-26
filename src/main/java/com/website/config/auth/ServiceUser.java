@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -29,7 +30,9 @@ public class ServiceUser implements UserDetails {
                 .id(user.getId())
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .authorities(AuthorityUtils.createAuthorityList(UserRole.USER.name()))
+                .authorities(AuthorityUtils.createAuthorityList(
+                        user.getRoles().stream().map(UserRole::name).toArray(String[]::new))
+                )
                 .build();
     }
 
