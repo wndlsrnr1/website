@@ -77,7 +77,7 @@ public class ItemController {
         return ApiResponse.success(pageResult);
     }
 
-    @GetMapping("/recommended")
+    @GetMapping("/reviewed")
     public ApiResponse<PageResultResponse<ItemWithReviewResponse>> searchReviews(
             @RequestParam @Min(1) Integer size,
             @RequestParam(required = false) String nextSearchAfter,
