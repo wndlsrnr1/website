@@ -2,11 +2,14 @@ package com.website.controller.api.item;
 
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.common.model.PageResultResponse;
+import com.website.controller.api.item.model.ItemWithReviewResponse;
 import com.website.controller.api.item.model.SearchItemResponse;
-import com.website.repository.common.PageResult;
 import com.website.repository.item.model.ItemSearchSortType;
+import com.website.repository.item.model.ItemWithReviewSortType;
 import com.website.service.common.model.PageResultDto;
 import com.website.service.item.ItemService;
+import com.website.service.item.model.ItemWithReviewDto;
+import com.website.service.item.model.ItemWithReviewSearchRequestDto;
 import com.website.service.item.model.SearchItemDto;
 import com.website.service.item.model.SearchItemRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -73,4 +76,29 @@ public class ItemController {
 
         return ApiResponse.success(pageResult);
     }
+
+    @GetMapping("/recommended")
+    public ApiResponse<PageResultResponse<ItemWithReviewResponse>> searchReviews(
+            @RequestParam @Min(1) Integer size,
+            @RequestParam(required = false) String nextSearchAfter,
+            @RequestParam(required = false, defaultValue = "false") boolean withTotalCount,
+            @RequestParam(required = false, defaultValue = "RECENT") ItemWithReviewSortType sortType
+    ) {
+        ItemWithReviewSearchRequestDto dto = ItemWithReviewSearchRequestDto.builder()
+                .nextSearchAfter(nextSearchAfter)
+                .size(size)
+                .sortType(sortType)
+                .withTotalCount(withTotalCount)
+                .build();
+
+        PageResultDto<ItemWithReviewDto> resultDto = itemService.searchItemWithReview(dto);
+        PageResultResponse<ItemWithReviewResponse> resultResponse = PageResultResponse.<ItemWithReviewResponse>builder()
+                .items(resultDto.getItems().stream().map(ItemWithReviewResponse::of).collect(Collectors.toList()))
+                .nextSearchAfter(resultDto.getNextSearchAfter())
+                .totalCount(resultDto.getTotalCount())
+                .build();
+
+        return ApiResponse.success(resultResponse);
+    }
+
 }

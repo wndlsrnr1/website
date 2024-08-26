@@ -2,6 +2,7 @@ package com.website.repository.item;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.controller.api.model.request.item.EditItemRequest;
@@ -11,10 +12,10 @@ import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
 import com.website.repository.common.PageResult;
-import com.website.repository.item.model.ItemSearchSortType;
-import com.website.repository.item.model.QSearchItem;
-import com.website.repository.item.model.SearchItem;
-import com.website.repository.item.model.SearchItemCriteria;
+import com.website.repository.item.model.*;
+import com.website.repository.model.user.QUser;
+import com.website.repository.purchases.model.QPurchases;
+import com.website.repository.review.model.QReview;
 import com.website.utils.common.SearchAfterEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,6 +42,9 @@ import static com.website.repository.model.item.QItemAttachment.itemAttachment;
 import static com.website.repository.model.item.QItemInfo.itemInfo;
 import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
 import static com.website.repository.model.item.QItemThumbnail.itemThumbnail;
+import static com.website.repository.model.user.QUser.*;
+import static com.website.repository.purchases.model.QPurchases.purchases;
+import static com.website.repository.review.model.QReview.*;
 
 @Repository
 @Slf4j
@@ -252,6 +256,107 @@ public class CustomItemRepositoryImpl implements CustomItemRepository {
                 .totalCount(totalCount)
                 .build();
     }
+
+    @Override
+    public PageResult<ItemWithReview> searchItemWithReview(ItemWithReviewSearchCriteria criteria) {
+        List<ItemWithReview> result = query.select(new QItemWithReview(
+                        review.id,
+                        item.id,
+                        itemThumbnail.attachment.id,
+                        item.name,
+                        item.nameKor,
+                        review.content,
+                        user.name,
+                        review.createdAt
+                )).from(review)
+                .join(purchases).on(review.purchases.id.eq(purchases.id))
+                .join(item).on(purchases.item.id.eq(item.id))
+                .join(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
+                .join(user).on(purchases.user.id.eq(user.id))
+                .where(
+                        whereClauseForNextSearchAfter(criteria)
+                )
+                .orderBy(orderBySortType(criteria.getSortType()))
+                .limit(criteria.getSize())
+                .fetch();
+
+        //getNextSearchAfter
+        String nextSearchAfter = getEncodedNextSearchAfter(criteria, result);
+
+        //getTotalCount
+        Long totalCount = getTotalCount(criteria);
+
+
+        return PageResult.<ItemWithReview>builder()
+                .items(result)
+                .nextSearchAfter(nextSearchAfter)
+                .totalCount(totalCount)
+                .build();
+    }
+
+
+    // ItemWithReview - Start
+    private Long getTotalCount(ItemWithReviewSearchCriteria criteria) {
+        if (!criteria.isWithTotalCount()) {
+            return null;
+        }
+
+        return query.selectFrom(review)
+                .join(purchases).on(review.purchases.id.eq(purchases.id))
+                .join(item).on(purchases.item.id.eq(item.id))
+                .join(itemThumbnail).on(item.id.eq(itemThumbnail.item.id))
+                .join(user).on(purchases.user.id.eq(user.id))
+                .fetchCount();
+    }
+
+    private String getEncodedNextSearchAfter(ItemWithReviewSearchCriteria criteria, List<ItemWithReview> result) {
+        String nextSearchAfter = null;
+
+        if (criteria.getSize() == result.size()) {
+            ItemWithReview lastItem = result.get(result.size() - 1);
+            switch (criteria.getSortType()) {
+                case RECENT: {
+                    nextSearchAfter = SearchAfterEncoder.encode(lastItem.getReviewId().toString());
+                    break;
+                }
+                default: {
+                    throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + criteria.getSortType().name());
+                }
+            }
+        }
+        return nextSearchAfter;
+    }
+
+    private OrderSpecifier<?>[] orderBySortType(ItemWithReviewSortType sortType) {
+        switch (sortType) {
+            case RECENT: {
+                return new OrderSpecifier[]{
+                        review.id.desc(),
+                };
+            }
+            default: {
+                throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + sortType.name());
+            }
+        }
+    }
+
+    private BooleanExpression whereClauseForNextSearchAfter(ItemWithReviewSearchCriteria criteria) {
+        if (criteria.getNextSearchAfter() == null) {
+            return null;
+        }
+        switch (criteria.getSortType()) {
+            case RECENT: {
+                String[] decoded = SearchAfterEncoder.decode(criteria.getNextSearchAfter());
+                Long reviewId = Long.parseLong(decoded[0]);
+                return review.id.lt(reviewId);
+            }
+            default: {
+                throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + criteria.getSortType().name());
+            }
+        }
+    }
+    // ---------End
+
 
     private BooleanExpression whereClauseForSearch(SearchItemCriteria criteria) {
         if (criteria.getSearchName() == null) {

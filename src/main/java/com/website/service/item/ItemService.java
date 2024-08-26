@@ -3,6 +3,7 @@ package com.website.service.item;
 import com.website.controller.api.model.response.item.*;
 import com.website.controller.api.model.response.item.sequence.ItemAttachmentSequenceResponse;
 import com.website.repository.common.PageResult;
+import com.website.repository.item.model.ItemWithReview;
 import com.website.repository.item.model.SearchItem;
 import com.website.repository.item.model.SearchItemCriteria;
 import com.website.repository.model.attachment.Attachment;
@@ -26,6 +27,8 @@ import com.website.service.attachment.FileService;
 import com.website.service.common.BindingResultUtils;
 import com.website.service.common.model.PageResultDto;
 import com.website.service.item.carousel.ItemHomeCarouselService;
+import com.website.service.item.model.ItemWithReviewDto;
+import com.website.service.item.model.ItemWithReviewSearchRequestDto;
 import com.website.service.item.model.SearchItemDto;
 import com.website.service.item.model.SearchItemRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -646,5 +649,17 @@ public class ItemService {
                 .nextSearchAfter(pageResult.getNextSearchAfter())
                 .build()
                 ;
+    }
+
+    @Transactional(readOnly = true)
+    public PageResultDto<ItemWithReviewDto> searchItemWithReview(ItemWithReviewSearchRequestDto dto) {
+
+        PageResult<ItemWithReview> pageResult = itemRepository.searchItemWithReview(dto.toCriteria());
+
+        return PageResultDto.<ItemWithReviewDto>builder()
+                .nextSearchAfter(pageResult.getNextSearchAfter())
+                .totalCount(pageResult.getTotalCount())
+                .items(pageResult.getItems().stream().map(ItemWithReviewDto::of).collect(Collectors.toList()))
+                .build();
     }
 }
