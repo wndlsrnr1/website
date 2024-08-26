@@ -1,11 +1,12 @@
 package com.website.controller.api.review;
 
+import com.website.config.auth.LoginUser;
+import com.website.config.auth.ServiceUser;
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.common.model.PageResultResponse;
 import com.website.controller.api.review.model.ReviewCreateRequest;
 import com.website.controller.api.review.model.ReviewResponse;
 import com.website.controller.api.review.model.ReviewUpdateRequest;
-import com.website.repository.model.user.constance.UserConst;
 import com.website.repository.review.model.ReviewSortType;
 import com.website.service.common.model.PageResultDto;
 import com.website.service.review.ReviewService;
@@ -15,6 +16,7 @@ import com.website.service.review.model.ReviewSearchCriteria;
 import com.website.service.review.model.ReviewUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -31,16 +33,15 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     // Create a new review
+    @LoginUser
     @PostMapping
     public ApiResponse<ReviewResponse> createReview(
-            HttpSession session,
+            @AuthenticationPrincipal ServiceUser serviceUser,
             @RequestBody @Valid ReviewCreateRequest request
     ) {
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // replace with injected authentication in the future
         ReviewCreateDto dto = request.toDto();
-        ReviewDto reviewDto = reviewService.registerReview(dto, userId);
+        ReviewDto reviewDto = reviewService.registerReview(dto, serviceUser.getId());
         ReviewResponse response = ReviewResponse.of(reviewDto);
-        log.info("response = {}", response);
         return ApiResponse.<ReviewResponse>success(response);
     }
 
@@ -84,26 +85,26 @@ public class ReviewController {
     }
 
     // Update an existing review
+    @LoginUser
     @PostMapping("/update")
     public ApiResponse<ReviewResponse> updateReview(
-            HttpSession session,
+            @AuthenticationPrincipal ServiceUser serviceUser,
             @RequestBody @Valid ReviewUpdateRequest request
     ) {
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // todo:replace with injected authentication in the future
         ReviewUpdateDto dto = request.toDto();
-        ReviewDto reviewDto = reviewService.updateReview(dto, userId);
+        ReviewDto reviewDto = reviewService.updateReview(dto, serviceUser.getId());
         ReviewResponse response = ReviewResponse.of(reviewDto);
         return ApiResponse.success(response);
     }
 
     // Delete a review by ID
+    @LoginUser
     @DeleteMapping("/{reviewId}")
     public ApiResponse<Void> deleteReview(
-            HttpSession session,
+            @AuthenticationPrincipal ServiceUser serviceUser,
             @PathVariable(value = "reviewId") Long reviewId
     ) {
-        Long userId = (Long) session.getAttribute(UserConst.USER_ID); // todo:replace with injected authentication in the future
-        reviewService.removeReview(userId, reviewId);
+        reviewService.removeReview(serviceUser.getId(), reviewId);
         return ApiResponse.<Void>success();
     }
 

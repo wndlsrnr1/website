@@ -55,6 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 context.setAuthentication(authenticationToken);
                 SecurityContextHolder.setContext(context);
 
+
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -78,10 +79,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContext context = SecurityContextHolder.createEmptyContext();
             context.setAuthentication(authenticationToken);
             SecurityContextHolder.setContext(context);
+
             filterChain.doFilter(request, response);
 
         } catch (AuthenticationException authenticationException) {
             logger.error("authentication failed", authenticationException);
+            writeErrorResponse(response, ErrorCode.FORBIDDEN);
+        } catch (org.springframework.security.access.AccessDeniedException accessDeniedException) {
+            logger.error("Access Denied. sadfdasdfasfasdf", accessDeniedException);
             writeErrorResponse(response, ErrorCode.FORBIDDEN);
         } catch (Exception e) {
             logger.error("authentication failed because of unexpected error", e);

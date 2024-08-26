@@ -37,25 +37,21 @@ public class WebConfig implements WebMvcConfigurer {
         return localValidatorFactoryBean;
     }
 
+    //
+    //@Override
+    //public void addInterceptors(InterceptorRegistry registry) {
+    //    registry.addInterceptor(new LoginCheckInterceptor())
+    //            .excludePathPatterns()
+    //            .addPathPatterns()
+    //            .order(1);
+    //}
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-
-        /*
-        registry.addInterceptor(new LoginCheckInterceptor())
-                .excludePathPatterns()
-                .addPathPatterns()
-                .order(1);
-         */
-        return;
-    }
-
-    @Bean
-    public FilterRegistrationBean<ExceptionLogFilter> filterRegistrationBean() {
-        FilterRegistrationBean<ExceptionLogFilter> registry = new FilterRegistrationBean(new ExceptionLogFilter());
-        registry.setOrder(1);
-        registry.addUrlPatterns("/*");
-        registry.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
-        return registry;
-    }
+    //@Bean
+    //public FilterRegistrationBean<ExceptionLogFilter> filterRegistrationBean() {
+    //    FilterRegistrationBean<ExceptionLogFilter> registry = new FilterRegistrationBean(new ExceptionLogFilter());
+    //    registry.setOrder(1);
+    //    registry.addUrlPatterns("/*");
+    //    registry.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ERROR);
+    //    return registry;
+    //}
 }

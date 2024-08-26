@@ -1,5 +1,6 @@
 package com.website.config.auth;
 
+import com.website.repository.user.model.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,8 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/error")
                         )
                         .permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/admin/**"))
+                        .hasRole(UserRole.ADMIN.name())
                         .anyRequest()
                         .authenticated()
                 )
