@@ -1,6 +1,6 @@
 package com.website.config.user;
 
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;

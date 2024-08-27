@@ -1,0 +1,31 @@
+@startuml
+
+actor "Service Client" as SC
+participant "Service Server" as SS
+participant "Kakao Auth Server" as KAS
+autonumber 1 "0. "
+SC -> SS: 카카오 로그인 요청
+== Step 1: 인가코드 받기 ==
+
+SS -> KAS: GET /oauth/authorize
+KAS --> SC: 카카오계정 로그인 요청
+SC -> KAS: 카카오계정 로그인
+KAS -> KAS: 사용자 인증, 앱설정 확인
+KAS --> SC: 동의 화면 출력
+SC -> KAS: 동의하고 계속하기
+KAS --> SS: 302 Redirect URI로 인가코드 전달
+
+== Step 2: 인가코드 받기 ==
+
+
+SS -> KAS: POST /oauth/token
+KAS --> SS: 토큰 발급
+
+== Step 3: 사용자 로그인 처리 ==
+opt OpenId Connect 사용시
+SS -> SS: ID 토큰 유효성 검증
+end opt
+SS -> SS: 발급 받은 토큰으로 사용자 정보 조회\n서비스 회원 정보 확인 또는 가입 처리
+SS --> SC: 로그인 완료
+
+@enduml

@@ -2,7 +2,7 @@ package com.website.repository.comment.model;
 
 
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

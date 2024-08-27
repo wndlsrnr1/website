@@ -1,12 +1,10 @@
 package com.website.repository.item.model;
 
 import com.querydsl.core.annotations.QueryProjection;
-import com.website.repository.model.user.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Builder

@@ -4,7 +4,7 @@ import com.website.config.jpa.JpaConfig;
 import com.website.repository.common.PageResult;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.comment.model.Comment;
 import com.website.repository.comment.model.CommentSearchCriteria;
 import com.website.repository.comment.model.CommentSortType;

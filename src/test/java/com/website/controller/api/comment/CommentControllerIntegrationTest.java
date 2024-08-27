@@ -7,7 +7,7 @@ import com.website.controller.api.comment.model.CommentResponse;
 import com.website.controller.api.comment.model.CommentUpdateRequest;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.comment.CommentRepository;
 import com.website.repository.comment.model.Comment;
 import com.website.repository.user.UserRepository;

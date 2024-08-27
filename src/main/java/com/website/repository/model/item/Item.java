@@ -1,7 +1,7 @@
 package com.website.repository.model.item;
 
 import com.website.repository.model.common.AbstractBaseEntity;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import lombok.*;
 
 import javax.persistence.*;

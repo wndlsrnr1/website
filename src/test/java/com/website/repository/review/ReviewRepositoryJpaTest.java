@@ -3,13 +3,12 @@ package com.website.repository.review;
 import com.website.config.jpa.JpaConfig;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.purchases.PurchasesRepository;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
 import com.website.repository.review.model.Review;
 import com.website.repository.user.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(JpaConfig.class)

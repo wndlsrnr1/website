@@ -1,9 +1,8 @@
 package com.website.repository.user;
 
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 
 public interface CustomUserRepository {
-    User findNormalUserByEmailPassword(String emailParam, String passwordParam);
 
     void saveUser(User user);
 

@@ -1,14 +1,14 @@
 package com.website.repository.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import org.springframework.stereotype.Repository;
 
 
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.website.repository.model.user.QUser.user;
+import static com.website.repository.user.model.QUser.user;
 
 @Repository
 public class CustomUserRepositoryWithJpaAndQueryDsl implements CustomUserRepository {
@@ -21,15 +21,6 @@ public class CustomUserRepositoryWithJpaAndQueryDsl implements CustomUserReposit
         this.entityManager = entityManager;
         this.jpaQueryFactory = new JPAQueryFactory(entityManager);
         this.userRepository = userRepository;
-    }
-
-    @Override
-    public User findNormalUserByEmailPassword(String emailParam, String passwordParam) {
-
-        return jpaQueryFactory.select(user)
-                .from(user)
-                .where(user.email.eq(emailParam), user.password.eq(passwordParam))
-                .fetchOne();
     }
 
     @Override
