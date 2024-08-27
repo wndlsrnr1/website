@@ -51,7 +51,7 @@ public class UserKakaoService {
     @Transactional(rollbackFor = JsonProcessingException.class)
     public UserDto register(KaKaoAuthRequestDto dto) {
         log.info("KaKaoAuthRequestDto = {}", dto);
-        KaKaoUserInfoDto kaKaoUserInfoDto = getKaKaoUserInfoDto(dto);
+        KaKaoUserInfoDto kaKaoUserInfoDto = getKaKaoUserInfoDto(dto, REGISTER_REDIRECT_URI);
 
         Optional<User> findUser = userRepository.findByEmail(kaKaoUserInfoDto.getEmail());
         if (findUser.isPresent()) {
@@ -74,7 +74,7 @@ public class UserKakaoService {
 
     @Transactional
     public void deleteUser(ServiceUser serviceUser, KaKaoAuthRequestDto dto) {
-        KaKaoUserInfoDto kaKaoUserInfoDto = getKaKaoUserInfoDto(dto);
+        KaKaoUserInfoDto kaKaoUserInfoDto = getKaKaoUserInfoDto(dto, DELETE_REDIRECT_URI);
         userValidator.validateUserExists(serviceUser.getId());
         User foundUser = userRepository.findByEmailAndSocialType(kaKaoUserInfoDto.getEmail(), SocialType.KAKAO).orElseThrow(() ->
                 new ClientException(ErrorCode.BAD_REQUEST, "user not exists. request = " + dto));
@@ -84,7 +84,7 @@ public class UserKakaoService {
     }
 
     public String login(KaKaoAuthRequestDto dto) {
-        KaKaoUserInfoDto kaKaoUserInfoDto = getKaKaoUserInfoDto(dto);
+        KaKaoUserInfoDto kaKaoUserInfoDto = getKaKaoUserInfoDto(dto, LOGIN_REDIRECT_URI);
         User user = userRepository.findByEmail(kaKaoUserInfoDto.getEmail())
                 .orElseThrow(() -> new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request" + dto));
 
@@ -95,6 +95,10 @@ public class UserKakaoService {
         return jwtUtil.generateToken(foundUser.getEmail());
     }
 
+    public void logout(KakaoAuthResponseDto dto) {
+
+    }
+
     private void validateUserEqualToRequestUserInfo(Long userId, Long dbUserId) {
         if (!userId.equals(dbUserId)) {
             throw new ClientException(ErrorCode.BAD_REQUEST,
@@ -102,8 +106,8 @@ public class UserKakaoService {
         }
     }
 
-    private KaKaoUserInfoDto getKaKaoUserInfoDto(KaKaoAuthRequestDto dto) {
-        KakaoAuthResponseDto authorizedData = getKakaoAuthResponseDto(dto);
+    private KaKaoUserInfoDto getKaKaoUserInfoDto(KaKaoAuthRequestDto dto, KaKaoLoginConstant method) {
+        KakaoAuthResponseDto authorizedData = getKakaoAuthResponseDto(dto, method);
         String payLoad = authorizedData.getIdToken().split("[.]")[1];
         String userInfo = new String(Base64.getDecoder().decode(payLoad), StandardCharsets.UTF_8);
         log.info("userInfo = {}" ,userInfo);
@@ -117,7 +121,7 @@ public class UserKakaoService {
         return kaKaoUserInfoDto;
     }
 
-    private KakaoAuthResponseDto getKakaoAuthResponseDto(KaKaoAuthRequestDto dto) {
+    private KakaoAuthResponseDto getKakaoAuthResponseDto(KaKaoAuthRequestDto dto, KaKaoLoginConstant method) {
         RestTemplate restTemplate = new RestTemplate();
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -125,7 +129,7 @@ public class UserKakaoService {
         formData.add("code", dto.getCode());
         formData.add("grant_type", "authorization_code");
         formData.add("client_id", CLIENT_ID.getValue());
-        formData.add("redirect_uri", REGISTER_REDIRECT_URI.getValue());
+        formData.add("redirect_uri", method.getValue());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
