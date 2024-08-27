@@ -95,7 +95,21 @@ public class UserController {
         return ApiResponse.success(UserResponse.of(userDto));
     }
 
-    //@PostMapping("/auth/login/kakao")
+    @PostMapping("/auth/login/kakao")
+    public ApiResponse<String> login(
+            @RequestBody @Valid KaKaoAuthRequest kaKaoAuthRequest
+    ) {
+        KaKaoAuthRequestDto dto = kaKaoAuthRequest.toDto();
+        String token = userKakaoService.login(dto);
+        return ApiResponse.success(token);
+    }
+
+    @GetMapping("/auth/logout/kakao")
+    public ApiResponse<Void> logout(
+            @RequestBody @Valid KaKaoAuthRequest kaKaoAuthRequest
+    ) {
+        return null;
+    }
 
     //@DeleteMapping("/auth/users/kakao")
 
