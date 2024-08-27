@@ -1,5 +1,4 @@
-package com.website.repository.model.user;
-
+package com.website.repository.user.model;
 import com.website.repository.converter.EnumListConverter;
 import com.website.repository.user.model.UserRole;
 import lombok.*;
@@ -29,6 +28,11 @@ public class User {
     private String email;
 
     private String password;
+
+    private String socialUnique;
+
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType;
 
     @Convert(converter = EnumListConverter.class)
     private List<UserRole> roles;

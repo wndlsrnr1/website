@@ -1,30 +1,34 @@
 package com.website.service.user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.website.config.auth.JwtUtil;
 import com.website.config.auth.ServiceUser;
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.SocialType;
+import com.website.repository.user.model.User;
 import com.website.repository.user.UserRepository;
 import com.website.repository.user.model.UserRole;
 import com.website.service.user.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$");
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder encoder;
     private final UserValidator userValidator;
+    private final ObjectMapper objectMapper;
 
     @Transactional(readOnly = true)
     public String login(LoginRequestDto dto) {
@@ -32,7 +36,11 @@ public class UserService {
         User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request" + dto));
 
-        if (!passwordEqual(dto.getPassword(), user.getPassword())) {
+        User foundUser = userRepository.findByIdAndSocialType(user.getId(), SocialType.NONE).orElseThrow(() ->
+                new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request" + dto)
+        );
+
+        if (!passwordEqual(dto.getPassword(), foundUser.getPassword())) {
             throw new ClientException(ErrorCode.BAD_REQUEST, "credential is not correct. request=" + dto);
         }
 
@@ -62,6 +70,7 @@ public class UserService {
                 .email(dto.getEmail())
                 .password(encoder.encode(dto.getPassword()))
                 .address(dto.getAddress())
+                .socialType(SocialType.NONE)
                 .roles(List.of(UserRole.USER))
                 .build();
 
@@ -74,7 +83,7 @@ public class UserService {
 
         validatePassword(dto.getPassword());
 
-        User foundUser = userRepository.findByEmail(dto.getEmail()).orElseThrow(() ->
+        User foundUser = userRepository.findByEmailAndSocialType(dto.getEmail(), SocialType.NONE).orElseThrow(() ->
                 new ClientException(ErrorCode.BAD_REQUEST, "user not exists. request = " + dto));
 
         validateUserEqualToRequestUserInfo(serviceUser.getId(), foundUser.getId());
@@ -95,7 +104,7 @@ public class UserService {
     }
 
     private void validatePassword(String password) {
-        if (password == null || !EMAIL_PATTERN.matcher(password).matches()) {
+        if (password == null || !PASSWORD_PATTERN.matcher(password).matches()) {
             throw new ClientException(ErrorCode.BAD_REQUEST, "invalid password. password=" + password);
         }
     }
@@ -112,4 +121,7 @@ public class UserService {
         }
         return EmailCheckResponseDto.builder().emailExists(true).build();
     }
+
+
+
 }

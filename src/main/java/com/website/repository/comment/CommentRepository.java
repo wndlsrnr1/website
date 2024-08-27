@@ -2,7 +2,7 @@ package com.website.repository.comment;
 
 import com.website.repository.model.item.Item;
 import com.website.repository.comment.model.Comment;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

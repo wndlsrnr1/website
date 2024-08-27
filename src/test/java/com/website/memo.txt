@@ -1,30 +1,3 @@
-You are right.
-Relying solely on client-side storage like localStorage for determining user roles is insecure beacause manipulate it and gain unauthorized access
-to restricted parts of your application. to prevent this, it's crucial to implement robust server-side checks and
-minimize trust in client-side data for security decisions.
-
-Secure Implementation for Admin Routes in React
-
-To properly scure you application, you need to
-
-1. Authenticate and autorize users on the server-side: Always enforce security rules on the server to protect sensitive data.
-2. Use server-validated information in you React app: Ensure your React app only shows admin content if the server confirms the user's role.
-
-Here's how to enhance security in you React application.
-
-Get User Role from the Server
-Instead of storing user role directly in 'localStorage' and relying on it for access control,
-fetch the user's role from a secure server endpoint after authentication.
-This ensures that the role data is valid and trusted.
-
-1. Create an Endpoint to Fetch User Role on the Server.
-In you Spring Boot application, you should have an endpoint that returns the authenticated user's role.
-Ensure this endpoint is protected, and only accessible to authenticated user.
-
-Fetch User Role in React.
-
-After the user logs in, fetch the user role from the server and store it in a state management solution instead localstorage.
-Use Server-Validated Role for Protected Routes.
-AdminRoute Component Using Server-Validated Role:
-
-modify your AminRout to use the server-validated role:
+1. 인가 코드 받기
+서비스 서버가 카카오 인증 서버로 인가 코드 받기를 요청합니다.
+카카오 인증 서버가 사용자에게 카카오계정 로그인을 통한 인증을 요청합니다.

@@ -1,6 +1,7 @@
 package com.website.config.auth;
 
 import com.website.repository.user.model.UserRole;
+import com.website.utils.common.constance.KaKaoLoginConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +30,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         //.requestMatchers("/h2-console/**", "/h2-console", "/error")
                         .requestMatchers(
-                                new AntPathRequestMatcher("/h2console/**"),
-                                new AntPathRequestMatcher("/h2-console"),
-                                new AntPathRequestMatcher("/error")
+                                url("/h2console/**"),
+                                url("/h2-console"),
+                                url("/error"),
+                                url(KaKaoLoginConstant.AUTH_URL.getValue()),
+                                url("/auth/users/kakao")
                         )
                         .permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**"))
@@ -50,6 +53,10 @@ public class SecurityConfig {
         ;
 
         return http.build();
+    }
+
+    private AntPathRequestMatcher url(String urlParam) {
+        return new AntPathRequestMatcher(urlParam);
     }
 
     @Bean

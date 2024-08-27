@@ -2,7 +2,7 @@ package com.website.repository.purchases;
 
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
 import com.website.repository.user.UserRepository;

@@ -7,14 +7,13 @@ import com.website.controller.api.review.model.ReviewResponse;
 import com.website.controller.api.review.model.ReviewUpdateRequest;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.purchases.PurchasesRepository;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
 import com.website.repository.review.ReviewRepository;
 import com.website.repository.review.model.Review;
 import com.website.repository.user.UserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,9 +30,7 @@ import org.springframework.util.MultiValueMap;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("local")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

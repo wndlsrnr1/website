@@ -13,7 +13,7 @@ import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
 import com.website.repository.common.PageResult;
 import com.website.repository.item.model.*;
-import com.website.repository.model.user.QUser;
+import com.website.repository.user.model.QUser;
 import com.website.repository.purchases.model.QPurchases;
 import com.website.repository.review.model.QReview;
 import com.website.utils.common.SearchAfterEncoder;
@@ -42,7 +42,7 @@ import static com.website.repository.model.item.QItemAttachment.itemAttachment;
 import static com.website.repository.model.item.QItemInfo.itemInfo;
 import static com.website.repository.model.item.QItemSubcategory.itemSubcategory;
 import static com.website.repository.model.item.QItemThumbnail.itemThumbnail;
-import static com.website.repository.model.user.QUser.*;
+import static com.website.repository.user.model.QUser.*;
 import static com.website.repository.purchases.model.QPurchases.purchases;
 import static com.website.repository.review.model.QReview.*;
 

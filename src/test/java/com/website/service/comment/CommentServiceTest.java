@@ -3,7 +3,7 @@ package com.website.service.comment;
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.comment.CommentRepository;
 import com.website.repository.comment.model.Comment;
 import com.website.service.item.ItemValidator;

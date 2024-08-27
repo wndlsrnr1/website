@@ -2,8 +2,7 @@ package com.website.service.review;
 
 import com.website.exception.*;
 import com.website.repository.common.PageResult;
-import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.purchases.PurchasesRepository;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
@@ -21,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

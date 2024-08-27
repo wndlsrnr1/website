@@ -4,7 +4,7 @@ import com.website.config.jpa.JpaConfig;
 import com.website.repository.common.PageResult;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.purchases.PurchasesRepository;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
@@ -12,8 +12,6 @@ import com.website.repository.review.model.Review;
 import com.website.repository.review.model.ReviewSortType;
 import com.website.repository.user.UserRepository;
 import com.website.service.review.model.ReviewSearchCriteria;
-import com.website.utils.common.SearchAfterEncoder;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest

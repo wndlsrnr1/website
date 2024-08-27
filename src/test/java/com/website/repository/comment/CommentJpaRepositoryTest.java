@@ -4,7 +4,7 @@ import com.website.config.jpa.JpaConfig;
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
 import com.website.repository.comment.model.Comment;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

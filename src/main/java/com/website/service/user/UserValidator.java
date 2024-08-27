@@ -2,7 +2,7 @@ package com.website.service.user;
 
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
-import com.website.repository.model.user.User;
+import com.website.repository.user.model.User;
 import com.website.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
