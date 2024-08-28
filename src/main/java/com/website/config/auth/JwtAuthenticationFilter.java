@@ -38,6 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String header = request.getHeader("Authorization");
 
+            String requestURI = request.getRequestURI();
+            logger.info(requestURI);
+            logger.info(header);
 
             if (header == null || !header.startsWith("Bearer ")) {
                 ServiceUser serviceUser = ServiceUser.guest();

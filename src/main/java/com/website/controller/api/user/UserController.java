@@ -8,10 +8,7 @@ import com.website.controller.api.user.model.*;
 import com.website.repository.user.model.UserRole;
 import com.website.service.user.UserKakaoService;
 import com.website.service.user.UserService;
-import com.website.service.user.model.EmailCheckResponseDto;
-import com.website.service.user.model.KaKaoAuthRequestDto;
-import com.website.service.user.model.UserDeleteDto;
-import com.website.service.user.model.UserDto;
+import com.website.service.user.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -86,14 +83,6 @@ public class UserController {
 
     //https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=b678b03b04bcdee81052dad6e436c06c&redirect_uri=http://localhost:8080/auth/users/kakao
     //@PostMapping("/auth/users/kakao")
-    @PostMapping("/auth/register/kakao")
-    public ApiResponse<UserResponse> register(
-            @RequestBody @Valid KaKaoAuthRequest kaKaoAuthRequest
-    ) {
-        KaKaoAuthRequestDto dto = kaKaoAuthRequest.toDto();
-        UserDto userDto = userKakaoService.register(dto);
-        return ApiResponse.success(UserResponse.of(userDto));
-    }
 
     @PostMapping("/auth/login/kakao")
     public ApiResponse<String> login(
@@ -104,13 +93,25 @@ public class UserController {
         return ApiResponse.success(token);
     }
 
-    @GetMapping("/auth/logout/kakao")
+    @LoginUser
+    @PostMapping("/auth/logout/kakao")
     public ApiResponse<Void> logout(
+            @AuthenticationPrincipal ServiceUser serviceUser,
             @RequestBody @Valid KaKaoAuthRequest kaKaoAuthRequest
     ) {
-        return null;
+        KaKaoAuthRequestDto dto = kaKaoAuthRequest.toDto();
+        userKakaoService.logout(serviceUser, dto);
+        return ApiResponse.success();
     }
 
-    //@DeleteMapping("/auth/users/kakao")
-
+    @LoginUser
+    @DeleteMapping("/auth/users/kakao")
+    public ApiResponse<Void> delete(
+            @AuthenticationPrincipal ServiceUser serviceUser,
+            @RequestBody @Valid KaKaoAuthRequest kaKaoAuthRequest
+    ) {
+        KaKaoAuthRequestDto authRequestDto = kaKaoAuthRequest.toDto();
+        userKakaoService.deleteUser(serviceUser, authRequestDto);
+        return ApiResponse.success();
+    }
 }
