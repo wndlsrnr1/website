@@ -34,7 +34,8 @@ public class SecurityConfig {
                                 url("/h2-console"),
                                 url("/error"),
                                 url(KaKaoLoginConstant.AUTH_URL.getValue()),
-                                url("/auth/users/kakao")
+                                url("/auth/user/login"),
+                                url("/auth/users/register")
                         )
                         .permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/admin/**"))

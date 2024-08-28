@@ -28,6 +28,7 @@ public class ServiceUser implements UserDetails {
         return ServiceUser.builder()
                 .id(user.getId())
                 .username(user.getEmail())
+                .email(user.getEmail())
                 .password(user.getPassword())
                 .authorities(AuthorityUtils.createAuthorityList(
                         user.getRoles().stream().map(UserRole::name).toArray(String[]::new))
