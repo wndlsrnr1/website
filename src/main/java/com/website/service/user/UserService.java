@@ -5,6 +5,7 @@ import com.website.config.auth.JwtUtil;
 import com.website.config.auth.ServiceUser;
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
+import com.website.exception.UnauthorizedActionException;
 import com.website.repository.user.model.SocialType;
 import com.website.repository.user.model.User;
 import com.website.repository.user.UserRepository;
@@ -15,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -78,6 +81,21 @@ public class UserService {
         return UserDto.of(savedUser);
     }
 
+
+    @Transactional
+    public UserDto updateUser(ServiceUser serviceUser, UserUpdateDto userUpdateDto) {
+        User user = userValidator.validateAndGet(serviceUser.getId());
+        if (userUpdateDto.getAddress() != null) {
+            user.setAddress(userUpdateDto.getAddress());
+        }
+        if (userUpdateDto.getUsername() != null) {
+            user.setName(userUpdateDto.getUsername());
+        }
+        User savedUser = userRepository.save(user);
+        return UserDto.of(savedUser);
+    }
+
+    @Transactional
     public void deleteUser(ServiceUser serviceUser, UserDeleteDto dto) {
         userValidator.validateUserExists(serviceUser.getId());
 
@@ -89,8 +107,25 @@ public class UserService {
         validateUserEqualToRequestUserInfo(serviceUser.getId(), foundUser.getId());
 
         userRepository.deleteById(foundUser.getId());
+    }
+
+    @Transactional
+    public void updatePassword(ServiceUser serviceUser, UpdatePasswordRequestDto dto) {
+        User foundUser = userValidator.validateAndGet(serviceUser.getId());
+        if (!foundUser.getSocialType().equals(SocialType.NONE)) {
+            throw new UnauthorizedActionException(ErrorCode.BAD_REQUEST,
+                    "social user can not change password. userId = " + serviceUser.getId());
+        }
+
+        if (!passwordEqual(dto.getCurrentPassword(), serviceUser.getPassword())) {
+            throw new UnauthorizedActionException(ErrorCode.UNAUTHORIZED,
+                    "requested password not equal to user's password. userId = " + serviceUser.getId());
+        }
+
+        userValidator.validatePasswordConfirmation(serviceUser.getId(), dto.getNewPassword(), dto.getConfirmPassword());
 
     }
+
 
     private boolean passwordEqual(String rawPassword, String encodedPassword) {
         return encoder.matches(rawPassword, encodedPassword);
@@ -121,7 +156,4 @@ public class UserService {
         }
         return EmailCheckResponseDto.builder().emailExists(true).build();
     }
-
-
-
 }

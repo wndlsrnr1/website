@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,6 +61,19 @@ public class UserController {
         UserDeleteDto dto = request.toDto(request);
         userService.deleteUser(serviceUser, dto);
         return ApiResponse.success();
+    }
+
+    @LoginUser
+    @PatchMapping("/users/me")
+    public ApiResponse<UserResponse> updateUser(
+            @AuthenticationPrincipal ServiceUser serviceUser,
+            @Valid @RequestBody UserUpdateRequest request
+    ) {
+        log.info("request = {}", request);
+        UserUpdateDto userUpdateDto = request.toDto(request);
+        UserDto userDto = userService.updateUser(serviceUser, userUpdateDto);
+        UserResponse userResponse = UserResponse.of(userDto);
+        return ApiResponse.success(userResponse);
     }
 
     @PostMapping("/users/check/email")
@@ -112,6 +126,27 @@ public class UserController {
     ) {
         KaKaoAuthRequestDto authRequestDto = kaKaoAuthRequest.toDto();
         userKakaoService.deleteUser(serviceUser, authRequestDto);
+        return ApiResponse.success();
+    }
+
+    @LoginUser
+    @GetMapping("/users")
+    public ApiResponse<UserResponse> getUser (
+            @AuthenticationPrincipal ServiceUser serviceUser
+    ) {
+        UserDto userDto = userService.getUser(serviceUser.getId());
+        UserResponse userResponse = UserResponse.of(userDto);
+        return ApiResponse.success(userResponse);
+    }
+
+    @LoginUser
+    @PostMapping("/users/me/password")
+    public ApiResponse<Void> updatePassword(
+            @AuthenticationPrincipal ServiceUser serviceUser,
+            @RequestBody @Valid UpdatePasswordRequest request
+    ) {
+        UpdatePasswordRequestDto dto = request.toDto();
+        userService.updatePassword(serviceUser, dto);
         return ApiResponse.success();
     }
 }

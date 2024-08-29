@@ -4,17 +4,18 @@ package com.website.exception;
 import com.website.controller.api.common.model.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,21 @@ public class CommonRestControllerAdvice {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(
             MethodArgumentNotValidException ex
     ) {
-        Map<String, String> errors = extractFieldErrors(ex);
         log.warn("Validation failed.", ex);
+        Map<String, String> errors = extractFieldErrors(ex.getBindingResult());
+        log.info("errors = {}", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(ErrorCode.BAD_REQUEST, errors));
+    }
+
+    @ExceptionHandler({CustomValidationException.class})
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleCustomValidationException(
+            CustomValidationException ex
+    ) {
+        Map<String, String> errors = ex.getErrorMessages();
         log.info("errors = {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.fail(ErrorCode.BAD_REQUEST, errors));
     }
@@ -47,6 +57,7 @@ public class CommonRestControllerAdvice {
     public ResponseEntity<ApiResponse<Void>> handleBadCredentialsException(
             BadCredentialsException ex
     ) {
+
         log.warn(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.fail(ErrorCode.FORBIDDEN));
     }
@@ -71,8 +82,8 @@ public class CommonRestControllerAdvice {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
     }
 
-    private Map<String, String> extractFieldErrors(MethodArgumentNotValidException ex) {
-        return ex.getBindingResult().getFieldErrors()
+    private Map<String, String> extractFieldErrors(BindingResult bindingResult) {
+        return bindingResult.getFieldErrors()
                 .stream()
                 .collect(Collectors.toMap(FieldError::getField, DefaultMessageSourceResolvable::getDefaultMessage,
                         (existingValue, newValue) -> existingValue // If there are multiple errors, keep the first one
