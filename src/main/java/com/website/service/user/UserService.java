@@ -126,6 +126,13 @@ public class UserService {
 
     }
 
+    @Transactional
+    public UserDto updateAddress(ServiceUser serviceUser, UpdateAddressRequestDto dto) {
+        User foundUser = userValidator.validateAndGet(serviceUser.getId());
+        foundUser.setAddress(dto.getAddress());
+        User savedUser = userRepository.save(foundUser);
+        return UserDto.of(savedUser);
+    }
 
     private boolean passwordEqual(String rawPassword, String encodedPassword) {
         return encoder.matches(rawPassword, encodedPassword);

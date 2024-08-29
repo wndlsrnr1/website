@@ -140,7 +140,7 @@ public class UserController {
     }
 
     @LoginUser
-    @PostMapping("/users/me/password")
+    @PatchMapping("/users/me/password")
     public ApiResponse<Void> updatePassword(
             @AuthenticationPrincipal ServiceUser serviceUser,
             @RequestBody @Valid UpdatePasswordRequest request
@@ -148,5 +148,16 @@ public class UserController {
         UpdatePasswordRequestDto dto = request.toDto();
         userService.updatePassword(serviceUser, dto);
         return ApiResponse.success();
+    }
+
+    @LoginUser
+    @PatchMapping("/users/me/address")
+    public ApiResponse<UserResponse> updateAddress(
+            @AuthenticationPrincipal ServiceUser serviceUser,
+            @RequestBody @Valid UpdateAddressRequest request
+    ) {
+        UpdateAddressRequestDto dto = request.toDto();
+        UserDto userDto = userService.updateAddress(serviceUser, dto);
+        return ApiResponse.success(UserResponse.of(userDto));
     }
 }
