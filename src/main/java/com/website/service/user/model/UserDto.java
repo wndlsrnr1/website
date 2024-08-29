@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,6 +19,8 @@ public class UserDto {
     private String address;
     private String password;
     private SocialType socialType;
+    private LocalDateTime createdAt;
+    private String username;
 
     public static UserDto of(User user) {
         return UserDto.builder()
@@ -25,6 +29,8 @@ public class UserDto {
                 .address(user.getAddress())
                 .socialType(user.getSocialType())
                 .password(user.getPassword())
+                .createdAt(user.getCreatedAt())
+                .username(user.getName())
                 .build();
     }
 
