@@ -2,6 +2,8 @@ package com.website.repository.item;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.controller.api.model.request.item.home.ItemSortedByType;
+import com.website.repository.model.item.Item;
+import com.website.repository.model.item.QItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 @SpringBootTest
 @Slf4j
@@ -30,4 +33,17 @@ class CustomItemRepositoryImplTest {
         System.out.println("itemSortedByType = " + itemSortedByType);
     }
 
+    @Test
+    void whereTest() {
+        Item item = Item.builder()
+                .nameKor("asdf")
+                .name("asdf").build();
+        itemRepository.save(item);
+        List<Item> fetch = query.select(QItem.item).from(QItem.item)
+                .where(QItem.item.name.eq("asdf"))
+                .where(QItem.item.name.eq("asdf"))
+                .fetch();
+
+        System.out.println("fetch = " + fetch);
+    }
 }

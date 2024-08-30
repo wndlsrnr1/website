@@ -2,6 +2,7 @@ package com.website.repository.purchases;
 
 import com.website.repository.item.ItemRepository;
 import com.website.repository.model.item.Item;
+import com.website.repository.user.model.SocialType;
 import com.website.repository.user.model.User;
 import com.website.repository.purchases.model.OrderStatus;
 import com.website.repository.purchases.model.Purchases;
@@ -9,6 +10,7 @@ import com.website.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -35,7 +37,7 @@ class PurchasesRepositoryCommitTest {
 
          */
 
-        List<User> user = userRepository.findAll();
+        List<User> user = List.of(userRepository.findByEmailAndSocialType("example3@naver.com", SocialType.NONE).get());
         Item item = itemRepository.findById(1213L).get();
         for (int i = 0; i < user.size(); i++) {
             Purchases purchases = Purchases.builder()
