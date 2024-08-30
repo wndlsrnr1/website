@@ -1,0 +1,45 @@
+@startuml
+title React + Spring kakao Login
+
+actor Browser
+participant ReactServer
+participant APIServer
+participant KakaoAuth
+autonumber 1 "0. "
+alt 선택 사항
+Browser -> ReactServer: 로그인 페이지 요청
+ReactServer --> Browser: 로그인 페이지 반환
+Browser -> APIServer: redirect할 주소 요청
+APIServer --> Browser: redirect할 주소 응답
+end alt
+== Step1: 인가 코드 받기\n(카카오의 서버의 사용자 인증 후 결과) ==
+Browser -> KakaoAuth: [로그인 요청] \nMethod: GET \nDomain: https://kauth.kakao.com\nPath: /oauth/authorize\nParameters: client_id, redirect_uri, response_type, scope.. 등등
+KakaoAuth --> Browser: [카카오 로그인 페이지 반환]
+Browser -> KakaoAuth: [로그인 정보 전달]
+KakaoAuth -> KakaoAuth: 사용자 인증, 앱설정 확인
+KakaoAuth --> Browser: [동의 화면 반환 반환]
+Browser -> KakaoAuth: [동의 정보 전달]
+
+opt 로그인 성공시
+KakaoAuth --> Browser: [Redirect 하라는 응답]\nStatusCode: 302\nLocation: ${redirect_uri}?code=${authorize_code}
+Browser -> ReactServer: [인증 성공시 Redirect할 View 요청]\nMethod: GET\nURL: redirect_uri\nParameters: code
+ReactServer --> Browser: View 반환
+else 로그인 실패시
+KakaoAuth --> Browser: [Redirect 하라는 응답]\nStatusCode: 302\nLocation: ${redirect_uri}?error=access_denied&error_description=User%20denied%20access
+Browser -> ReactServer: [인증 실패시 Redirect할 View 요청]\nMethod: GET\nURL: redirect_uri\nParameters: error, error_description
+ReactServer --> Browser: View 반환
+end opt
+
+
+== Step2: Access Token 토큰 받기\n(사용자 정보 받기) ==
+Browser -> APIServer: [API 서버에 code 전달]\nMethod: API 서버에서 설정한 Method\nLocation: 서버에서 API Location\n전달할 필수 데이터: code\n선택: request_uri
+APIServer -> KakaoAuth: [인가코드 전달]\nMethod: POST\nLocation: https://kauth.kakao.com/oauth/token\nHeader: Content-type: application/x-www-form-urlencoded;charset=utf-8\n폼데이터 파라미터: token, access_token 등
+KakaoAuth --> APIServer: [사용자 정보 전달]\nContentype: applicaton/json;charset=UTF-8\nBody: {\ntoken_type: bearer고정\naccess_token: 사용자 인증 및보유 권한 증명\nid_token: Base64로 encoding된 사용자 정보\n리프레시 토큰값, 만료시간 조회 기간 등.. \n}
+
+== Step3: 사용자 정보 처리 ==
+APIServer -> APIServer: 사용자 정보를 확인. \n로그인 / 회원가입 / 실패
+APIServer --> Browser: 인가에 대한 결과값 전달
+Browser -> Browser:  성공시 브라우저 로그인 작업, 실패시 에러 안내
+Browser -> ReactServer: 성공 실패에 따른 화면 요청
+ReactServer --> Browser: 화면 반환
+@enduml
