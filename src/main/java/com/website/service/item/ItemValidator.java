@@ -14,6 +14,7 @@ public class ItemValidator {
 
     /**
      * checks null and exists. and return Item
+     *
      * @param itemId
      * @return Entity of Item
      */
@@ -24,5 +25,11 @@ public class ItemValidator {
         return itemRepository.findById(itemId).orElseThrow(() ->
                 new ClientException(ErrorCode.BAD_REQUEST, "item is not found. itemId = " + itemId)
         );
+    }
+
+    public void validateItemExists(Long itemId) {
+        if (!itemRepository.existsById(itemId)) {
+            throw new ClientException(ErrorCode.BAD_REQUEST, "item not found. itemId = " + itemId);
+        }
     }
 }
