@@ -26,7 +26,8 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
     @Override
     public PageResult<Comment> search(CommentSearchCriteria criteria) {
         List<Comment> result = from(comment)
-                .where(userIdEq(criteria.getUserId()), itemIdEq(criteria.getItemId()), nextSearchProduct(criteria))
+                .where(userIdEq(criteria.getUserId()), itemIdEq(criteria.getItemId()),
+                        nextSearchProduct(criteria))
                 .limit(criteria.getSize())
                 .orderBy(orderBySort(criteria))
                 .fetch();
@@ -52,9 +53,9 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
                     nextSearchAfter = SearchAfterEncoder.encode(comment.getId().toString());
                     break;
 
-                case STAR:
-                    nextSearchAfter = SearchAfterEncoder.encode(comment.getId().toString(), comment.getStar().toString());
-                    break;
+                //case STAR:
+                //    nextSearchAfter = SearchAfterEncoder.encode(comment.getId().toString(), comment.getStar().toString());
+                //    break;
                 case ITEM:
                     break;
                 default: // todo: throw custom exception
@@ -85,21 +86,20 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
             case RECENT: {
                 String decoded = SearchAfterEncoder.decodeSingle(criteria.getNextSearchAfter());
                 Long id = Long.valueOf(decoded);
-                log.info("id = {}", id);
                 return comment.id.lt(id);
             }
             case ITEM: {
 
             }
-            case STAR: {
-                String[] decoded = SearchAfterEncoder.decode(criteria.getNextSearchAfter());
-                Long id = Long.valueOf(decoded[0]);
-                Integer star = Integer.valueOf(decoded[1]);
-                return comment.star.lt(star)
-                        .or(
-                                comment.id.lt(id).and(comment.star.eq(star))
-                        );
-            }
+            //case STAR: {
+            //    String[] decoded = SearchAfterEncoder.decode(criteria.getNextSearchAfter());
+            //    Long id = Long.valueOf(decoded[0]);
+            //    Integer star = Integer.valueOf(decoded[1]);
+            //    return comment.star.lt(star)
+            //            .or(
+            //                    comment.id.lt(id).and(comment.star.eq(star))
+            //            );
+            //}
             default:// todo: throw custom exception
                 return null;
         }
@@ -111,11 +111,11 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
                 return new OrderSpecifier[]{
                         comment.id.desc()
                 };
-            case STAR:
-                return new OrderSpecifier[]{
-                        comment.star.desc(),
-                        comment.id.desc(),
-                };
+            //case STAR:
+            //    return new OrderSpecifier[]{
+            //            comment.star.desc(),
+            //            comment.id.desc(),
+            //    };
             case ITEM:
             default:
                 return null;
