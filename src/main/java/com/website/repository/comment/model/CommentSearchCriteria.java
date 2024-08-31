@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentSearchCriteria {
-    private Long userId;
-    private Long itemId;
     private int size;
     private CommentSortType sortType;
     private boolean withTotalCount;
     private String nextSearchAfter;
+    private Long userId;
+    private Long itemId;
 }
