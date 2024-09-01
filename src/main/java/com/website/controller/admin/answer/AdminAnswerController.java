@@ -5,11 +5,10 @@ import com.website.config.auth.ServiceUser;
 import com.website.controller.admin.answer.model.AnswerRegisterRequest;
 import com.website.controller.admin.answer.model.AnswerResponse;
 import com.website.controller.admin.answer.model.AnswerUpdateRequest;
-import com.website.controller.admin.answer.model.CommentSearchResponse;
+import com.website.controller.admin.answer.model.CommentSearchWithAnswerResponse;
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.common.model.PageResultResponse;
 import com.website.repository.comment.model.CommentSortType;
-import com.website.repository.common.PageResult;
 import com.website.service.admin.answer.AdminAnswerService;
 import com.website.service.admin.answer.model.*;
 import com.website.service.common.model.PageResultDto;
@@ -54,8 +53,8 @@ public class AdminAnswerController {
     }
 
     //todo: implement search Method
-    @GetMapping("/answers")
-    public ApiResponse<PageResultResponse<CommentSearchResponse>> searchCommentWithAnswer(
+    @GetMapping("/comments")
+    public ApiResponse<PageResultResponse<CommentSearchWithAnswerResponse>> searchCommentWithAnswer(
             @RequestParam(required = true, defaultValue = "5") Integer size,
             @RequestParam(required = false, defaultValue = "RECENT") CommentSortType sortType,
             @RequestParam(required = false) String nextSearchAfter,
@@ -78,10 +77,10 @@ public class AdminAnswerController {
                 .isNoneWithAnswer(isNoneWithAnswer)
                 .build();
 
-        PageResultDto<CommentSearchResponseDto> pageResultDto = adminAnswerService.searchComment(dto);
+        PageResultDto<CommentSearchWithAnswerResponseDto> pageResultDto = adminAnswerService.searchComment(dto);
 
-        PageResultResponse<CommentSearchResponse> pageResult = PageResultResponse.<CommentSearchResponse>builder()
-                .items(pageResultDto.getItems().stream().map(CommentSearchResponse::of).collect(Collectors.toList()))
+        PageResultResponse<CommentSearchWithAnswerResponse> pageResult = PageResultResponse.<CommentSearchWithAnswerResponse>builder()
+                .items(pageResultDto.getItems().stream().map(CommentSearchWithAnswerResponse::of).collect(Collectors.toList()))
                 .nextSearchAfter(pageResultDto.getNextSearchAfter())
                 .totalCount(pageResultDto.getTotalCount())
                 .build();

@@ -1,5 +1,10 @@
 package com.website.controller.admin.item;
 
+import com.website.config.auth.AdminUser;
+import com.website.controller.admin.item.model.ItemResponseV2;
+import com.website.controller.api.common.model.ApiResponse;
+import com.website.controller.api.model.response.item.ItemResponse;
+import com.website.service.admin.item.model.ItemResponseDto;
 import com.website.service.item.ItemService;
 import com.website.controller.api.model.request.item.EditItemRequest;
 import com.website.controller.api.model.request.item.EditItemRequestV2;
@@ -28,7 +33,7 @@ public class ItemAdminController {
     //    log.info("itemSearchCond = {}", itemSearchCond);
     //    return itemService.sendItemResponseByCond(itemSearchCond, bindingResult, pageable);
     //}
-
+    @AdminUser
     @GetMapping
     public ResponseEntity sendItemDtoBySearchCond(
             @Validated ItemSearchCond itemSearchCond, BindingResult bindingResult, Pageable pageable,
@@ -41,6 +46,7 @@ public class ItemAdminController {
         return itemService.sendItemResponseByCondByLastItemId(itemSearchCond, bindingResult, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage);
     }
 
+    @AdminUser
     @GetMapping("/{itemId}")
     public ResponseEntity sendItemDetails(
             @PathVariable Long itemId,
@@ -50,16 +56,30 @@ public class ItemAdminController {
         return itemService.sendItemDetailPageByItemId(itemId);
     }
 
+    @AdminUser
+    @GetMapping("/v2/{itemId}")
+    public ApiResponse<ItemResponseV2> getItem(
+            @PathVariable(value = "itemId") Long itemId
+    ) {
+
+        ItemResponseDto responseDto = itemService.getItem(itemId);
+
+        return ApiResponse.success(ItemResponseV2.of(responseDto));
+    }
+
+    @AdminUser
     @PostMapping("/add")
     public ResponseEntity sendResultOfSaveItemDetailsByItemFormRequest(@Validated SaveItemRequest saveItemRequest, BindingResult bindingResult) {
         return itemService.saveItemByItemFormRequest(saveItemRequest, bindingResult);
     }
 
+    @AdminUser
     @DeleteMapping("/remove/{itemId}")
     public ResponseEntity removeItemRequestByItemId(@PathVariable Long itemId) {
         return itemService.removeItemByItemId(itemId);
     }
 
+    @AdminUser
     @DeleteMapping("/image/remove")
     public ResponseEntity removeAttachmentOnItemByAttachmentId(List<Long> fileIdList) {
         return itemService.deleteFileOnItem(fileIdList);
@@ -70,33 +90,40 @@ public class ItemAdminController {
         return itemService.editItemFormOnAdmin(itemId, editItemRequest, bindingResult);
     }
 
+    @AdminUser
     @PostMapping("/edit/{itemId}")
     public ResponseEntity editItemRequestV2(@PathVariable(name = "itemId", required = true) Long itemId, EditItemRequestV2 editItemRequest, BindingResult bindingResult) {
         return itemService.editItemFormOnAdminV2(itemId, editItemRequest, bindingResult);
     }
 
+    @AdminUser
     @GetMapping("/thumbnail/{itemId}")
     public ResponseEntity sendThumbnailResponse(@PathVariable("itemId") Long itemId) {
         return itemService.getThumbnailResponse(itemId);
     }
 
+    @AdminUser
     @PostMapping("/thumbnail/edit/{itemId}")
     public ResponseEntity editThumbnailResponse(@PathVariable("itemId") Long itemId, @RequestParam("imageId") Long imageId) {
         //썸네일이 이미 없는 경우 insert하기
         return itemService.editThumbnail(itemId, imageId);
     }
 
+    @AdminUser
     @PostMapping("/thumbnail/add/{itemId}")
     public ResponseEntity addThumbnailResponse(@PathVariable("itemId") Long itemId, @RequestParam("imageId") Long imageId) {
         return itemService.addThumbnail(itemId, imageId);
     }
 
     //        /admin/items/info?itemId=" + itemId
+    @AdminUser
     @GetMapping("/info")
     public ResponseEntity responseItemInfo(@RequestParam(value = "itemId", required = false) Long itemId) {
         log.info("itemid = {}", itemId);
         return itemService.getResponseItemInfo(itemId);
     }
+
+    @AdminUser
     @GetMapping("/sequence/{itemId}")
     public ResponseEntity responseAttachmentSequence(@PathVariable("itemId") Long itemId) {
         return itemService.getItemAttachmentSequence(itemId);

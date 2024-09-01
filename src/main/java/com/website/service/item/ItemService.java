@@ -2,6 +2,8 @@ package com.website.service.item;
 
 import com.website.controller.api.model.response.item.*;
 import com.website.controller.api.model.response.item.sequence.ItemAttachmentSequenceResponse;
+import com.website.exception.ClientException;
+import com.website.exception.ErrorCode;
 import com.website.repository.common.PageResult;
 import com.website.repository.item.model.ItemWithReview;
 import com.website.repository.item.model.SearchItem;
@@ -23,6 +25,7 @@ import com.website.controller.api.model.request.item.EditItemRequest;
 import com.website.controller.api.model.request.item.EditItemRequestV2;
 import com.website.controller.api.model.request.item.SaveItemRequest;
 import com.website.controller.api.model.sqlcond.item.ItemSearchCond;
+import com.website.service.admin.item.model.ItemResponseDto;
 import com.website.service.attachment.FileService;
 import com.website.service.common.BindingResultUtils;
 import com.website.service.common.model.PageResultDto;
@@ -661,5 +664,13 @@ public class ItemService {
                 .totalCount(pageResult.getTotalCount())
                 .items(pageResult.getItems().stream().map(ItemWithReviewDto::of).collect(Collectors.toList()))
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ItemResponseDto getItem(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new ClientException(ErrorCode.BAD_REQUEST, "can not found item. itemId = " + itemId)
+        );
+        return ItemResponseDto.of(item);
     }
 }

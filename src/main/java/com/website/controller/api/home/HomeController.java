@@ -42,7 +42,7 @@ public class HomeController {
     }
 
 
-    @GetMapping("/item_list")
+    @GetMapping("/items/list")
     public ResponseEntity responseRequestForItemList(
             String sortedBy, Pageable pageable, @RequestParam(value = "lastItemId", required = false) Long lastItemId, Integer lastPageNumber, Integer pageChunk, Boolean isLastPage, @RequestParam(value = "subcategoryId", required = false) Long subcategoryId, @RequestParam(value = "totalItems", required = false) Long totalItems
     ) {

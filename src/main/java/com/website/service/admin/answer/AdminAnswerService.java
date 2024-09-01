@@ -1,12 +1,10 @@
 package com.website.service.admin.answer;
 
-import com.website.controller.admin.answer.model.CommentSearchResponse;
-import com.website.controller.api.common.model.PageResultResponse;
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
 import com.website.repository.answer.AnswerRepository;
 import com.website.repository.answer.model.Answer;
-import com.website.repository.answer.model.CommentSearch;
+import com.website.repository.answer.model.CommentSearchWithAnswer;
 import com.website.repository.answer.model.SearchCommentCriteria;
 import com.website.repository.common.PageResult;
 import com.website.service.admin.answer.model.*;
@@ -64,14 +62,14 @@ public class AdminAnswerService {
     }
 
     @Transactional(readOnly = true)
-    public PageResultDto<CommentSearchResponseDto> searchComment(SearchCommentRequestDto dto) {
+    public PageResultDto<CommentSearchWithAnswerResponseDto> searchComment(SearchCommentRequestDto dto) {
 
         SearchCommentCriteria criteria = dto.toCriteria();
 
-        PageResult<CommentSearch> pageResult = answerRepository.searchComment(criteria);
+        PageResult<CommentSearchWithAnswer> pageResult = answerRepository.searchComment(criteria);
 
-        return PageResultDto.<CommentSearchResponseDto>builder()
-                .items(pageResult.getItems().stream().map(CommentSearchResponseDto::of).collect(Collectors.toList()))
+        return PageResultDto.<CommentSearchWithAnswerResponseDto>builder()
+                .items(pageResult.getItems().stream().map(CommentSearchWithAnswerResponseDto::of).collect(Collectors.toList()))
                 .nextSearchAfter(pageResult.getNextSearchAfter())
                 .totalCount(pageResult.getTotalCount())
                 .build();
