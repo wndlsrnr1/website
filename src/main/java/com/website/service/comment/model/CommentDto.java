@@ -26,7 +26,6 @@ public class CommentDto {
                 .id(savedComment.getId())
                 .itemId(savedComment.getItem().getId())
                 .username(savedComment.getUser().getName())
-                .star(savedComment.getStar())
                 .content(savedComment.getContent())
                 .createdAt(savedComment.getCreatedAt())
                 .updatedAt(savedComment.getUpdatedAt())

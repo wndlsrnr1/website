@@ -38,7 +38,6 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(dto.getStar())
                 .content(dto.getContent())
                 .build();
 
@@ -79,7 +78,6 @@ public class CommentService {
         );
 
         comment.setContent(dto.getContent());
-        comment.setStar(dto.getStar());
         Comment updatedComment = commentRepository.save(comment);
         return CommentDto.of(updatedComment);
     }
