@@ -176,7 +176,6 @@ class ReviewControllerIntegrationTest {
         reviewRepository.save(review);
 
         ReviewUpdateRequest updateRequest = ReviewUpdateRequest.builder()
-                .reviewId(review.getId())
                 .content("Updated review content")
                 .star(4)
                 .build();
@@ -188,10 +187,11 @@ class ReviewControllerIntegrationTest {
         headers.set(HttpHeaders.COOKIE, jsessionid);
 
         ResponseEntity<ApiResponse<ReviewResponse>> response = restTemplate.exchange(
-                getBaseUrl() + "/reviews/update",
-                HttpMethod.POST,
+                getBaseUrl() + "/reviews/{reviewId}",
+                HttpMethod.PATCH,
                 new HttpEntity<>(updateRequest, headers),
-                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {}
+                new ParameterizedTypeReference<ApiResponse<ReviewResponse>>() {},
+                review.getId()
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
