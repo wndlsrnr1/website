@@ -29,6 +29,8 @@ public class ReviewDto {
 
     private LocalDateTime updatedAt;
 
+    private Long itemId;
+
     public static ReviewDto of(Review savedReview) {
         return ReviewDto.builder()
                 .id(savedReview.getId())
@@ -37,6 +39,7 @@ public class ReviewDto {
                 .star(savedReview.getStar())
                 .createdAt(savedReview.getCreatedAt())
                 .updatedAt(savedReview.getUpdatedAt())
+                .itemId(savedReview.getPurchases().getItem().getId())
                 .build();
     }
 }
