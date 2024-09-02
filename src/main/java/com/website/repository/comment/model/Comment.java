@@ -36,8 +36,6 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private Integer star;
-
     private String content;
 
     @CreatedDate

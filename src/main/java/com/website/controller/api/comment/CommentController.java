@@ -81,7 +81,37 @@ public class CommentController {
                 .build();
 
         return ApiResponse.success(resultResponse);
+    }
 
+    @LoginUser
+    @GetMapping("/comments/me")
+    public ApiResponse<PageResultResponse<CommentResponse>> searchComments(
+            @AuthenticationPrincipal ServiceUser serviceUser,
+            @RequestParam(required = false, defaultValue = "5") @Min(1) Integer size,
+            @RequestParam(required = false) String searchAfter,
+            @RequestParam(required = false) Long itemId,
+            @RequestParam(required = false, defaultValue = "false") boolean withTotalCount,
+            @RequestParam CommentSortType sortType
+    ) {
+
+        CommentSearchRequestDto dto = CommentSearchRequestDto.builder()
+                .itemId(itemId)
+                .userId(serviceUser.getId())
+                .nextSearchAfter(searchAfter)
+                .size(size)
+                .sortType(sortType)
+                .withTotalCount(withTotalCount)
+                .build();
+
+        PageResultDto<CommentDto> resultDto = commentService.searchComment(dto);
+
+        PageResultResponse<CommentResponse> resultResponse = PageResultResponse.<CommentResponse>builder()
+                .items(resultDto.getItems().stream().map(CommentResponse::of).collect(Collectors.toList()))
+                .nextSearchAfter(resultDto.getNextSearchAfter())
+                .totalCount(resultDto.getTotalCount())
+                .build();
+
+        return ApiResponse.success(resultResponse);
     }
 
     //update
