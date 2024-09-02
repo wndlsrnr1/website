@@ -2,6 +2,7 @@ package com.website.service.comment;
 
 import com.website.exception.ClientException;
 import com.website.exception.ErrorCode;
+import com.website.repository.comment.model.CommentWithAnswer;
 import com.website.repository.common.PageResult;
 import com.website.repository.model.item.Item;
 import com.website.repository.user.model.User;
@@ -108,4 +109,13 @@ public class CommentService {
     }
 
 
+    public PageResultDto<CommentWithAnswerDto> searchCommentV2(CommentSearchRequestDto dto) {
+        CommentSearchCriteria criteria = dto.toCriteria();
+        PageResult<CommentWithAnswer> findResult = commentRepository.searchV2(criteria);
+        return PageResultDto.<CommentWithAnswerDto>builder()
+                .items(findResult.getItems().stream().map(CommentWithAnswerDto::of).collect(Collectors.toList()))
+                .totalCount(findResult.getTotalCount())
+                .nextSearchAfter(findResult.getNextSearchAfter())
+                .build();
+    }
 }

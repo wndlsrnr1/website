@@ -2,18 +2,16 @@ package com.website.controller.api.comment;
 
 import com.website.config.auth.LoginUser;
 import com.website.config.auth.ServiceUser;
+import com.website.controller.api.comment.model.CommentWithAnswerResponse;
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.common.model.PageResultResponse;
 import com.website.controller.api.comment.model.CommentCreateRequest;
 import com.website.controller.api.comment.model.CommentResponse;
 import com.website.controller.api.comment.model.CommentUpdateRequest;
 import com.website.repository.comment.model.CommentSortType;
+import com.website.service.comment.model.*;
 import com.website.service.common.model.PageResultDto;
 import com.website.service.comment.CommentService;
-import com.website.service.comment.model.CommentCreateDto;
-import com.website.service.comment.model.CommentDto;
-import com.website.service.comment.model.CommentSearchRequestDto;
-import com.website.service.comment.model.CommentUpdateDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -107,6 +105,37 @@ public class CommentController {
 
         PageResultResponse<CommentResponse> resultResponse = PageResultResponse.<CommentResponse>builder()
                 .items(resultDto.getItems().stream().map(CommentResponse::of).collect(Collectors.toList()))
+                .nextSearchAfter(resultDto.getNextSearchAfter())
+                .totalCount(resultDto.getTotalCount())
+                .build();
+
+        return ApiResponse.success(resultResponse);
+    }
+
+    @LoginUser
+    @GetMapping("/v2/comments/me")
+    public ApiResponse<PageResultResponse<CommentWithAnswerResponse>> searchCommentsV2(
+            @AuthenticationPrincipal ServiceUser serviceUser,
+            @RequestParam(required = false, defaultValue = "5") @Min(1) Integer size,
+            @RequestParam(required = false) String searchAfter,
+            @RequestParam(required = false) Long itemId,
+            @RequestParam(required = false, defaultValue = "false") boolean withTotalCount,
+            @RequestParam CommentSortType sortType
+    ) {
+
+        CommentSearchRequestDto dto = CommentSearchRequestDto.builder()
+                .itemId(itemId)
+                .userId(serviceUser.getId())
+                .nextSearchAfter(searchAfter)
+                .size(size)
+                .sortType(sortType)
+                .withTotalCount(withTotalCount)
+                .build();
+
+        PageResultDto<CommentWithAnswerDto> resultDto = commentService.searchCommentV2(dto);
+
+        PageResultResponse<CommentWithAnswerResponse> resultResponse = PageResultResponse.<CommentWithAnswerResponse>builder()
+                .items(resultDto.getItems().stream().map(CommentWithAnswerResponse::of).collect(Collectors.toList()))
                 .nextSearchAfter(resultDto.getNextSearchAfter())
                 .totalCount(resultDto.getTotalCount())
                 .build();
