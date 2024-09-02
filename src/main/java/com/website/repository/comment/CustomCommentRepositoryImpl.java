@@ -3,6 +3,7 @@ package com.website.repository.comment;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.website.repository.comment.model.CommentWithAnswer;
 import com.website.repository.comment.model.QComment;
 import com.website.repository.common.PageResult;
 import com.website.repository.comment.model.Comment;
@@ -41,6 +42,11 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
                 .nextSearchAfter(nextSearchAfter)
                 .totalCount(totalCount)
                 .build();
+    }
+
+    @Override
+    public PageResult<CommentWithAnswer> searchV2(CommentSearchCriteria criteria) {
+        return null;
     }
 
     private String getNextSearchAfter(List<Comment> result, CommentSearchCriteria criteria) {
