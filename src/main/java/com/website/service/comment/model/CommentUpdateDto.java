@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CommentUpdateDto {
-    private Long commentId;
     private Long userId;
-    private Integer star;
     private String content;
 }

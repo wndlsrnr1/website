@@ -199,7 +199,6 @@ class CommentControllerIntegrationTest {
                 .user(user)
                 .item(item)
                 .content("content")
-                .star(4)
                 .build();
 
         Comment savedComment = commentRepository.save(comment);
@@ -237,28 +236,24 @@ class CommentControllerIntegrationTest {
                 .user(user)
                 .item(item)
                 .content("testContent")
-                .star(4)
                 .build();
 
         Comment comment2 = Comment.builder()
                 .user(user)
                 .item(item)
                 .content("testContent")
-                .star(4)
                 .build();
 
         Comment comment3 = Comment.builder()
                 .user(user)
                 .item(item)
                 .content("testContent")
-                .star(4)
                 .build();
 
         Comment comment4 = Comment.builder()
                 .user(user2)
                 .item(item)
                 .content("testContent")
-                .star(4)
                 .build();
 
         commentRepository.saveAll(List.of(comment1, comment2, comment3, comment4));
@@ -336,8 +331,6 @@ class CommentControllerIntegrationTest {
         Long commentId = response.getBody().getBody().getId();
         Long itemId = response.getBody().getBody().getItemId();
         CommentUpdateRequest updateRequest = CommentUpdateRequest.builder()
-                .commentId(commentId)
-                .star(3)
                 .content("updatedContent")
                 .build();
 
@@ -354,7 +347,6 @@ class CommentControllerIntegrationTest {
         assertThat(body).isNotNull();
         assertThat(body.getBody().getId()).isEqualTo(commentId);
         assertThat(body.getBody().getContent()).isEqualTo("updatedContent");
-        assertThat(body.getBody().getStar()).isEqualTo(3);
     }
 
     //delete 성공

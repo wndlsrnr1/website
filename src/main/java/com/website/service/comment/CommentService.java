@@ -70,12 +70,11 @@ public class CommentService {
 
     // update
     @Transactional
-    public CommentDto updateComment(CommentUpdateDto dto) {
+    public CommentDto updateComment(CommentUpdateDto dto, Long commentId) {
         User user = userValidator.validateAndGet(dto.getUserId());
-        //Item item = itemValidator.validateAndGet(dto.getItemId());
 
-        Comment comment = commentRepository.findById(dto.getCommentId()).orElseThrow(
-                () -> new ClientException(ErrorCode.BAD_REQUEST, "comment not found commentId = " + user.getId() + ", commentId = " + dto.getCommentId())
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new ClientException(ErrorCode.BAD_REQUEST, "comment not found commentId = " + user.getId() + ", commentId = " + commentId)
         );
 
         comment.setContent(dto.getContent());

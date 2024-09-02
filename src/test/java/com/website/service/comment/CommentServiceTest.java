@@ -251,9 +251,7 @@ class CommentServiceTest {
 
         CommentUpdateDto updateDto = CommentUpdateDto.builder()
                 .userId(userId)
-                .commentId(commentId)
                 .content("updatedContent")
-                .star(4)
                 .build();
 
         Comment beforeUpdate = Comment.builder()
@@ -267,17 +265,15 @@ class CommentServiceTest {
                 .item(item)
                 .user(user)
                 .content(updateDto.getContent())
-                .star(updateDto.getStar())
                 .build();
 
         when(userValidator.validateAndGet(userId)).thenReturn(user);
-        when(commentRepository.findById(updateDto.getCommentId())).thenReturn(Optional.of(beforeUpdate));
+        when(commentRepository.findById(commentId)).thenReturn(Optional.of(beforeUpdate));
         when(commentRepository.save(beforeUpdate)).thenReturn(afterUpdate);
-        CommentDto commentDto = commentService.updateComment(updateDto);
+        CommentDto commentDto = commentService.updateComment(updateDto, commentId);
 
         assertThat(commentDto.getId()).isEqualTo(commentId);
         assertThat(commentDto.getContent()).isEqualTo(updateDto.getContent());
-        assertThat(commentDto.getStar()).isEqualTo(updateDto.getStar());
 
         verify(userValidator, times(1)).validateAndGet(userId);
         verify(commentRepository, times(1)).findById(commentId);
@@ -291,16 +287,13 @@ class CommentServiceTest {
         when(userValidator.validateAndGet(userId)).thenReturn(user);
 
         CommentUpdateDto updateDto = CommentUpdateDto.builder()
-                .commentId(commentId)
-                .commentId(commentId)
                 .userId(userId)
                 .content("updatedContent")
-                .star(4)
                 .build();
 
         // When
         ClientException exception = assertThrows(ClientException.class,
-                () -> commentService.updateComment(updateDto)
+                () -> commentService.updateComment(updateDto, commentId)
         );
 
         // Then
