@@ -117,7 +117,7 @@ public class CommentController {
     public ApiResponse<PageResultResponse<CommentWithAnswerResponse>> searchCommentsV2(
             @AuthenticationPrincipal ServiceUser serviceUser,
             @RequestParam(required = false, defaultValue = "5") @Min(1) Integer size,
-            @RequestParam(required = false) String searchAfter,
+            @RequestParam(required = false) String nextSearchAfter,
             @RequestParam(required = false) Long itemId,
             @RequestParam(required = false, defaultValue = "false") boolean withTotalCount,
             @RequestParam CommentSortType sortType
@@ -126,7 +126,7 @@ public class CommentController {
         CommentSearchRequestDto dto = CommentSearchRequestDto.builder()
                 .itemId(itemId)
                 .userId(serviceUser.getId())
-                .nextSearchAfter(searchAfter)
+                .nextSearchAfter(nextSearchAfter)
                 .size(size)
                 .sortType(sortType)
                 .withTotalCount(withTotalCount)
@@ -145,20 +145,21 @@ public class CommentController {
 
     //update
     @LoginUser
-    @PostMapping("/items/update/comments")
+    @PatchMapping("/comments/{commentId}")
     public ApiResponse<CommentResponse> updateComment(
             @AuthenticationPrincipal ServiceUser serviceUser,
-            @RequestBody @Valid CommentUpdateRequest request
+            @RequestBody @Valid CommentUpdateRequest request,
+            @PathVariable(value = "commentId") Long commentId
     ) {
         CommentUpdateDto dto = request.toDto(serviceUser.getId());
-        CommentDto commentDto = commentService.updateComment(dto);
+        CommentDto commentDto = commentService.updateComment(dto, commentId);
         CommentResponse response = CommentResponse.of(commentDto);
         return ApiResponse.success(response);
     }
 
     //delete
     @LoginUser
-    @DeleteMapping("/items/comments/{commentId}")
+    @DeleteMapping("/comments/{commentId}")
     public ApiResponse<Void> deleteComment(
             @AuthenticationPrincipal ServiceUser serviceUser,
             @PathVariable(value = "commentId") Long commentId

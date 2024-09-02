@@ -20,15 +20,17 @@ public class CommentWithAnswerDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long answerId;
+    private String answerContent;
 
     public static CommentWithAnswerDto of(CommentWithAnswer comment) {
         return CommentWithAnswerDto.builder()
                 .id(comment.getId())
-                .itemId(comment.getId())
+                .itemId(comment.getItemId())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .answerId(comment.getAnswerId())
+                .answerContent(comment.getAnswerContent())
                 .build();
     }
 }

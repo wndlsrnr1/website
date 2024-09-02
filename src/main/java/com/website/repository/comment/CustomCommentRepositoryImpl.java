@@ -3,30 +3,38 @@ package com.website.repository.comment;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.website.repository.comment.model.CommentWithAnswer;
-import com.website.repository.comment.model.QComment;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.website.exception.ClientException;
+import com.website.exception.ErrorCode;
+import com.website.repository.answer.model.QAnswer;
+import com.website.repository.comment.model.*;
 import com.website.repository.common.PageResult;
-import com.website.repository.comment.model.Comment;
-import com.website.repository.comment.model.CommentSearchCriteria;
 import com.website.utils.common.SearchAfterEncoder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.website.repository.answer.model.QAnswer.answer;
+import static com.website.repository.comment.model.QComment.comment;
+
 @Slf4j
-public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport implements CustomCommentRepository {
+@Repository
+public class CustomCommentRepositoryImpl implements CustomCommentRepository {
 
-    private final QComment comment = QComment.comment;
+    private final EntityManager em;
+    private final JPAQueryFactory query;
 
-    public CustomCommentRepositoryImpl() {
-        super(Comment.class);
+    public CustomCommentRepositoryImpl(EntityManager em) {
+        this.em = em;
+        this.query = new JPAQueryFactory(em);
     }
-
 
     @Override
     public PageResult<Comment> search(CommentSearchCriteria criteria) {
-        List<Comment> result = from(comment)
+        List<Comment> result = query.selectFrom(comment)
                 .where(userIdEq(criteria.getUserId()), itemIdEq(criteria.getItemId()),
                         nextSearchProduct(criteria))
                 .limit(criteria.getSize())
@@ -46,7 +54,101 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public PageResult<CommentWithAnswer> searchV2(CommentSearchCriteria criteria) {
-        return null;
+        List<CommentWithAnswer> result = query.select(new QCommentWithAnswer(
+                        comment.id,
+                        comment.item.id,
+                        comment.content,
+                        comment.createdAt,
+                        comment.updatedAt,
+                        answer.id,
+                        answer.content
+                ))
+                .from(comment)
+                .where(where(whereByParams(criteria), whereByStatefulParams(criteria)))
+                .leftJoin(answer).on(answer.commentId.eq(comment.id))
+                .limit(criteria.getSize())
+                .orderBy(order(criteria.getSortType()))
+                .fetch();
+
+        Long totalCount = getTotalCountForSearchV2(criteria);
+
+        String nextSearchAfter = getNextSearchAfterV2(result, criteria);
+
+        return PageResult.<CommentWithAnswer>builder()
+                .items(result)
+                .nextSearchAfter(nextSearchAfter)
+                .totalCount(totalCount)
+                .build();
+    }
+
+    private String getNextSearchAfterV2(List<CommentWithAnswer> result, CommentSearchCriteria criteria) {
+        String nextSearchAfter =  null;
+        if (criteria.getSize() == result.size()) {
+            CommentWithAnswer lastElem = result.get(result.size() - 1);
+            switch (criteria.getSortType()) {
+                case RECENT:
+                    nextSearchAfter = SearchAfterEncoder.encode(lastElem.getId().toString());
+                    break;
+                case ITEM:
+                    break;
+                default: {
+                    throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + criteria.getSortType());
+                }
+            }
+        }
+        return nextSearchAfter;
+    }
+
+    private Long getTotalCountForSearchV2(CommentSearchCriteria criteria) {
+        return query.selectFrom(comment)
+                .where(whereByParams(criteria))
+                .leftJoin(answer).on(answer.commentId.eq(comment.id))
+                .fetchCount();
+    }
+
+    private BooleanExpression[] where(BooleanExpression[] whereByParams, BooleanExpression whereByStatefulParams) {
+        if (whereByStatefulParams == null) {
+            return whereByParams;
+        }
+        BooleanExpression[] newArray = Arrays.copyOf(whereByParams, whereByParams.length + 1);
+        newArray[newArray.length - 1] = whereByStatefulParams;
+        return newArray;
+    }
+
+    private BooleanExpression[] whereByParams(CommentSearchCriteria criteria) {
+        return new BooleanExpression[]{
+                userIdEq(criteria.getUserId()),
+                itemIdEq(criteria.getItemId())
+        };
+    }
+
+    private BooleanExpression whereByStatefulParams(CommentSearchCriteria criteria) {
+        if (criteria.getNextSearchAfter() == null) {
+            return null;
+        }
+        switch (criteria.getSortType()) {
+            case RECENT: {
+                String decoded = SearchAfterEncoder.decodeSingle(criteria.getNextSearchAfter());
+                Long id = Long.valueOf(decoded);
+                return comment.id.lt(id);
+            }
+            default: {
+                throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + criteria.getSortType());
+            }
+        }
+    }
+
+    private OrderSpecifier<?>[] order(CommentSortType sortType) {
+        switch (sortType) {
+            case RECENT: {
+                return new OrderSpecifier[]{
+                        comment.id.desc()
+                };
+            }
+            default: {
+                throw new ClientException(ErrorCode.BAD_REQUEST, "unimplemented sort type. sorType = " + sortType);
+            }
+        }
     }
 
     private String getNextSearchAfter(List<Comment> result, CommentSearchCriteria criteria) {
@@ -75,7 +177,7 @@ public class CustomCommentRepositoryImpl extends QuerydslRepositorySupport imple
         if (!criteria.isWithTotalCount()) {
             return null;
         }
-        return from(comment).where(whereBySort(criteria)).fetchCount();
+        return query.selectFrom(comment).where(whereBySort(criteria)).fetchCount();
     }
 
 

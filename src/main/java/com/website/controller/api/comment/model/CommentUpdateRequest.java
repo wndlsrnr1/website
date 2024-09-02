@@ -16,22 +16,13 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentUpdateRequest {
-    @Min(0)
-    @Max(5)
-    @NotNull
-    private Integer star;
 
     @NotBlank
     private String content;
 
-    @NotNull
-    private Long commentId;
-
     public CommentUpdateDto toDto(Long userId) {
         return CommentUpdateDto.builder()
                 .userId(userId)
-                .star(star)
-                .commentId(commentId)
                 .content(content)
                 .build();
     }
