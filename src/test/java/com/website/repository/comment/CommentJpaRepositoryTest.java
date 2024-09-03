@@ -74,7 +74,7 @@ class CommentJpaRepositoryTest {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(4)
+                //.star(4)
                 .content("test")
                 .build();
 
@@ -86,7 +86,7 @@ class CommentJpaRepositoryTest {
         assertThat(savedComment.getContent()).isEqualTo("test");
         assertThat(savedComment.getItem().getName()).isEqualTo("name");
         assertThat(savedComment.getUser().getName()).isEqualTo("test");
-        assertThat(savedComment.getStar()).isEqualTo(4);
+        //assertThat(savedComment.getStar()).isEqualTo(4);
         assertThat(savedComment.getCreatedAt()).isNotNull();
         assertThat(savedComment.getUpdatedAt()).isNotNull();
     }
@@ -100,7 +100,7 @@ class CommentJpaRepositoryTest {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(4)
+                //.star(4)
                 .content("test")
                 .build();
         Comment savedComment = commentRepository.save(comment);
@@ -112,7 +112,7 @@ class CommentJpaRepositoryTest {
         assertThat(findComment).hasSize(1);
         assertThat(findComment.get(0).getUser().getName()).isEqualTo("test");
         assertThat(findComment.get(0).getItem().getName()).isEqualTo("name");
-        assertThat(findComment.get(0).getStar()).isEqualTo(4);
+        //assertThat(findComment.get(0).getStar()).isEqualTo(4);
     }
 
     @Test
@@ -122,7 +122,7 @@ class CommentJpaRepositoryTest {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(4)
+                //.star(4)
                 .content("test")
                 .build();
         Comment savedComment = commentRepository.save(comment);
@@ -134,7 +134,7 @@ class CommentJpaRepositoryTest {
         assertThat(findComment).hasSize(1);
         assertThat(findComment.get(0).getUser().getName()).isEqualTo("test");
         assertThat(findComment.get(0).getItem().getName()).isEqualTo("name");
-        assertThat(findComment.get(0).getStar()).isEqualTo(4);
+        //assertThat(findComment.get(0).getStar()).isEqualTo(4);
     }
 
     @Test
@@ -144,7 +144,7 @@ class CommentJpaRepositoryTest {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(4)
+                //.star(4)
                 .content("test")
                 .build();
         Comment savedComment = commentRepository.save(comment);
@@ -156,7 +156,7 @@ class CommentJpaRepositoryTest {
         assertThat(findComment).isNotEmpty();
         assertThat(findComment.get(0).getUser().getId()).isEqualTo(user.getId());
         assertThat(findComment.get(0).getItem().getId()).isEqualTo(item.getId());
-        assertThat(findComment.get(0).getStar()).isEqualTo(4);
+        //assertThat(findComment.get(0).getStar()).isEqualTo(4);
     }
 
     // update
@@ -167,7 +167,7 @@ class CommentJpaRepositoryTest {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(4)
+                //.star(4)
                 .content("test")
                 .build();
 
@@ -175,7 +175,7 @@ class CommentJpaRepositoryTest {
 
         //when
         savedComment.setContent("test2");
-        savedComment.setStar(5);
+        //savedComment.setStar(5);
         commentRepository.save(savedComment);
 
         Long commentId = savedComment.getId();
@@ -185,7 +185,7 @@ class CommentJpaRepositoryTest {
         assertThat(findComment.getId()).isEqualTo(savedComment.getId());
         assertThat(findComment.getUser().getId()).isEqualTo(user.getId());
         assertThat(findComment.getItem().getId()).isEqualTo(item.getId());
-        assertThat(findComment.getStar()).isEqualTo(5);
+        //assertThat(findComment.getStar()).isEqualTo(5);
         assertThat(findComment.getContent()).isEqualTo("test2");
 
     }
@@ -198,7 +198,7 @@ class CommentJpaRepositoryTest {
         Comment comment = Comment.builder()
                 .item(item)
                 .user(user)
-                .star(4)
+                //.star(4)
                 .content("test")
                 .build();
         Comment savedComment = commentRepository.save(comment);

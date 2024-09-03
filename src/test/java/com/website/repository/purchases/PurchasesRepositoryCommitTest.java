@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SpringBootTest
-@ActiveProfiles("dev")
+//@ActiveProfiles("dev")
 class PurchasesRepositoryCommitTest {
 
     @Autowired
@@ -33,22 +33,19 @@ class PurchasesRepositoryCommitTest {
     @Test
     //@Commit
     void commit() {
-        /*
 
-         */
-
-        List<User> user = List.of(userRepository.findByEmailAndSocialType("example3@naver.com", SocialType.NONE).get());
-        Item item = itemRepository.findById(1213L).get();
-        for (int i = 0; i < user.size(); i++) {
+        List<User> user = userRepository.findAll();
+        List<Item> itemList = itemRepository.findAll();
+        for (int i = 0; i < 100; i++) {
             Purchases purchases = Purchases.builder()
                     .orderNumber(UUID.randomUUID().toString())
                     .orderDate(LocalDateTime.now())
-                    .user(user.get(i))
-                    .item(item)
+                    .user(user.get(i % user.size()))
+                    .item(itemList.get((int)(Math.random() * itemList.size())))
                     .status(OrderStatus.DELIVERED)
                     .totalAmount(1)
-                    .address("지구")
-                    .discount(10)
+                    .address("지구" + i)
+                    .discount((int)(Math.random() * 10))
                     .notes("이상 없음")
                     .build();
             purchasesRepository.save(purchases);

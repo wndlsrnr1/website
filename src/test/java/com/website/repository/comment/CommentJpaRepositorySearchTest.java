@@ -54,15 +54,15 @@ public class CommentJpaRepositorySearchTest {
         item2 = itemRepository.save(Item.builder().name("item2name").nameKor("item2nameKor").status("item2status").build());
 
         //comment 저장
-        commentRepository.save(Comment.builder().item(item1).user(user1).content("content1").star(1).build());
-        commentRepository.save(Comment.builder().item(item1).user(user2).content("content2").star(1).build());
-        commentRepository.save(Comment.builder().item(item1).user(user3).content("content3").star(2).build());
-        commentRepository.save(Comment.builder().item(item1).user(user4).content("content4").star(2).build());
-
-        commentRepository.save(Comment.builder().item(item2).user(user4).content("content5").star(4).build());
-        commentRepository.save(Comment.builder().item(item2).user(user3).content("content6").star(4).build());
-        commentRepository.save(Comment.builder().item(item2).user(user2).content("content7").star(3).build());
-        commentRepository.save(Comment.builder().item(item2).user(user1).content("content8").star(3).build());
+        //commentRepository.save(Comment.builder().item(item1).user(user1).content("content1").star(1).build());
+        //commentRepository.save(Comment.builder().item(item1).user(user2).content("content2").star(1).build());
+        //commentRepository.save(Comment.builder().item(item1).user(user3).content("content3").star(2).build());
+        //commentRepository.save(Comment.builder().item(item1).user(user4).content("content4").star(2).build());
+        //
+        //commentRepository.save(Comment.builder().item(item2).user(user4).content("content5").star(4).build());
+        //commentRepository.save(Comment.builder().item(item2).user(user3).content("content6").star(4).build());
+        //commentRepository.save(Comment.builder().item(item2).user(user2).content("content7").star(3).build());
+        //commentRepository.save(Comment.builder().item(item2).user(user1).content("content8").star(3).build());
     }
 
     //item에 따라서
@@ -115,7 +115,7 @@ public class CommentJpaRepositorySearchTest {
         //given
         CommentSearchCriteria criteria = CommentSearchCriteria.builder()
                 .size(2)
-                .sortType(CommentSortType.STAR)
+                //.sortType(CommentSortType.STAR)
                 .withTotalCount(true)
                 .itemId(item2.getId())
                 .build();

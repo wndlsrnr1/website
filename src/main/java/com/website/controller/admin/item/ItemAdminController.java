@@ -70,6 +70,7 @@ public class ItemAdminController {
     @AdminUser
     @PostMapping("/add")
     public ResponseEntity sendResultOfSaveItemDetailsByItemFormRequest(@Validated SaveItemRequest saveItemRequest, BindingResult bindingResult) {
+        log.info("saveItemRequest = {}", saveItemRequest);
         return itemService.saveItemByItemFormRequest(saveItemRequest, bindingResult);
     }
 
