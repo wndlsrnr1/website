@@ -34,9 +34,11 @@ class PurchasesRepositoryCommitTest {
     //@Commit
     void commit() {
 
+
         List<User> user = userRepository.findAll();
         List<Item> itemList = itemRepository.findAll();
         for (int i = 0; i < 100; i++) {
+
             Purchases purchases = Purchases.builder()
                     .orderNumber(UUID.randomUUID().toString())
                     .orderDate(LocalDateTime.now())
