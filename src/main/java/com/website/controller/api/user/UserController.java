@@ -5,6 +5,8 @@ import com.website.config.auth.LoginUser;
 import com.website.config.auth.ServiceUser;
 import com.website.controller.api.common.model.ApiResponse;
 import com.website.controller.api.user.model.*;
+import com.website.exception.ErrorCode;
+import com.website.exception.UnauthorizedActionException;
 import com.website.repository.user.model.UserRole;
 import com.website.service.user.UserKakaoService;
 import com.website.service.user.UserService;
@@ -58,6 +60,9 @@ public class UserController {
             @AuthenticationPrincipal ServiceUser serviceUser,
             @Valid @RequestBody UserDeleteRequest request
     ) {
+        if (serviceUser.getEmail().equals("admin@admin.com") || serviceUser.getEmail().equals("user@naver.com")) {
+            throw new UnauthorizedActionException(ErrorCode.UNAUTHORIZED, "삭제하지마시오");
+        }
         UserDeleteDto dto = request.toDto(request);
         userService.deleteUser(serviceUser, dto);
         return ApiResponse.success();
