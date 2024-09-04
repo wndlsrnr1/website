@@ -1,14 +1,16 @@
 package com.website.repository.comment;
 
+import com.website.common.repository.comment.CommentRepository;
+import com.website.common.repository.comment.CustomCommentRepositoryImpl;
 import com.website.config.jpa.JpaConfig;
-import com.website.repository.common.PageResult;
-import com.website.repository.item.ItemRepository;
-import com.website.repository.model.item.Item;
-import com.website.repository.user.model.User;
-import com.website.repository.comment.model.Comment;
-import com.website.repository.comment.model.CommentSearchCriteria;
-import com.website.repository.comment.model.CommentSortType;
-import com.website.repository.user.UserRepository;
+import com.website.common.repository.common.PageResult;
+import com.website.common.repository.item.ItemRepository;
+import com.website.common.repository.model.item.Item;
+import com.website.common.repository.user.model.User;
+import com.website.common.repository.comment.model.Comment;
+import com.website.common.repository.comment.model.CommentSearchCriteria;
+import com.website.common.repository.comment.model.CommentSortType;
+import com.website.common.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

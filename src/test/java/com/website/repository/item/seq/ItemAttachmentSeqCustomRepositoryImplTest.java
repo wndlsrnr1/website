@@ -1,6 +1,7 @@
 package com.website.repository.item.seq;
 
-import com.website.controller.api.model.response.item.sequence.ItemAttachmentSequenceResponse;
+import com.website.common.repository.item.model.ItemAttachmentSequenceResponse;
+import com.website.common.repository.item.seq.ItemAttachmentSeqRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

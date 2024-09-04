@@ -1,12 +1,10 @@
 package com.website.utils.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.website.service.user.model.KaKaoUserInfoDto;
-import org.assertj.core.api.Assertions;
+import com.website.customer.service.user.model.KaKaoUserInfoDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 

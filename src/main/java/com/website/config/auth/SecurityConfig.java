@@ -1,6 +1,6 @@
 package com.website.config.auth;
 
-import com.website.repository.user.model.UserRole;
+import com.website.common.repository.user.model.UserRole;
 import com.website.utils.common.constance.KaKaoLoginConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Configuration
 @EnableMethodSecurity(proxyTargetClass = true)

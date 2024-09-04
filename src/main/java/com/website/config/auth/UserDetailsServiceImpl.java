@@ -1,7 +1,7 @@
 package com.website.config.auth;
 
-import com.website.repository.user.model.User;
-import com.website.repository.user.UserRepository;
+import com.website.common.repository.user.model.User;
+import com.website.common.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

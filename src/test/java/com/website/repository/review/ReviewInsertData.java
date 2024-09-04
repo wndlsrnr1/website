@@ -1,12 +1,12 @@
 package com.website.repository.review;
 
-import com.website.repository.purchases.PurchasesRepository;
-import com.website.repository.purchases.model.Purchases;
-import com.website.repository.review.model.Review;
+import com.website.common.repository.purchases.PurchasesRepository;
+import com.website.common.repository.purchases.model.Purchases;
+import com.website.common.repository.review.ReviewRepository;
+import com.website.common.repository.review.model.Review;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;

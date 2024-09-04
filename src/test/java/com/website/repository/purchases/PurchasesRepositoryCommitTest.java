@@ -1,17 +1,15 @@
 package com.website.repository.purchases;
 
-import com.website.repository.item.ItemRepository;
-import com.website.repository.model.item.Item;
-import com.website.repository.user.model.SocialType;
-import com.website.repository.user.model.User;
-import com.website.repository.purchases.model.OrderStatus;
-import com.website.repository.purchases.model.Purchases;
-import com.website.repository.user.UserRepository;
+import com.website.common.repository.item.ItemRepository;
+import com.website.common.repository.model.item.Item;
+import com.website.common.repository.purchases.PurchasesRepository;
+import com.website.common.repository.user.model.User;
+import com.website.common.repository.purchases.model.OrderStatus;
+import com.website.common.repository.purchases.model.Purchases;
+import com.website.common.repository.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;

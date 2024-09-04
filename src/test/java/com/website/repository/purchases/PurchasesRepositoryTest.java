@@ -1,7 +1,8 @@
 package com.website.repository.purchases;
 
+import com.website.common.repository.purchases.CustomPurchasesRepositoryImpl;
 import com.website.config.jpa.JpaConfig;
-import com.website.repository.comment.CommentRepository;
+import com.website.common.repository.comment.CommentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

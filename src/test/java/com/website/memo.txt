@@ -1,0 +1,12 @@
+To create a test case that commits real data to the database for testing purpose (using a dummy dataset),
+you will need to configure your test envirionment use a real database.
+This is typically done with test-specific dadtabase setup,
+such as using an in-memory database or a dedicated test database that is separate from your production data.
+
+steps to create a real data test case.
+
+configure a tes database use an in-memory database like h2 or a dedicated test database.
+set up test configureation: use pring boot's testing frame work to configure adifferent set of perpeti for tests.
+write a test acse: create a junit test that performs actual data insertion using the controller.
+use a test profile. ensure that the test runs with the appropriate profile to avoid affecting production data.
+

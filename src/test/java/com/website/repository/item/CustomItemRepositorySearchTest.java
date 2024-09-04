@@ -1,24 +1,23 @@
 package com.website.repository.item;
 
+import com.website.common.repository.item.CustomItemRepository;
+import com.website.common.repository.item.CustomItemRepositoryImpl;
+import com.website.common.repository.item.ItemRepository;
 import com.website.config.jpa.JpaConfig;
-import com.website.repository.attachment.AttachmentRepository;
-import com.website.repository.category.CategoryRepository;
-import com.website.repository.item.info.ItemInfoRepository;
-import com.website.repository.model.attachment.Attachment;
-import com.website.repository.model.category.Category;
-import com.website.repository.model.category.Subcategory;
-import com.website.repository.model.item.Item;
-import com.website.repository.model.item.ItemInfo;
-import com.website.repository.subcategory.SubcategoryRepository;
+import com.website.common.repository.attachment.AttachmentRepository;
+import com.website.common.repository.category.CategoryRepository;
+import com.website.common.repository.item.info.ItemInfoRepository;
+import com.website.common.repository.model.attachment.Attachment;
+import com.website.common.repository.model.category.Category;
+import com.website.common.repository.model.category.Subcategory;
+import com.website.common.repository.model.item.Item;
+import com.website.common.repository.model.item.ItemInfo;
+import com.website.common.repository.subcategory.SubcategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import({JpaConfig.class, CustomItemRepositoryImpl.class})
