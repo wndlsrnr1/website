@@ -1,8 +1,8 @@
 package com.website.config.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.website.controller.api.common.model.ApiResponse;
-import com.website.exception.ErrorCode;
+import com.website.common.controller.model.ApiResponse;
+import com.website.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;

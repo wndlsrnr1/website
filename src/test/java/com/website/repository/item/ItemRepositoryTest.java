@@ -1,10 +1,11 @@
 package com.website.repository.item;
 
-import com.website.repository.model.category.Category;
-import com.website.repository.model.category.Subcategory;
-import com.website.repository.model.item.Item;
-import com.website.repository.category.CategoryRepository;
-import com.website.repository.subcategory.SubcategoryRepository;
+import com.website.common.repository.item.ItemRepository;
+import com.website.common.repository.model.category.Category;
+import com.website.common.repository.model.category.Subcategory;
+import com.website.common.repository.model.item.Item;
+import com.website.common.repository.category.CategoryRepository;
+import com.website.common.repository.subcategory.SubcategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

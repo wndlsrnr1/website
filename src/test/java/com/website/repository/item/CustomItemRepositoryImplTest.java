@@ -1,8 +1,9 @@
 package com.website.repository.item;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.website.controller.api.model.request.item.home.ItemSortedByType;
-import com.website.repository.model.item.Item;
+import com.website.common.controller.item.model.home.ItemSortedByType;
+import com.website.common.repository.item.ItemRepository;
+import com.website.common.repository.model.item.Item;
 import com.website.repository.model.item.QItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

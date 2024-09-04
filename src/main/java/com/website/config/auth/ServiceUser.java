@@ -1,7 +1,7 @@
 package com.website.config.auth;
 
-import com.website.repository.user.model.User;
-import com.website.repository.user.model.UserRole;
+import com.website.common.repository.user.model.User;
+import com.website.common.repository.user.model.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

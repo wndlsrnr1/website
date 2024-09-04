@@ -1,7 +1,7 @@
 package com.website.repository.item.entitylisteners;
 
-import com.website.repository.model.item.Item;
-import com.website.repository.item.ItemRepository;
+import com.website.common.repository.model.item.Item;
+import com.website.common.repository.item.ItemRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

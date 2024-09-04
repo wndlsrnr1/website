@@ -1,13 +1,13 @@
 package com.website.repository;
 
-import com.website.repository.model.category.Category;
-import com.website.repository.model.category.Subcategory;
-import com.website.repository.model.item.Item;
-import com.website.repository.model.item.ItemSubcategory;
-import com.website.repository.category.CategoryRepository;
-import com.website.repository.item.ItemRepository;
-import com.website.repository.itemsubcategory.ItemSubcategoryRepository;
-import com.website.repository.subcategory.SubcategoryRepository;
+import com.website.common.repository.model.category.Category;
+import com.website.common.repository.model.category.Subcategory;
+import com.website.common.repository.model.item.Item;
+import com.website.common.repository.model.item.ItemSubcategory;
+import com.website.common.repository.category.CategoryRepository;
+import com.website.common.repository.item.ItemRepository;
+import com.website.common.repository.itemsubcategory.ItemSubcategoryRepository;
+import com.website.common.repository.subcategory.SubcategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

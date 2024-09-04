@@ -1,6 +1,6 @@
 package com.website;
 
-import com.website.repository.item.entitylisteners.ItemListener;
+import com.website.common.repository.item.entitylisteners.ItemListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
