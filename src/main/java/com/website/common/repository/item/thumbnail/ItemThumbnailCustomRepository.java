@@ -6,7 +6,7 @@ import com.website.common.repository.item.model.ItemThumbnailResponse;
 
 public interface ItemThumbnailCustomRepository {
 
-    ItemThumbnailResponse findByItemId(Long itemId);
+    ItemThumbnailResponse findByItemIdV2(Long itemId);
 
     void updateThumbnail(Long itemId, Long imageId);
 

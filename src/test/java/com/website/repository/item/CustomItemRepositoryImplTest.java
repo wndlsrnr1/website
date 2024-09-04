@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.website.common.controller.item.model.home.ItemSortedByType;
 import com.website.common.repository.item.ItemRepository;
 import com.website.common.repository.model.item.Item;
-import com.website.repository.model.item.QItem;
+import com.website.common.repository.model.item.QItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+
+import static com.website.common.repository.model.item.QItem.*;
+import static com.website.common.repository.model.item.QItem.item;
 
 @SpringBootTest
 @Slf4j

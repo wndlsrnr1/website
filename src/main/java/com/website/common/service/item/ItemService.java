@@ -513,7 +513,7 @@ public class ItemService {
             return ResponseEntity.badRequest().body(body);
         }
 
-        ItemThumbnailResponse itemThumbnailResponse = itemThumbnailRepository.findByItemId(itemId);
+        ItemThumbnailResponse itemThumbnailResponse = itemThumbnailRepository.findByItemIdV2(itemId);
 
         if (itemThumbnailResponse == null) {
             String message = messageSource.getMessage("Nodata", null, null);
@@ -532,7 +532,7 @@ public class ItemService {
             return ResponseEntity.badRequest().build();
         }
 
-        ItemThumbnailResponse itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        ItemThumbnailResponse itemThumbnail = itemThumbnailRepository.findByItemIdV2(itemId);
         if (itemThumbnail == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -580,7 +580,7 @@ public class ItemService {
     }
 
     private void deleteThumbnailInDb(Long itemId, List<Long> imagesForDelete) {
-        ItemThumbnailResponse itemThumbnail = itemThumbnailRepository.findByItemId(itemId);
+        ItemThumbnailResponse itemThumbnail = itemThumbnailRepository.findByItemIdV2(itemId);
         if (itemThumbnail == null) {
             log.info("itemThumbnail is null");
             return;

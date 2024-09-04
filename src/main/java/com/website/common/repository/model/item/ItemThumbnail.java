@@ -1,17 +1,15 @@
 package com.website.common.repository.model.item;
 
 import com.website.common.repository.model.attachment.Attachment;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
 public class ItemThumbnail {
 
     @Id
