@@ -26,7 +26,7 @@ public class ItemThumbnailCustomRepositoryImpl implements ItemThumbnailCustomRep
     }
 
     @Override
-    public ItemThumbnailResponse findByItemId(Long itemId) {
+    public ItemThumbnailResponse findByItemIdV2(Long itemId) {
 
         List<ItemThumbnailResponse> fetch = query.select(
                         new QItemThumbnailResponse(

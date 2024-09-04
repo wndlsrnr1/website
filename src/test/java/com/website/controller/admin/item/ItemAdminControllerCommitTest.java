@@ -41,7 +41,7 @@ class ItemAdminControllerCommitTest {
     @Test
     @Commit
     public void testSaveItemDetailsByItemFormRequest() throws Exception {
-        String basePath = "/Users/ik/Downloads/";
+        String basePath = "/Users/ik/Downloads/dummy/";
         long[] subcategoryIdArray = {3297, 3298, 3293, 3291, 3290, 3289, 3288, 3299, 3296, 3294};
         List<String> fileNameList = new ArrayList<>();
         for (int i = 2; i <= 14; i++) {
@@ -52,7 +52,7 @@ class ItemAdminControllerCommitTest {
             byte[] bytes = Files.readAllBytes(Paths.get(basePath + fileName));
             imageByteList.add(bytes);
         }
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             // Mock image files
             MockMultipartFile imageFile =
                     new MockMultipartFile("imageFiles", "dummy-image" + i + ".png", MediaType.IMAGE_PNG_VALUE, imageByteList.get((int) (Math.random() * 13)));
