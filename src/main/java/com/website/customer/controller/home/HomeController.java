@@ -26,17 +26,17 @@ public class HomeController {
         return itemHomeCarouselService.getCarousels();
     }
 
-    @GetMapping("/main/item/recent")
+    @GetMapping("/main/items/recent")
     public ResponseEntity responseRequestForRecentItem() {
         return itemHomeService.getItemsResponseLatest();
     }
 
-    @GetMapping("/main/item/special-sale")
+    @GetMapping("/main/items/special-sale")
     public ResponseEntity responseRequestForSpecialSale() {
         return itemHomeService.getItemsResponseSpecialSale();
     }
 
-    @GetMapping("/main/item/popular")
+    @GetMapping("/main/items/popular")
     public ResponseEntity responseRequestForPopularItem() {
         return itemHomeService.getItemsResponsePopular();
     }
@@ -49,7 +49,7 @@ public class HomeController {
         return itemHomeService.sendItemsResponseByCondByLastItemId(sortedBy, pageable, lastItemId, lastPageNumber, pageChunk, isLastPage, subcategoryId, totalItems);
     }
 
-    @GetMapping("/info/item/category/subcategory/{subcategoryId}")
+    @GetMapping("/info/items/category/subcategory/{subcategoryId}")
     public ResponseEntity sendResponseSubcategoryInfo(@PathVariable("subcategoryId") Long subcategoryId) {
         return itemHomeService.getSubcategoryInfoResponse(subcategoryId);
     }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.OptimisticLockException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -81,6 +83,16 @@ public class CommonRestControllerAdvice {
         return ResponseEntity.status(errorCode.getHttpStatus()).body(ApiResponse.fail(errorCode));
     }
 
+
+    @ExceptionHandler(value = {CommonException.class})
+    public ResponseEntity<ApiResponse<Void>> handleCommonException(CommonException exception) {
+
+        log.warn(exception.getServerMessage(), exception);
+        HttpStatus httpStatus = exception.getErrorCode().getHttpStatus();
+        ErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity.status(httpStatus).body(ApiResponse.fail(errorCode));
+    }
+
     private Map<String, String> extractFieldErrors(BindingResult bindingResult) {
         return bindingResult.getFieldErrors()
                 .stream()
@@ -89,5 +101,13 @@ public class CommonRestControllerAdvice {
                 ));
     }
 
+    @ExceptionHandler(value = {ConcurrentUpdateException.class})
+    public ResponseEntity<ApiResponse<Void>> handleConcurrentUpdateException(ConcurrentUpdateException exception) {
+        log.warn(exception.getServerMessage(), exception);
+        ErrorCode errorCode = exception.getErrorCode();
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(ApiResponse.fail(errorCode));
+    }
 
 }

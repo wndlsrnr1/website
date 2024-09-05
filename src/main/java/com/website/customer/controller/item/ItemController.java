@@ -22,10 +22,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/item")
-public class ItemController {
+@RequestMapping("/items")
+public class
+ItemController {
 
     private final ItemService itemService;
+
+
 
     @GetMapping("/thumbnail")
     public ResponseEntity responseThumbnail(@RequestParam(value = "itemId", required = false) Long itemId) {

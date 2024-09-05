@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -15,17 +17,15 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Data
 public class CreatePurchasesRequest {
-    @NotNull
-    private Long itemId;
-
-    @Length(min = 1, max = 100)
+    @Min(value = 1)
+    @Max(value = 10)
     private Integer totalAmount;
 
     @NotBlank
     @Length(min = 8, max = 100)
     private String address;
 
-    public CreatePurchasesRequestDto toDto(Long userId) {
+    public CreatePurchasesRequestDto toDto(Long userId, Long itemId) {
         return CreatePurchasesRequestDto.builder()
                 .userId(userId)
                 .itemId(itemId)

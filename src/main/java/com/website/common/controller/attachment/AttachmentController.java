@@ -89,7 +89,7 @@ public class AttachmentController {
                 .body(resource);
     }
 
-    @GetMapping("/item/{itemId}")
+    @GetMapping("/items/{itemId}")
     public ResponseEntity responseImageInfoForCustomerResponse(@PathVariable("itemId") Long itemId) {
         return attachmentService.getResponseImageInfoForCustomerResponse(itemId);
     }

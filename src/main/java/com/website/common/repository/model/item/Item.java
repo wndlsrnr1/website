@@ -25,6 +25,9 @@ public class Item extends AbstractBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @Version
+    private Long version;
+
     private String name;
     private String nameKor;
     private Integer price;
@@ -33,33 +36,6 @@ public class Item extends AbstractBaseEntity {
     private String description;
     private LocalDateTime releasedAt;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setNameKor(String nameKor) {
-        this.nameKor = nameKor;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setReleasedAt(LocalDateTime releaseDate) {
-        this.releasedAt = releaseDate;
-    }
 
 }
 
