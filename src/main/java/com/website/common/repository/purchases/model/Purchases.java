@@ -24,7 +24,7 @@ public class Purchases {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "purchases_id", nullable = false)
+    @Column(name = "purchases_id")
     private Long id;
 
     @Column

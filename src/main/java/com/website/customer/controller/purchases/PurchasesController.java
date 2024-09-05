@@ -1,6 +1,5 @@
 package com.website.customer.controller.purchases;
 
-import com.website.config.auth.AdminUser;
 import com.website.config.auth.LoginUser;
 import com.website.config.auth.ServiceUser;
 import com.website.common.controller.model.ApiResponse;
@@ -66,13 +65,14 @@ public class PurchasesController {
     }
 
     @LoginUser
-    @PostMapping("/purchases")
+    @PostMapping("/items/{itemId}/purchases")
     public ApiResponse<PurchasesResponse> createPurchase(
             @AuthenticationPrincipal ServiceUser serviceUser,
-            @Valid @RequestBody CreatePurchasesRequest request
+            @Valid @RequestBody CreatePurchasesRequest request,
+            @PathVariable("itemId") Long itemId
     ) {
-        CreatePurchasesRequestDto dto = request.toDto(serviceUser.getId());
-        PurchasesResponseDto responseDto = purchasesService.create(dto);
+        CreatePurchasesRequestDto dto = request.toDto(serviceUser.getId(), itemId);
+        PurchasesResponseDto responseDto = purchasesService.createPurchases(dto);
         return ApiResponse.success(PurchasesResponse.of(responseDto));
     }
 

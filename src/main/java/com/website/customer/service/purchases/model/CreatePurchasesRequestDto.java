@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -27,6 +29,7 @@ public class CreatePurchasesRequestDto {
                 .user(user)
                 .totalAmount(totalAmount)
                 .address(address)
+                .orderNumber("order: " + UUID.randomUUID())
                 .build();
     }
 
